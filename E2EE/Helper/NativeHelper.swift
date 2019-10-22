@@ -81,10 +81,13 @@ extension Crypto : CryptoProtocol {
     
     func decryptAlgorithm(data: Data, keyCipher: Data) throws -> Data? {
         if #available(iOS 13.0, *) {
-            <#code#>
+            let sealedBox = try AES.GCM.SealedBox.init(combined: data)
+            let decryptData = try AES.GCM.open(sealedBox, using: SymmetricKey(data: keyCipher))
+            return decryptData
         } else {
             
         }
+        return nil
     }
     
     
