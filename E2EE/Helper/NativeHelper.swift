@@ -10,24 +10,11 @@ import Foundation
 import CommonCrypto
 import Security
 
-protocol CryptoProtocol : NSObject {
-    func hashMethod(data : Data) throws -> Data? // Example: SHA256, SHA512, ...
-    func hmacAuthentication(data : Data, salt: Data) throws -> Data? // Example: hmacSHA256, hmacbcrypt, hmacMD5, ...
-    func encryptAlgorithm(data : Data, keyCipher: Data) throws -> Data? //Example: AES, DES, IDEA, ...
-    func decryptAlgorithm(data : Data, keyCipher: Data) throws -> Data? //Example: AES, DES, IDEA, ...
-}
-
 enum Error : Swift.Error {
     case BadKeyLength
     case BadInputVectorLength
     case keyGenerator(status: Int)
     case cryptoFailed(status: CCCryptorStatus)
-}
-
-public class Crypto : NSObject {
-    override public init() {
-        super.init()
-    }
 }
 
 struct AES256 {
@@ -114,39 +101,58 @@ struct AES256 {
     }
 }
 
-//func hmac(hashName:String, message:Data, key:Data) -> Data? {
-//    let algos = ["SHA1":   (kCCHmacAlgSHA1,   CC_SHA1_DIGEST_LENGTH),
-//                 "MD5":    (kCCHmacAlgMD5,    CC_MD5_DIGEST_LENGTH),
-//                 "SHA224": (kCCHmacAlgSHA224, CC_SHA224_DIGEST_LENGTH),
-//                 "SHA256": (kCCHmacAlgSHA256, CC_SHA256_DIGEST_LENGTH),
-//                 "SHA384": (kCCHmacAlgSHA384, CC_SHA384_DIGEST_LENGTH),
-//                 "SHA512": (kCCHmacAlgSHA512, CC_SHA512_DIGEST_LENGTH)]
-//    guard let (hashAlgorithm, length) = algos[hashName]  else { return nil }
-//    var macData = Data(count: Int(length))
-//
-//    macData.withUnsafeMutableBytes {macBytes in
-//        message.withUnsafeBytes {messageBytes in
-//            key.withUnsafeBytes {keyBytes in
-//                CCHmac(CCHmacAlgorithm(hashAlgorithm),
-//                       keyBytes,     key.count,
-//                       messageBytes, message.count,
-//                       macBytes)
-//            }
-//        }
-//    }
-//    return macData
-//}
+enum hmacAlgorithm {
+    case SHA1, SHA224, SHA256, SHA384, SHA512, MD5
+    
+    var algorithm: CCHmacAlgorithm {
+        var result: Int = 0
+        switch self {
+        case .MD5:
+            result = kCCHmacAlgMD5
+        case .SHA1:
+            result = kCCHmacAlgSHA1
+        case .SHA224:
+            result = kCCHmacAlgSHA224
+        case .SHA256:
+            result = kCCHmacAlgSHA256
+        case .SHA384:
+            result = kCCHmacAlgSHA384
+        case .SHA512:
+            result = kCCHmacAlgSHA512
+        }
+        return CCHmacAlgorithm(result)
+    }
+    
+    var length : Int32 {
+        var result: Int32 = 0
+        switch self {
+        case .MD5:
+            result = CC_MD5_DIGEST_LENGTH
+        case .SHA224:
+            result = CC_SHA224_DIGEST_LENGTH
+        case .SHA256:
+            result = CC_SHA256_DIGEST_LENGTH
+        case .SHA384:
+            result = CC_SHA384_DIGEST_LENGTH
+        case .SHA512:
+            result = CC_SHA512_DIGEST_LENGTH
+        case .SHA1:
+            result = CC_SHA1_DIGEST_LENGTH
+        }
+        return result
+    }
+}
 
 struct hmacSHA256 {
-    static func hmac(message: Data, key: Data) -> Data? {
-        var macData = Data(count: Int(CC_SHA256_DIGEST_LENGTH))
+    static func hmac(algorithm: hmacAlgorithm = .SHA256, message: Data, key: Data) -> Data? {
+        var macData = Data(count: Int(algorithm.length))
         macData.withUnsafeMutableBytes({(macBuffer: UnsafeMutableRawBufferPointer) -> Void in
             let macBytes = macBuffer.baseAddress!
             message.withUnsafeBytes({(messBuffer: UnsafeRawBufferPointer) -> Void in
                 let messBytes = messBuffer.baseAddress!
                 key.withUnsafeBytes({(keyBuffer: UnsafeRawBufferPointer) -> Void in
                     let keyBytes = keyBuffer.baseAddress!
-                    CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA256), keyBytes, key.count, messBytes, message.count, macBytes)
+                    CCHmac(algorithm.algorithm, keyBytes, key.count, messBytes, message.count, macBytes)
                 })
             })
         })
@@ -161,6 +167,3 @@ struct hmacSHA256 {
     }
 }
 
-struct hashSHA256 {
-    
-}
