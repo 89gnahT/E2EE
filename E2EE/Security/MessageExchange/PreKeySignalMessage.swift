@@ -15,7 +15,7 @@ public struct PreKeySignalMessage {
     let identityKey: PublicKey
     let message: SignalMessage
     
-    init(preKeyId: UInt32, signedPreKeyId: UInt32, baseKey: PublicKey, identityKey: PublicKey, message: SignalMessage) {
+    init(preKeyId: UInt32?, signedPreKeyId: UInt32, baseKey: PublicKey, identityKey: PublicKey, message: SignalMessage) {
         self.preKeyId = preKeyId
         self.signedPreKeyId = signedPreKeyId
         self.baseKey = baseKey
