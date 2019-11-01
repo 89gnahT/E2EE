@@ -1,0 +1,6 @@
+framework module Pods_E2EE {
+  umbrella header "Pods-E2EE-umbrella.h"
+
+  export *
+  module * { export * }
+}
