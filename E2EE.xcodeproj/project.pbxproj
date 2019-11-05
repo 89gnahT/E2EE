@@ -17,6 +17,9 @@
 		814F61D223595A3B00A6AA44 /* E2EETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814F61D123595A3B00A6AA44 /* E2EETests.swift */; };
 		814F61DD23595A3B00A6AA44 /* E2EEUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814F61DC23595A3B00A6AA44 /* E2EEUITests.swift */; };
 		9E57540C4342436078C7A840 /* Pods_E2EE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 317644017F8F555E3EE757CF /* Pods_E2EE.framework */; };
+		C203CE202371654500E71171 /* NetworkSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = C203CE1F2371654500E71171 /* NetworkSocket.swift */; };
+		C203CE222371670100E71171 /* NetBaseSocketAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C203CE212371670100E71171 /* NetBaseSocketAdapter.swift */; };
+		C203CE2823717E7600E71171 /* StreamSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = C203CE2723717E7600E71171 /* StreamSocket.swift */; };
 		C25D7282236BDD0B00359C11 /* DeviceConsistencySignature.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25D7281236BDD0B00359C11 /* DeviceConsistencySignature.swift */; };
 		C25D7284236BDEDD00359C11 /* DeviceConsistencyMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25D7283236BDEDD00359C11 /* DeviceConsistencyMessage.swift */; };
 		C25D7286236BE48D00359C11 /* DeviceConsistencyCommitment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25D7285236BE48D00359C11 /* DeviceConsistencyCommitment.swift */; };
@@ -112,6 +115,9 @@
 		814F61DC23595A3B00A6AA44 /* E2EEUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EEUITests.swift; sourceTree = "<group>"; };
 		814F61DE23595A3B00A6AA44 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		91924533B0CE1BBD58F6278C /* Pods-E2EETests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EETests.release.xcconfig"; path = "Target Support Files/Pods-E2EETests/Pods-E2EETests.release.xcconfig"; sourceTree = "<group>"; };
+		C203CE1F2371654500E71171 /* NetworkSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSocket.swift; sourceTree = "<group>"; };
+		C203CE212371670100E71171 /* NetBaseSocketAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetBaseSocketAdapter.swift; sourceTree = "<group>"; };
+		C203CE2723717E7600E71171 /* StreamSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSocket.swift; sourceTree = "<group>"; };
 		C25D7281236BDD0B00359C11 /* DeviceConsistencySignature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceConsistencySignature.swift; sourceTree = "<group>"; };
 		C25D7283236BDEDD00359C11 /* DeviceConsistencyMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceConsistencyMessage.swift; sourceTree = "<group>"; };
 		C25D7285236BE48D00359C11 /* DeviceConsistencyCommitment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceConsistencyCommitment.swift; sourceTree = "<group>"; };
@@ -210,6 +216,17 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		53DC8FE2236FBA18007AF733 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				C203CE1E2371604000E71171 /* VoiceCall */,
+				C203CE1D2371603700E71171 /* SocketLayer */,
+				C203CE1C2371602500E71171 /* RTMP */,
+				C203CE1B2371601400E71171 /* MessageCommunication */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
 		814F61AE23595A3700A6AA44 = {
 			isa = PBXGroup;
 			children = (
@@ -235,6 +252,7 @@
 		814F61B923595A3700A6AA44 /* E2EE */ = {
 			isa = PBXGroup;
 			children = (
+				53DC8FE2236FBA18007AF733 /* Network */,
 				C2763720236BD981007A563D /* Security */,
 				814F61BA23595A3700A6AA44 /* AppDelegate.swift */,
 				814F61BC23595A3700A6AA44 /* SceneDelegate.swift */,
@@ -263,6 +281,53 @@
 				814F61DE23595A3B00A6AA44 /* Info.plist */,
 			);
 			path = E2EEUITests;
+			sourceTree = "<group>";
+		};
+		C203CE1B2371601400E71171 /* MessageCommunication */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = MessageCommunication;
+			sourceTree = "<group>";
+		};
+		C203CE1C2371602500E71171 /* RTMP */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = RTMP;
+			sourceTree = "<group>";
+		};
+		C203CE1D2371603700E71171 /* SocketLayer */ = {
+			isa = PBXGroup;
+			children = (
+				C203CE2623716B7700E71171 /* NetworkSocket */,
+				C203CE2523716B6C00E71171 /* StreamSocket */,
+				C203CE212371670100E71171 /* NetBaseSocketAdapter.swift */,
+			);
+			path = SocketLayer;
+			sourceTree = "<group>";
+		};
+		C203CE1E2371604000E71171 /* VoiceCall */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = VoiceCall;
+			sourceTree = "<group>";
+		};
+		C203CE2523716B6C00E71171 /* StreamSocket */ = {
+			isa = PBXGroup;
+			children = (
+				C203CE2723717E7600E71171 /* StreamSocket.swift */,
+			);
+			path = StreamSocket;
+			sourceTree = "<group>";
+		};
+		C203CE2623716B7700E71171 /* NetworkSocket */ = {
+			isa = PBXGroup;
+			children = (
+				C203CE1F2371654500E71171 /* NetworkSocket.swift */,
+			);
+			path = NetworkSocket;
 			sourceTree = "<group>";
 		};
 		C25D7280236BDCED00359C11 /* DeviceConsistency */ = {
@@ -655,6 +720,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C276378B236BD981007A563D /* SessionState.swift in Sources */,
+				C203CE222371670100E71171 /* NetBaseSocketAdapter.swift in Sources */,
 				C2763761236BD981007A563D /* SenderKeyState.swift in Sources */,
 				C2763768236BD981007A563D /* KeyStore.swift in Sources */,
 				C2763786236BD981007A563D /* SessionPreKeyBundle.swift in Sources */,
@@ -681,6 +747,7 @@
 				C2763764236BD981007A563D /* Fingerprint.swift in Sources */,
 				C2763760236BD981007A563D /* SenderKeyRecord.swift in Sources */,
 				C276376B236BD981007A563D /* SessionStore.swift in Sources */,
+				C203CE202371654500E71171 /* NetworkSocket.swift in Sources */,
 				C276375D236BD981007A563D /* PublicKey.swift in Sources */,
 				C2763765236BD981007A563D /* ScannableFingerprint.swift in Sources */,
 				C2763762236BD981007A563D /* SignalError.swift in Sources */,
@@ -694,6 +761,7 @@
 				C276376D236BD981007A563D /* CipherTextMessage.swift in Sources */,
 				C2763763236BD981007A563D /* DisplayableFingerprint.swift in Sources */,
 				C2763779236BD981007A563D /* ProtocolBufferEquivalent.swift in Sources */,
+				C203CE2823717E7600E71171 /* StreamSocket.swift in Sources */,
 				C2763781236BD981007A563D /* SenderChainKey.swift in Sources */,
 				C276377D236BD981007A563D /* RatchetMessageKey.swift in Sources */,
 				C276375E236BD981007A563D /* CommonSignalCrypto.swift in Sources */,

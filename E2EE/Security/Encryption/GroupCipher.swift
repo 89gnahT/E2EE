@@ -11,6 +11,7 @@ import Foundation
 public struct GroupCipher<Context: GroupKeyStore> {
     private let store: Context
     private let address: Context.GroupAddress
+    private let crypto = CommonSignalCrypto()
     
     init(address: Context.GroupAddress, store: Context) {
         self.store = store
@@ -33,7 +34,6 @@ public struct GroupCipher<Context: GroupKeyStore> {
     
     public func createSession() throws -> SenderKeyDistributionMessage {
         let record = try store.senderKeyStore.senderKey(for: address) ?? SenderKeyRecord()
-        let crypto = CommonSignalCrypto()
         if record.isEmpty {
             let senderKeyId = try crypto.generateSenderKeyId()
             let senderKey = try crypto.generateSenderKey()
@@ -61,7 +61,6 @@ public struct GroupCipher<Context: GroupKeyStore> {
     
     public func encrypt(_ plaintext: Data) throws -> CipherTextMessage {
         let record = try loadRecord()
-        let crypto = CommonSignalCrypto()
         guard let state = record.state else {
             throw SignalError(.unknown, "No state in session record")
         }
