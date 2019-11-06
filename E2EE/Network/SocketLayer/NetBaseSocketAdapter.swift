@@ -17,12 +17,14 @@ enum ConnectionStatus {
 public protocol NetbaseSocketProtocol {
     func send(_ data: Data)
     func receiver(_ data: Data)
-    func init(withHost host: String, and port: String)
 }
 
 
 enum NetBaseErrorType: String {
     case invalidSetting = "Invalid connection setting"
+    case internalError = "Internal Error"
+    case sendError = "Send Error"
+    case receiveError = "Receive Error"
 }
 
 public class NetBaseError: CustomStringConvertible, Error {
