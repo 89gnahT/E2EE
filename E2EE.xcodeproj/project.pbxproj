@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0670785F10ACD65243E377E8 /* Pods_E2EE_E2EEUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 669DCAAD94F20C41F7BA0FBC /* Pods_E2EE_E2EEUITests.framework */; };
+		537280F123730A570074F9EA /* SignalSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537280F023730A570074F9EA /* SignalSocket.swift */; };
 		814F61BB23595A3700A6AA44 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814F61BA23595A3700A6AA44 /* AppDelegate.swift */; };
 		814F61BD23595A3700A6AA44 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814F61BC23595A3700A6AA44 /* SceneDelegate.swift */; };
 		814F61BF23595A3700A6AA44 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814F61BE23595A3700A6AA44 /* ViewController.swift */; };
@@ -98,6 +99,7 @@
 		1EC2E78D4FDB9D02A56600AC /* Pods-E2EETests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EETests.debug.xcconfig"; path = "Target Support Files/Pods-E2EETests/Pods-E2EETests.debug.xcconfig"; sourceTree = "<group>"; };
 		2B4F3E4287CAF0019291820F /* Pods_E2EETests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_E2EETests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		317644017F8F555E3EE757CF /* Pods_E2EE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_E2EE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		537280F023730A570074F9EA /* SignalSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalSocket.swift; sourceTree = "<group>"; };
 		5EF4F8F96B03EC46DAEF9048 /* Pods-E2EE-E2EEUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EE-E2EEUITests.release.xcconfig"; path = "Target Support Files/Pods-E2EE-E2EEUITests/Pods-E2EE-E2EEUITests.release.xcconfig"; sourceTree = "<group>"; };
 		669DCAAD94F20C41F7BA0FBC /* Pods_E2EE_E2EEUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_E2EE_E2EEUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		814F61B723595A3700A6AA44 /* E2EE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = E2EE.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -286,6 +288,7 @@
 		C203CE1B2371601400E71171 /* MessageCommunication */ = {
 			isa = PBXGroup;
 			children = (
+				537280F023730A570074F9EA /* SignalSocket.swift */,
 			);
 			path = MessageCommunication;
 			sourceTree = "<group>";
@@ -755,6 +758,7 @@
 				814F61BF23595A3700A6AA44 /* ViewController.swift in Sources */,
 				C276376E236BD981007A563D /* PreKeySignalMessage.swift in Sources */,
 				C2763774236BD981007A563D /* LocalStorage.pb.swift in Sources */,
+				537280F123730A570074F9EA /* SignalSocket.swift in Sources */,
 				C25D7284236BDEDD00359C11 /* DeviceConsistencyMessage.swift in Sources */,
 				C2763788236BD981007A563D /* SessionRecord.swift in Sources */,
 				C2763778236BD981007A563D /* ProtocolBufferConvertible.swift in Sources */,
