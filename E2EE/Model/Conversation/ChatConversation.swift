@@ -9,7 +9,17 @@
 import UIKit
 
 class ChatConversation: Conversation {
-     init(cvsID: ConversationID, membersID: Array<UserID>, nameConversation: String, lastMsg: Message, muteTime : TimeInterval) {
-        super.init(cvsID: cvsID, type: .chat, membersID: membersID, nameConversation: nameConversation, lastMsg: lastMsg, muteTime: muteTime)
+    init(cvsID: ConversationID,
+         membersID: Array<UserID>,
+         nameConversation: String,
+         lastMsg: Message,
+         muteTime : TimeInterval)
+    {
+        super.init(cvsID: cvsID,
+                   type: .chat,
+                   membersID: membersID,
+                   nameConversation: nameConversation,
+                   lastMsg: lastMsg,
+                   muteTime: muteTime)
     }
 }

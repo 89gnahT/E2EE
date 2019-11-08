@@ -33,15 +33,15 @@ class ZAConversationTableCellNode: ASCellNode {
         
         
         // Setup ImageNode
-//        imageNode = node.avatar
-//        if (imageNode != nil){
-//            node.getAvatarImage { (image) in
-//                self.imageNode?.image = image
-//            }
-//
-//            imageNode?.style.preferredSize = CGSize(width: 60, height: 60)
-//            //imageNode?.imageModificationBlock = ASImageNodeRoundBorderModificationBlock(0, nil)
-//        }
+        //        imageNode = node.avatar
+        //        if (imageNode != nil){
+        //            node.getAvatarImage { (image) in
+        //                self.imageNode?.image = image
+        //            }
+        //
+        //            imageNode?.style.preferredSize = CGSize(width: 60, height: 60)
+        //            //imageNode?.imageModificationBlock = ASImageNodeRoundBorderModificationBlock(0, nil)
+        //        }
         
         let isReadMsg = viewModel.isReadMsg ?? false
         
@@ -50,16 +50,12 @@ class ZAConversationTableCellNode: ASCellNode {
             titleNode = ASTextNode()
             titleNode!.truncationMode = .byTruncatingTail
             titleNode!.maximumNumberOfLines = 1
-            
-            var attributedText : NSAttributedString
-            if isReadMsg{
-                attributedText = NSAttributedString(string: viewModel.title!,
-                                                    attributes: [NSAttributedString.Key.font : UIFont.defaultFont(ofSize: 16), NSAttributedString.Key.foregroundColor : UIColor.black])
-            }else{
-                attributedText = NSAttributedString(string: viewModel.title!,
-                                                    attributes: [NSAttributedString.Key.font : UIFont.boldDefaultFont(ofSize: 16), NSAttributedString.Key.foregroundColor : UIColor.black])
-            }
-            titleNode!.attributedText = attributedText
+            setAtributedStringForASTextNode(titleNode!,
+                                            string: viewModel.title!,
+                                            fontSize: 16,
+                                            isHighLight: !isReadMsg,
+                                            highLightColor: .black,
+                                            normalColor: .black)
         }
         
         // Setup subTitleNode
@@ -67,31 +63,25 @@ class ZAConversationTableCellNode: ASCellNode {
             subTitleNode = ASTextNode()
             subTitleNode!.truncationMode = .byTruncatingTail
             subTitleNode!.maximumNumberOfLines = 1
-            var attributedText : NSAttributedString
-            if isReadMsg{
-                attributedText = NSAttributedString(string: viewModel.subTitle!,
-                                                    attributes: [NSAttributedString.Key.font : UIFont.defaultFont(ofSize: 14), NSAttributedString.Key.foregroundColor : UIColor.darkGray])
-            }else{
-                attributedText = NSAttributedString(string: viewModel.subTitle!,
-                                                    attributes: [NSAttributedString.Key.font : UIFont.boldDefaultFont(ofSize: 14), NSAttributedString.Key.foregroundColor : UIColor.black])
-            }
-            subTitleNode!.attributedText = attributedText
+            setAtributedStringForASTextNode(subTitleNode!,
+                                            string: viewModel.subTitle!,
+                                            fontSize: 14,
+                                            isHighLight: !isReadMsg,
+                                            highLightColor: .black,
+                                            normalColor: .darkGray)
+            
         }
         
         // Setup rightTitleNode
         if viewModel.rightTitle != nil{
             rightTitleNode = ASTextNode()
             rightTitleNode!.style.maxWidth = ASDimensionMake("80pt")
-            var attributedText : NSAttributedString
-            if isReadMsg{
-                attributedText = NSAttributedString(string: viewModel.rightTitle!,
-                                                    attributes: [NSAttributedString.Key.font : UIFont.defaultFont(ofSize: 12), NSAttributedString.Key.foregroundColor : UIColor.darkGray])
-            }else{
-                attributedText = NSAttributedString(string: viewModel.rightTitle!,
-                                                    attributes: [NSAttributedString.Key.font : UIFont.boldDefaultFont(ofSize: 12), NSAttributedString.Key.foregroundColor : UIColor.black])
-            }
-            
-            rightTitleNode!.attributedText = attributedText
+            setAtributedStringForASTextNode(rightTitleNode!,
+                                            string: viewModel.rightTitle!,
+                                            fontSize: 12,
+                                            isHighLight: !isReadMsg,
+                                            highLightColor: .black,
+                                            normalColor: .darkGray)
         }
         
         let icon = viewModel.iconRightSubTitle
@@ -100,6 +90,37 @@ class ZAConversationTableCellNode: ASCellNode {
             iconRightTitleNode!.style.preferredSize = CGSize(width: 12, height: 15)
         }
         
+    }
+    
+    private func setAtributedStringForASTextNode(_ textNode : ASTextNode,
+                                                 string : String,
+                                                 fontSize : CGFloat,
+                                                 isHighLight : Bool,
+                                                 highLightColor : UIColor,
+                                                 normalColor : UIColor){
+        func atributedString(_ string : String,
+                             fontSize : CGFloat,
+                             isBold : Bool,
+                             foregroundColor : UIColor) -> NSAttributedString{
+            var font : UIFont
+            if isBold{
+                font = UIFont.boldDefaultFont(ofSize: fontSize)
+            }else{
+                font = UIFont.defaultFont(ofSize: fontSize)
+            }
+            
+            return NSAttributedString(string: string,
+                                      attributes: [NSAttributedString.Key.font : font, NSAttributedString.Key.foregroundColor : foregroundColor])
+        }
+        
+        var attributedText : NSAttributedString
+        
+        if isHighLight{
+            attributedText = atributedString(string, fontSize: fontSize, isBold: true, foregroundColor: highLightColor)
+        }else{
+            attributedText = atributedString(string, fontSize: fontSize, isBold: false, foregroundColor: normalColor)
+        }
+        textNode.attributedText = attributedText
     }
     
     
@@ -160,7 +181,7 @@ class ZAConversationTableCellNode: ASCellNode {
         // BottomSubContent
         var arrayOfBottomSubContent = Array<ASLayoutElement>()
         if subTitleNode != nil{
-            let maxWidth = (contentStack.style.maxWidth.value - imageNodeWidth) * 0.7
+            let maxWidth = (contentStack.style.maxWidth.value - imageNodeWidth) * 0.8
             subTitleNode?.style.maxWidth = ASDimensionMake(maxWidth)
             
             arrayOfBottomSubContent.append(subTitleNode!)
@@ -169,6 +190,8 @@ class ZAConversationTableCellNode: ASCellNode {
             arrayOfBottomSubContent.append(iconRightSubTitleNode!)
         }
         bottomSubContentStack.children = arrayOfBottomSubContent
+        bottomSubContentStack.spacing = 10
+        bottomSubContentStack.justifyContent = .spaceBetween
         
         return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12), child: contentStack)
     }

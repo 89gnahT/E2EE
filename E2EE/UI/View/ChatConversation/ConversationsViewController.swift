@@ -23,7 +23,17 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         }
     }
     
-    var editNavigationView : EditNavigationView!
+    lazy var editNavigationView : EditNavigationView = {
+        let navigationViewFrame = (navigationController?.navigationBar.bounds)!
+        let toolBarViewFrame = (tabBarController?.tabBar.bounds)!
+        return EditNavigationView(target: self,
+                                  navigationViewFrame: navigationViewFrame,
+                                  toolBarViewFrame: toolBarViewFrame,
+                                  leftTopButtonAction: #selector(leftTopButtonAction(button:)),
+                                  rightTopButtonAction: #selector(rightTopButtonAction(button:)),
+                                  leftBottomButtonAction: #selector(leftBottomButtonAction(button:)),
+                                  rightBottomButtonAction: #selector(rightBottomButtonAction(button:)))
+    }()
     
     init() {
         super.init(node: tableNode)
@@ -146,18 +156,19 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
 extension ConversationsViewController : ConversationsDelegate{
     
     func tableNode(_ table: ConversationsTableNode, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        var more, hide, delete : UITableViewRowAction
-        more = UITableViewRowAction(style: .normal, title: "More", handler: { (viewAction, indexPath) in
-            print("More")
+        let more = UITableViewRowAction(style: .normal, title: "More", handler: { (viewAction, indexPath) in
+            let action = UIAlertAction(title: "OK", style: .cancel, handler: { action in })
+            self.displayAlert(title: "Thông báo", message: "Tính năng đang cập nhật", actions: [action], preferredStyle: .actionSheet)
         })
-        more.backgroundColor = UIColor.lightGray
+        more.backgroundColor = UIColor.systemGray
         
-        hide = UITableViewRowAction(style: .default, title: "Hide", handler: { (viewAction, indexPath) in
-            print("Hide")
+        let hide = UITableViewRowAction(style: .default, title: "Hide", handler: { (viewAction, indexPath) in
+            let action = UIAlertAction(title: "OK", style: .cancel, handler: { action in })
+            self.displayAlert(title: "Thông báo", message: "Tính năng đang cập nhật", actions: [action], preferredStyle: .actionSheet)
         })
         hide.backgroundColor = UIColor.systemPurple
         
-        delete = UITableViewRowAction(style: .destructive, title: "Delete", handler: { (viewAction, indexPath) in
+        let delete = UITableViewRowAction(style: .destructive, title: "Delete", handler: { (viewAction, indexPath) in
             let itemsDelete = NSMutableArray(object: self.modelViews.object(at: indexPath.row))
             self.alertDeleteItems(items: itemsDelete, completion: {
                 itemsDelete.removeAllObjects()
@@ -193,16 +204,6 @@ extension ConversationsViewController : ConversationsDelegate{
         if isEdittingMode == false{
             isEdittingMode = true
             
-            let navigationViewFrame = (navigationController?.navigationBar.bounds)!
-            let toolBarViewFrame = (tabBarController?.tabBar.bounds)!
-            editNavigationView = EditNavigationView(target: self,
-                                                    navigationViewFrame: navigationViewFrame,
-                                                    toolBarViewFrame: toolBarViewFrame,
-                                                    leftTopButtonAction: #selector(leftTopButtonAction(button:)),
-                                                    rightTopButtonAction: #selector(rightTopButtonAction(button:)),
-                                                    leftBottomButtonAction: #selector(leftBottomButtonAction(button:)),
-                                                    rightBottomButtonAction: #selector(rightBottomButtonAction(button:)))
-            
             navigationController?.navigationBar.addSubnode(editNavigationView.editNavigationView);
             tabBarController?.tabBar.addSubnode(editNavigationView.editTabBarView)
         }
@@ -218,6 +219,7 @@ extension ConversationsViewController : ConversationsDataSource{
 
 // MARK: Navigation In Editting mode
 extension ConversationsViewController{
+    
     @objc func leftTopButtonAction(button : ASButtonNode){
         exitEdittingMode()
     }

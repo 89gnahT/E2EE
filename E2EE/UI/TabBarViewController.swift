@@ -26,7 +26,6 @@ class TabBarViewController: UIViewController, UITabBarControllerDelegate {
         friendListVC.tabBarItem.image = UIImage(named: "contact_icon")
         friendListVC.tabBarItem.selectedImage = UIImage(named: "contact_selected_icon")
         
-        
         groupChatListVC.title = "Nhóm"
         groupChatListVC.tabBarItem.image = UIImage(named: "group_icon")
         groupChatListVC.tabBarItem.selectedImage = UIImage(named: "group_selected_icon")

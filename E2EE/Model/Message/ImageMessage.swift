@@ -9,7 +9,17 @@
 import UIKit
 
 class ImageMessage: Message {
-    init(id : MsgID, conversationID : ConversationID, senderId : UserID, contents : [String], time : MsgTime) {
-        super.init(id: id,conversationID: conversationID, senderId: senderId, type: .image, contents: contents, time: time)
+    init(id : MsgID,
+         conversationID : ConversationID,
+         senderId : UserID,
+         contents : [String],
+         time : MsgTime)
+    {
+        super.init(id: id,
+                   conversationID: conversationID,
+                   senderId: senderId,
+                   type: .image,
+                   contents: contents,
+                   time: time)
     }
 }

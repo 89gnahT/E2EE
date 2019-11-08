@@ -23,7 +23,13 @@ class Conversation: NSObject {
     var type : ConversationType
     var muteTime : TimeInterval
     
-    init(cvsID : ConversationID, type : ConversationType, membersID : Array<UserID>, nameConversation : String, lastMsg : Message, muteTime : TimeInterval) {
+    init(cvsID : ConversationID,
+         type : ConversationType,
+         membersID : Array<UserID>,
+         nameConversation : String,
+         lastMsg : Message,
+         muteTime : TimeInterval)
+    {
         self.cvsID = cvsID
         self.type = type
         self.membersID = membersID

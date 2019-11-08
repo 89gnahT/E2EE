@@ -15,8 +15,6 @@ enum MsgType {
     case image
 }
 
-
-
 struct MsgTime {
     var sent : TimeInterval
     var deliveried : TimeInterval
@@ -40,7 +38,13 @@ class Message: NSObject {
     
     var time : MsgTime
     
-    init(id : MsgID, conversationID : ConversationID, senderId : UserID, type : MsgType,contents : [String], time : MsgTime) {
+    init(id : MsgID,
+         conversationID : ConversationID,
+         senderId : UserID,
+         type : MsgType,
+         contents : [String],
+         time : MsgTime)
+    {
         self.id = id
         self.conversationID = conversationID
         self.senderId = senderId

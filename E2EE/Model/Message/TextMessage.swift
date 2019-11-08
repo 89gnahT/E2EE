@@ -9,7 +9,17 @@
 import UIKit
 
 class TextMessage: Message {
-    init(id : MsgID, conversationID : ConversationID, senderId : UserID, content : String, time : MsgTime) {
-        super.init(id: id,conversationID: conversationID, senderId: senderId, type: .text, contents: [content], time: time)
+    init(id : MsgID,
+         conversationID : ConversationID,
+         senderId : UserID,
+         content : String,
+         time : MsgTime)
+    {
+        super.init(id: id,
+                   conversationID: conversationID,
+                   senderId: senderId,
+                   type: .text,
+                   contents: [content],
+                   time: time)
     }
 }
