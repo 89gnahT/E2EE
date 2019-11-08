@@ -61,24 +61,24 @@ class ContactTableNode: ASDisplayNode {
         tableNode.reloadData()
     }
     
-    public func deleteRows(at indexPaths : [IndexPath], withAnimation animation : UITableView.RowAnimation){
-        for indexPath in indexPaths{
-            let section = indexPath.section
-            modelViews[section].remove(at: indexPath.row)
+    public func deleteRow(at indexPath : IndexPath, withAnimation animation : UITableView.RowAnimation){
+        let section = indexPath.section
+        modelViews[section].remove(at: indexPath.row)
+        
+        if modelViews[section].count == 0{
+            keyModelViews.remove(at: section)
+            modelViews.remove(at: section)
             
-            if modelViews[section].count == 0{
-                keyModelViews.remove(at: section)
-                modelViews.remove(at: section)
-                
-                tableNode.deleteSections(IndexSet(integer: section), with: animation)
-            }else{
-                tableNode.deleteRows(at: [indexPath], with: animation)
-            }
+            tableNode.deleteSections(IndexSet(integer: section), with: animation)
+        }else{
+            tableNode.deleteRows(at: [indexPath], with: animation)
         }
     }
     
-    public func insertRows(at indexPaths : [IndexPath], withAnimation animation : UITableView.RowAnimation){
-        tableNode.insertRows(at: indexPaths, with: animation)
+    public func insertRow(at indexPath : IndexPath, withAnimation animation : UITableView.RowAnimation){
+        modelViews = (dataSource?.modelViews(for: self))!
+        keyModelViews = (dataSource?.sectionIndexTitles(for: self))!
+        tableNode.insertRows(at: [indexPath], with: animation)
     }
 }
 

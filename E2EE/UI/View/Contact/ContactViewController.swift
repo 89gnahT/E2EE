@@ -69,7 +69,7 @@ class ContactViewController: ASViewController<ASDisplayNode>{
             keyModelViews.remove(at: indexPath.section)
             modelViews.remove(at: indexPath.section)
         }
-        self.tableNode.deleteRows(at: [indexPath], withAnimation: .automatic)
+        self.tableNode.deleteRow(at: indexPath, withAnimation: .automatic)
     }
     
     func alertDeleteItem(at indexPath : IndexPath, completion: (() -> Void)?){

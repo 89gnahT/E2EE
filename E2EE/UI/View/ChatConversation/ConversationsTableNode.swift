@@ -78,20 +78,18 @@ class ConversationsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
         tableNode.reloadData()
     }
     
-    public func reloadRows(at indexPaths : [IndexPath], with animation : UITableView.RowAnimation){
-        tableNode.reloadRows(at: indexPaths, with: animation)
+    public func reloadRow(at indexPath : IndexPath, with animation : UITableView.RowAnimation){
+        tableNode.reloadRows(at: [indexPath], with: animation)
     }
     
-    public func deleteRows(at indexPaths : [IndexPath], withAnimation animation : UITableView.RowAnimation){
-        for indexPath in indexPaths{
-            modelViews.remove(at: indexPath.row)
-        }
-        tableNode.deleteRows(at: indexPaths, with: animation)
+    public func deleteRow(at indexPath : IndexPath, withAnimation animation : UITableView.RowAnimation){
+        modelViews.remove(at: indexPath.row)
+        tableNode.deleteRows(at: [indexPath], with: animation)
     }
     
-    public func insertRows(at indexPaths : [IndexPath], withAnimation animation : UITableView.RowAnimation){
+    public func insertRow(at indexPath : IndexPath, withAnimation animation : UITableView.RowAnimation){
         modelViews = (dataSource?.tableNode(self))!
-        tableNode.insertRows(at: indexPaths, with: animation)
+        tableNode.insertRows(at: [indexPath], with: animation)
     }
 }
 
