@@ -45,7 +45,7 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         tableNode.setNeedsLayout()
         tableNode.layoutIfNeeded()
         
-        var t = FakeData.shared.conversations
+        var t = DataManager.shared.conversations
         t.sort { (a, b) -> Bool in
             if a.lastMsg.time.sent < b.lastMsg.time.sent{
                 return false
@@ -58,6 +58,31 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         }
 
         tableNode.reloadData()
+    }
+    
+    func markItemsAsRead(at indexPaths : [IndexPath]){
+        for indexPath in indexPaths{
+            let conversation = (modelViews[indexPath.row] as! ZAConversationViewModel).model
+            DataManager.shared.markConversationAsRead(cvs: conversation!)
+        }
+    
+        tableNode.reloadRows(at: indexPaths, with: .automatic)
+    }
+    
+    func alertMarkItemsAsRead(at indexPaths : [IndexPath], completion: (() -> Void)?){
+        let message = "Đánh dấu đã đọc " + String(indexPaths.count) + " cuộc trò chuyện này?"
+        
+        let delete = UIAlertAction(title: "Không", style: .cancel, handler: { action in })
+        
+        let dontDelete = UIAlertAction(title: "Có", style: .destructive, handler: { action in
+            self.markItemsAsRead(at: indexPaths)
+            
+            if (completion != nil){
+                completion!()
+            }
+        })
+        
+        displayAlert(title: "Xác nhận", message: message, actions: [delete, dontDelete], preferredStyle: .alert)
     }
     
     func exitEdittingMode(){
@@ -149,7 +174,7 @@ extension ConversationsViewController : ConversationsDelegate{
             editNavigationView.updateRightButtonInEditNavigation(numberOfItems: listSelectedItemsInEdittingMode.count)
             editNavigationView.updateRightButtonInEditToolBar(numberOfItems: listSelectedItemsInEdittingMode.count)
         }else{
-            
+            markItemsAsRead(at: [indexPath])
         }
     }
     
@@ -204,8 +229,19 @@ extension ConversationsViewController{
     }
     
     @objc func leftBottomButtonAction(button : ASButtonNode){
+        let action = UIAlertAction(title: "OK", style: .cancel, handler: { action in })
+        self.displayAlert(title: "Thông báo", message: "Tính năng đang cập nhật", actions: [action], preferredStyle: .actionSheet)
     }
     
     @objc func rightBottomButtonAction(button : ASButtonNode){
+        var indexPaths = Array<IndexPath>()
+        for item in listSelectedItemsInEdittingMode{
+            let indexPath = IndexPath(row: modelViews.index(of: item), section: 0)
+            indexPaths.append(indexPath)
+        }
+        
+        self.alertMarkItemsAsRead(at: indexPaths) {
+            self.exitEdittingMode()
+        }
     }
 }

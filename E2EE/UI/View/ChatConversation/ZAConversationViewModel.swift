@@ -12,7 +12,7 @@ import AsyncDisplayKit
 public typealias ImageDownloadCompletionClosure = (_ image: UIImage? ) -> Void
 
 class ZAConversationViewModel  : NSObject{
-    private var model : ChatConversation?
+    public var model : ChatConversation?
     
     init(conversation : ChatConversation) {
         super.init()
@@ -20,8 +20,7 @@ class ZAConversationViewModel  : NSObject{
     }
     
     public var avatarURL : URL?{
-        let user = FakeData.shared.users.first { (u) -> Bool in
-            return u.id == (self.model?.membersID.last)!}
+        let user = DataManager.shared.friendWithID((model?.membersID.last)!)
         
         return URL(string: user!.avatarURL!)
     }
@@ -118,9 +117,7 @@ class ZAConversationViewModel  : NSObject{
     }
     public func getAvatarImage(completionHanlder : @escaping ImageDownloadCompletionClosure){
         DispatchQueue.global().async {
-            let user = FakeData.shared.users.first { (u) -> Bool in
-                return u.id == (self.model?.membersID.last)!
-            }
+            let user = DataManager.shared.friendWithID((self.model?.membersID.last)!)
             if user?.avatarURL != nil{
                 // TODO
                 

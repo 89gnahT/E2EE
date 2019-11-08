@@ -106,15 +106,16 @@ class ZAContactTableCellNode: ASCellNode {
         subContenStack.children = [leftSubContentStack, rightSubContentStack]
         
         // LeftSubContent
+        let imageNodeWidth = imageNode?.style.preferredSize.width ?? 0
         var arrayOfLeftSubContent = Array<ASLayoutElement>()
         if titleNode != nil{
-            let maxWidth = (contentStack.style.maxWidth.value - (imageNode?.style.preferredSize.width ?? 0)  ) * 0.6
+            let maxWidth = (contentStack.style.maxWidth.value - imageNodeWidth) * 0.6
             titleNode?.style.maxWidth = ASDimensionMake(maxWidth)
             
             arrayOfLeftSubContent.append(titleNode!)
         }
         if subTitleNode != nil{
-            let maxWidth = (contentStack.style.maxWidth.value - (imageNode?.style.preferredSize.width ?? 0)  ) * 0.6
+            let maxWidth = (contentStack.style.maxWidth.value - imageNodeWidth) * 0.6
             subTitleNode?.style.maxWidth = ASDimensionMake(maxWidth)
             
             arrayOfLeftSubContent.append(subTitleNode!)

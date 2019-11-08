@@ -43,29 +43,4 @@ class TabBarViewController: UIViewController, UITabBarControllerDelegate {
         
         navigationController?.setNavigationBarHidden(true, animated: true)
     }
-    
-    
-    
-    
-    //    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-    //        switch item.title {
-    //        case chatListVC.title:
-    //            print("Chat tab")
-    //
-    //            let button1 = UIBarButtonItem(title: "Button1", style: .plain, target: self, action: #selector(testFunc))
-    //            navigationController?.navigationBar.backgroundColor = UIColor.green
-    //
-    //            navigationController?.navigationItem.rightBarButtonItem = button1
-    //            moreNavigationController.navigationBar.backgroundColor = UIColor.green
-    //        //navigationItem.rightBarButtonItems = [button1]
-    //        case friendListVC.title:
-    //            print("Friend tab")
-    //        case groupChatListVC.title:
-    //            print("Group chat tab")
-    //        default:
-    //            print("Other")
-    //        }
-    //
-    //    }
-    
 }

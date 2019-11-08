@@ -52,7 +52,7 @@ class ZAConversationTableCellNode: ASCellNode {
             titleNode!.maximumNumberOfLines = 1
             
             var attributedText : NSAttributedString
-            if isReadMsg == false {
+            if isReadMsg{
                 attributedText = NSAttributedString(string: viewModel.title!,
                                                     attributes: [NSAttributedString.Key.font : UIFont.defaultFont(ofSize: 16), NSAttributedString.Key.foregroundColor : UIColor.black])
             }else{
@@ -68,7 +68,7 @@ class ZAConversationTableCellNode: ASCellNode {
             subTitleNode!.truncationMode = .byTruncatingTail
             subTitleNode!.maximumNumberOfLines = 1
             var attributedText : NSAttributedString
-            if isReadMsg == false {
+            if isReadMsg{
                 attributedText = NSAttributedString(string: viewModel.subTitle!,
                                                     attributes: [NSAttributedString.Key.font : UIFont.defaultFont(ofSize: 14), NSAttributedString.Key.foregroundColor : UIColor.darkGray])
             }else{
@@ -83,7 +83,7 @@ class ZAConversationTableCellNode: ASCellNode {
             rightTitleNode = ASTextNode()
             rightTitleNode!.style.maxWidth = ASDimensionMake("80pt")
             var attributedText : NSAttributedString
-            if isReadMsg == false{
+            if isReadMsg{
                 attributedText = NSAttributedString(string: viewModel.rightTitle!,
                                                     attributes: [NSAttributedString.Key.font : UIFont.defaultFont(ofSize: 12), NSAttributedString.Key.foregroundColor : UIColor.darkGray])
             }else{
@@ -134,11 +134,12 @@ class ZAConversationTableCellNode: ASCellNode {
         subContenStack.spacing = 5
         subContenStack.justifyContent = .center
         
+        let imageNodeWidth = imageNode?.style.preferredSize.width ?? 0
         // TopSubContent
         if titleNode == nil{
             topSubContentStack.children = [rightSubTopContentStack]
         }else{
-            let maxWidth = (contentStack.style.maxWidth.value - (imageNode?.style.preferredSize.width ?? 0)  ) * 0.6
+            let maxWidth = (contentStack.style.maxWidth.value - imageNodeWidth) * 0.6
             titleNode?.style.maxWidth = ASDimensionMake(maxWidth)
             
             topSubContentStack.children = [titleNode!, rightSubTopContentStack]
@@ -159,7 +160,7 @@ class ZAConversationTableCellNode: ASCellNode {
         // BottomSubContent
         var arrayOfBottomSubContent = Array<ASLayoutElement>()
         if subTitleNode != nil{
-            let maxWidth = (contentStack.style.maxWidth.value - (imageNode?.style.preferredSize.width ?? 0)  ) * 0.7
+            let maxWidth = (contentStack.style.maxWidth.value - imageNodeWidth) * 0.7
             subTitleNode?.style.maxWidth = ASDimensionMake(maxWidth)
             
             arrayOfBottomSubContent.append(subTitleNode!)
