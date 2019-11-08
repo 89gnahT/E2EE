@@ -33,14 +33,16 @@ struct MsgTime {
 
 class Message: NSObject {
     var id : MsgID
+    var conversationID : ConversationID
     var senderId : UserID
     var msgType : MsgType
     var contents : [String]
     
     var time : MsgTime
     
-    init(id : MsgID, senderId : UserID, type : MsgType,contents : [String], time : MsgTime) {
+    init(id : MsgID, conversationID : ConversationID, senderId : UserID, type : MsgType,contents : [String], time : MsgTime) {
         self.id = id
+        self.conversationID = conversationID
         self.senderId = senderId
         self.msgType = type
         self.contents = contents

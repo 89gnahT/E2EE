@@ -36,7 +36,7 @@ class ContactViewController: ASViewController<ASDisplayNode>{
         tableNode.setNeedsLayout()
         tableNode.layoutIfNeeded()
 
-        let temp = FakeData.shared.users
+        let temp = DataManager.shared.friends
         var modelViewsTemp = Array<ZAContactViewModel>()
         for i in temp{
             modelViewsTemp.append(ZAContactViewModel(model: i))
@@ -73,7 +73,8 @@ class ContactViewController: ASViewController<ASDisplayNode>{
     }
     
     func alertDeleteItem(at indexPath : IndexPath, completion: (() -> Void)?){
-        let message = "Bạn có muốn xoá bạn với " + "?"
+        let name = modelViews[indexPath.section][indexPath.row].title!
+        let message = "Bạn có muốn xoá bạn với " + name + "?"
         
         let delete = UIAlertAction(title: "Không", style: .cancel, handler: { action in })
 

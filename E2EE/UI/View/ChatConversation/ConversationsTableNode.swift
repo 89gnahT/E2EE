@@ -78,6 +78,10 @@ class ConversationsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
         tableNode.reloadData()
     }
     
+    public func reloadRows(at indexPaths : [IndexPath], with animation : UITableView.RowAnimation){
+        tableNode.reloadRows(at: indexPaths, with: animation)
+    }
+    
     public func deleteRows(at indexPaths : [IndexPath], withAnimation animation : UITableView.RowAnimation){
         tableNode.deleteRows(at: indexPaths, with: animation)
     }

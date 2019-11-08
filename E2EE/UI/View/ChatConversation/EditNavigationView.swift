@@ -30,17 +30,21 @@ class EditNavigationView: NSObject {
          rightBottomButtonAction : Selector) {
         
         super.init()
-       
+        
         let edgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         // NavigationBar
         editNavigationView.frame = navigationViewFrame
         editNavigationView.backgroundColor = .white
         
         updateLeftButtonInEditNavigation()
-        leftButtonInEditNavigation.addTarget(target, action: leftTopButtonAction, forControlEvents: .touchUpInside)
+        leftButtonInEditNavigation.addTarget(target,
+                                             action: leftTopButtonAction,
+                                             forControlEvents: .touchUpInside)
         
         updateRightButtonInEditNavigation(numberOfItems: 1)
-        rightButtonInEditNavigation.addTarget(target, action: rightTopButtonAction, forControlEvents: .touchUpInside)
+        rightButtonInEditNavigation.addTarget(target,
+                                              action: rightTopButtonAction,
+                                              forControlEvents: .touchUpInside)
         
         editNavigationView.automaticallyManagesSubnodes = true
         
@@ -58,10 +62,14 @@ class EditNavigationView: NSObject {
         editTabBarView.backgroundColor = .white
         
         updateLeftButtonInEditToolBar()
-        leftButtonInEditTabBar.addTarget(target, action: leftBottomButtonAction, forControlEvents: .touchUpInside)
+        leftButtonInEditTabBar.addTarget(target,
+                                         action: leftBottomButtonAction,
+                                         forControlEvents: .touchUpInside)
         
         updateRightButtonInEditToolBar(numberOfItems: 1)
-        rightButtonInEditTabBar.addTarget(target, action: rightBottomButtonAction, forControlEvents: .touchUpInside)
+        rightButtonInEditTabBar.addTarget(target,
+                                          action: rightBottomButtonAction,
+                                          forControlEvents: .touchUpInside)
         
         editTabBarView.automaticallyManagesSubnodes = true
         
@@ -77,24 +85,19 @@ class EditNavigationView: NSObject {
     
     
     func updateLeftButtonInEditNavigation(){
-        let atributedString = NSAttributedString(string: "Huỷ",
-                                                 attributes: [NSAttributedString.Key.font: UIFont.defaultFont(ofSize: fontSize),
-                                                              NSAttributedString.Key.foregroundColor : UIColor.systemBlue])
+        let atributedString = atributed(string: "Huỷ", with: UIColor.systemBlue)
         leftButtonInEditNavigation.setAttributedTitle(atributedString, for: .normal)
     }
     
     func updateRightButtonInEditNavigation(numberOfItems : Int){
         var atributedString : NSAttributedString
+        
         if numberOfItems > 0{
             let title = "Xoá (" + String(numberOfItems) + ")"
-            atributedString = NSAttributedString(string: title,
-                                                 attributes: [NSAttributedString.Key.font: UIFont.boldDefaultFont(ofSize: fontSize),
-                                                              NSAttributedString.Key.foregroundColor : UIColor.systemRed])
+            atributedString = atributed(string: title, with: UIColor.systemRed)
             rightButtonInEditNavigation.isEnabled = true
         }else{
-            atributedString = NSAttributedString(string: "Xoá",
-                                                 attributes: [NSAttributedString.Key.font: UIFont.boldDefaultFont(ofSize: fontSize),
-                                                              NSAttributedString.Key.foregroundColor : UIColor.darkGray])
+            atributedString = atributed(string: "Xoá", with: UIColor.darkGray)
             rightButtonInEditNavigation.isEnabled = false
         }
         
@@ -102,30 +105,28 @@ class EditNavigationView: NSObject {
     }
     
     func updateLeftButtonInEditToolBar(){
-        let atributedString = NSAttributedString(string: "Chọn tất cả",
-                                                 attributes: [NSAttributedString.Key.font: UIFont.defaultFont(ofSize: fontSize),
-                                                              NSAttributedString.Key.foregroundColor : UIColor.systemBlue])
+        let atributedString = atributed(string: "Chọn tất cả", with: UIColor.systemBlue)
         leftButtonInEditTabBar.setAttributedTitle(atributedString, for: .normal)
     }
     
     func updateRightButtonInEditToolBar(numberOfItems : Int){
         var atributedString : NSAttributedString
+        
         if numberOfItems > 0{
             let title = "Đánh dấu đã đọc (" + String(numberOfItems) + ")"
-            atributedString = NSAttributedString(string: title,
-                                                 attributes: [NSAttributedString.Key.font: UIFont.defaultFont(ofSize: fontSize),
-                                                              NSAttributedString.Key.foregroundColor : UIColor.systemBlue])
+            atributedString = atributed(string: title, with: UIColor.systemBlue)
             rightButtonInEditTabBar.isEnabled = true
         }else{
-            atributedString = NSAttributedString(string: "Đánh dấu đã đọc",
-                                                 attributes: [NSAttributedString.Key.font: UIFont.defaultFont(ofSize: fontSize),
-                                                              NSAttributedString.Key.foregroundColor : UIColor.darkGray])
+            atributedString = atributed(string: "Đánh dấu đã đọc", with: UIColor.darkGray)
             rightButtonInEditTabBar.isEnabled = false
         }
         
         rightButtonInEditTabBar.setAttributedTitle(atributedString, for: .normal)
     }
-    deinit {
-        print("navigation bar denit")
+    
+    private func atributed(string : String, with foregroundColor : UIColor) -> NSAttributedString{
+        return NSAttributedString(string: string,
+                                  attributes: [NSAttributedString.Key.font: UIFont.defaultFont(ofSize: fontSize),
+                                               NSAttributedString.Key.foregroundColor : foregroundColor])
     }
 }
