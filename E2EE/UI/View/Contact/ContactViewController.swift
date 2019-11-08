@@ -110,7 +110,7 @@ extension ContactViewController : ContactDelegate{
         })
         more.backgroundColor = UIColor.lightGray
         
-        let hide = UITableViewRowAction(style: .default, title: "Hide", handler: { (viewAction, indexPath) in
+        let hide = UITableViewRowAction(style: .default, title: "Nhật kí", handler: { (viewAction, indexPath) in
             let action = UIAlertAction(title: "OK", style: .cancel, handler: { action in })
             self.displayAlert(title: "Thông báo", message: "Tính năng đang cập nhật", actions: [action], preferredStyle: .actionSheet)
         })

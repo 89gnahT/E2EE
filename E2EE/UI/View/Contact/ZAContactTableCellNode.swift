@@ -26,7 +26,7 @@ class ZAContactTableCellNode: ASCellNode {
         
         imageNode = ASNetworkImageNode()
         imageNode?.url = viewModel.avatarURL
-        imageNode?.style.preferredSize = CGSize(width: 48, height: 48)
+        imageNode?.style.preferredSize = CGSize(squareEdge: 48)
         imageNode?.imageModificationBlock = ASImageNodeRoundBorderModificationBlock(0, nil)
         
         
@@ -64,13 +64,13 @@ class ZAContactTableCellNode: ASCellNode {
         var icon = viewModel.icon1RightTitle
         if icon != nil{
             icon1RightTitleNode = icon
-            icon1RightTitleNode!.style.preferredSize = CGSize(width: 17, height: 17)
+            icon1RightTitleNode!.style.preferredSize = CGSize(squareEdge: 17)
         }
         
         icon = viewModel.icon2RightTitle
         if icon != nil{
             icon2RightTitleNode = icon
-            icon2RightTitleNode!.style.preferredSize = CGSize(width: 20, height: 20)
+            icon2RightTitleNode!.style.preferredSize = CGSize(squareEdge: 20)
         }
     }
     
@@ -129,7 +129,7 @@ class ZAContactTableCellNode: ASCellNode {
             arrayOfLeftSubContent.append(titleNode!)
         }
         if subTitleNode != nil{
-            let maxWidth = (contentStack.style.maxWidth.value - imageNodeWidth) * 0.6
+            let maxWidth = (contentStack.style.maxWidth.value - imageNodeWidth) * 0.7
             subTitleNode?.style.maxWidth = ASDimensionMake(maxWidth)
             
             arrayOfLeftSubContent.append(subTitleNode!)

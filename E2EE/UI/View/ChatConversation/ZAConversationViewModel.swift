@@ -99,8 +99,12 @@ class ZAConversationViewModel  : NSObject{
         return false
     }
     
+    public var isMute : Bool{
+        return !(Date.timeIntervalSinceReferenceDate > model?.muteTime ?? 0)
+    }
+    
     public var iconRightSubTitle : ASImageNode?{
-        if Date.timeIntervalSinceReferenceDate > model!.muteTime{
+        if !isMute {
             return nil
         }
         

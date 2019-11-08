@@ -16,7 +16,7 @@ enum ConversationType {
 }
 
 class Conversation: NSObject {
-    var cvsID : ConversationID
+    var id : ConversationID
     var membersID : Array<UserID>
     var nameConversation : String
     var lastMsg : Message
@@ -30,7 +30,7 @@ class Conversation: NSObject {
          lastMsg : Message,
          muteTime : TimeInterval)
     {
-        self.cvsID = cvsID
+        self.id = cvsID
         self.type = type
         self.membersID = membersID
         self.nameConversation = nameConversation

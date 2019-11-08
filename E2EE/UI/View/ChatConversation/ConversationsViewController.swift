@@ -13,9 +13,9 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     
     let tableNode = ConversationsTableNode()
     
-    var modelViews = NSMutableArray()
+    var modelViews = Array<ZAConversationViewModel>()
     
-    var listSelectedItemsInEdittingMode = NSMutableArray()
+    var listSelectedItemsInEdittingMode = Array<ZAConversationViewModel>()
     
     var isEdittingMode : Bool = false{
         didSet{
@@ -23,10 +23,11 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         }
     }
     
-    lazy var editNavigationView : EditNavigationView = {
+    lazy var editView : EditNavigationBarAndTabBarView = {
         let navigationViewFrame = (navigationController?.navigationBar.bounds)!
         let toolBarViewFrame = (tabBarController?.tabBar.bounds)!
-        return EditNavigationView(target: self,
+        
+        return EditNavigationBarAndTabBarView(target: self,
                                   navigationViewFrame: navigationViewFrame,
                                   toolBarViewFrame: toolBarViewFrame,
                                   leftTopButtonAction: #selector(leftTopButtonAction(button:)),
@@ -64,28 +65,84 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         }
         
         for c in t{
-            modelViews.add(ZAConversationViewModel(conversation: c as! ChatConversation))
+            modelViews.append(ZAConversationViewModel(conversation: c as! ChatConversation))
         }
-
+        
         tableNode.reloadData()
     }
     
-    func markItemsAsRead(at indexPaths : [IndexPath]){
-        for indexPath in indexPaths{
-            let conversation = (modelViews[indexPath.row] as! ZAConversationViewModel).model
-            DataManager.shared.markConversationAsRead(cvs: conversation!)
+    func markItemsAsRead(items : [ZAConversationViewModel]){
+        var indexPaths = Array<IndexPath>()
+        
+        for item in items {
+            let indexOfItem = self.modelViews.firstIndex(of: item)
+            if indexOfItem != nil{
+                indexPaths.append(IndexPath(row: indexOfItem!, section: 0))
+            }
+            
+            DataManager.shared.markConversationAsRead(cvs: item.model!)
         }
-    
+        
         tableNode.reloadRows(at: indexPaths, with: .automatic)
     }
     
-    func alertMarkItemsAsRead(at indexPaths : [IndexPath], completion: (() -> Void)?){
-        let message = "Đánh dấu đã đọc " + String(indexPaths.count) + " cuộc trò chuyện này?"
+    
+    
+    func exitEdittingMode(){
+        if isEdittingMode{
+            isEdittingMode = false
+            
+            listSelectedItemsInEdittingMode.removeAll()
+            
+            editView.removeFromSupernode()
+        }
+    }
+    
+    func deleteItems(items : Array<ZAConversationViewModel>){
+        var indexPaths = Array<IndexPath>()
+        
+        for item in items {
+            let indexOfItem = self.modelViews.firstIndex(of: item)
+            if indexOfItem != nil{
+                indexPaths.append(IndexPath(row: indexOfItem!, section: 0))
+            }
+        }
+        
+        for indexPath in indexPaths{
+            self.modelViews.remove(at: indexPath.row)
+        }
+        
+        self.tableNode.deleteRows(at: indexPaths, withAnimation: .automatic)
+    }
+    
+    
+    func muteItem(at indexPath : IndexPath, time : TimeInterval){
+        let cvsID = modelViews[indexPath.row].model?.id
+        DataManager.shared.muteConversation(cvsID: cvsID!, time: time)
+        
+        tableNode.reloadRows(at: [indexPath], with: .automatic)
+    }
+    
+    func unmuteItem(at indexPath : IndexPath){
+        let cvsID = modelViews[indexPath.row].model?.id
+        DataManager.shared.unmuteConversation(cvsID: cvsID!)
+        
+        tableNode.reloadRows(at: [indexPath], with: .automatic)
+    }
+    
+    
+}
+
+// MARK: Display alert
+extension ConversationsViewController{
+    
+    func alertMarkItemsAsRead(items : [ZAConversationViewModel], completion: (() -> Void)?){
+        let message = "Đánh dấu đã đọc " + String(items.count) + " cuộc trò chuyện này?"
         
         let delete = UIAlertAction(title: "Không", style: .cancel, handler: { action in })
         
         let dontDelete = UIAlertAction(title: "Có", style: .destructive, handler: { action in
-            self.markItemsAsRead(at: indexPaths)
+            self.markItemsAsRead(items: items)
             
             if (completion != nil){
                 completion!()
@@ -95,32 +152,7 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         displayAlert(title: "Xác nhận", message: message, actions: [delete, dontDelete], preferredStyle: .alert)
     }
     
-    func exitEdittingMode(){
-        if isEdittingMode{
-            isEdittingMode = false
-            
-            listSelectedItemsInEdittingMode.removeAllObjects()
-            
-            editNavigationView.editNavigationView.removeFromSupernode()
-            editNavigationView.editTabBarView.removeFromSupernode()
-        }
-    }
-    
-    func deleteItems(items : NSMutableArray){
-        var indexPaths = Array<IndexPath>()
-        
-        for ob in items {
-            indexPaths.append(IndexPath(row: self.modelViews.index(of: ob), section: 0))
-        }
-        
-        for indexPath in indexPaths{
-            self.modelViews.removeObject(at: indexPath.row)
-        }
-        
-        self.tableNode.deleteRows(at: indexPaths, withAnimation: .automatic)
-    }
-    
-    func alertDeleteItems(items : NSMutableArray, completion: (() -> Void)?){
+    func alertDeleteItems(items : Array<ZAConversationViewModel>, completion: (() -> Void)?){
         var message : String
         if items.count > 1{
             message = "Bạn có muốn xoá " + String(items.count) + " cuộc trò chuyện đã chọn?"
@@ -141,6 +173,28 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         displayAlert(title: "Xác nhận", message: message, actions: [delete, dontDelete], preferredStyle: .alert)
     }
     
+    func alertMuteItem(at indexPath : IndexPath, completion: (() -> Void)?){
+        let message = "Không thông báo tin nhắn mới của hội thoại này"
+        
+        let mute1h = UIAlertAction(title: "Trong 1 tiếng", style: .default, handler: { action in
+            self.muteItem(at: indexPath, time: Date.timeIntervalSinceReferenceDate + HOURS)
+        })
+        let mute4h = UIAlertAction(title: "Trong 4 tiếng", style: .default, handler: { action in
+            self.muteItem(at: indexPath, time: Date.timeIntervalSinceReferenceDate + 4 * HOURS)
+        })
+        let mute8h = UIAlertAction(title: "Trong 8 tiếng", style: .default, handler: { action in
+            self.muteItem(at: indexPath, time: Date.timeIntervalSinceReferenceDate + 8 * HOURS)
+        })
+        let muteUnlimited = UIAlertAction(title: "Cho đến khi được mở lại", style: .default, handler: { action in
+            self.muteItem(at: indexPath, time: 2 * Date.timeIntervalSinceReferenceDate)
+        })
+        
+        let cancel = UIAlertAction(title: "Huỷ", style: .cancel, handler: { action in })
+        
+        displayAlert(title: "Tắt thông báo", message: message, actions: [mute1h, mute4h, mute8h, muteUnlimited, cancel], preferredStyle: .actionSheet)
+    }
+    
+    
     func displayAlert(title : String, message : String, actions : [UIAlertAction], preferredStyle: UIAlertController.Style, completion: (() -> Void)? = nil){
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: preferredStyle)
@@ -152,27 +206,45 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     }
 }
 
+
 // MARK: Delegate
 extension ConversationsViewController : ConversationsDelegate{
     
     func tableNode(_ table: ConversationsTableNode, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        
+        // Option
         let more = UITableViewRowAction(style: .normal, title: "More", handler: { (viewAction, indexPath) in
-            let action = UIAlertAction(title: "OK", style: .cancel, handler: { action in })
-            self.displayAlert(title: "Thông báo", message: "Tính năng đang cập nhật", actions: [action], preferredStyle: .actionSheet)
+            let mute = UIAlertAction(title: "Tắt thông báo", style: .default, handler: { action in
+                self.alertMuteItem(at: indexPath, completion: nil)
+            })
+            
+            let unmute = UIAlertAction(title: "Bật thông báo", style: .default, handler: { action in
+                self.unmuteItem(at: indexPath)
+            })
+            
+            let cancel = UIAlertAction(title: "Huỷ", style: .cancel, handler: { action in })
+            
+            var actions = Array<UIAlertAction>()
+            if self.modelViews[indexPath.row].isMute{
+                actions = [unmute, cancel]
+            }else{
+                actions = [mute, cancel]
+            }
+            
+            self.displayAlert(title: "Tuỳ chọn", message: "", actions: actions, preferredStyle: .actionSheet)
         })
         more.backgroundColor = UIColor.systemGray
         
+        // Hide Item
         let hide = UITableViewRowAction(style: .default, title: "Hide", handler: { (viewAction, indexPath) in
             let action = UIAlertAction(title: "OK", style: .cancel, handler: { action in })
             self.displayAlert(title: "Thông báo", message: "Tính năng đang cập nhật", actions: [action], preferredStyle: .actionSheet)
         })
         hide.backgroundColor = UIColor.systemPurple
         
+        // Delete Item
         let delete = UITableViewRowAction(style: .destructive, title: "Delete", handler: { (viewAction, indexPath) in
-            let itemsDelete = NSMutableArray(object: self.modelViews.object(at: indexPath.row))
-            self.alertDeleteItems(items: itemsDelete, completion: {
-                itemsDelete.removeAllObjects()
-            })
+            self.alertDeleteItems(items: [self.modelViews[indexPath.row]], completion: nil)
         })
         delete.backgroundColor = UIColor.systemRed
         
@@ -181,38 +253,44 @@ extension ConversationsViewController : ConversationsDelegate{
     
     func tableNode(_ table: ConversationsTableNode, didSelectRowAt indexPath: IndexPath) {
         if isEdittingMode{
-            listSelectedItemsInEdittingMode.add(modelViews[indexPath.row])
-            editNavigationView.updateRightButtonInEditNavigation(numberOfItems: listSelectedItemsInEdittingMode.count)
-            editNavigationView.updateRightButtonInEditToolBar(numberOfItems: listSelectedItemsInEdittingMode.count)
+            listSelectedItemsInEdittingMode.append(modelViews[indexPath.row])
+            
+            editView.updateButtonInNavigationBarAndTabBar(numberOfItems: listSelectedItemsInEdittingMode.count)
         }else{
-            markItemsAsRead(at: [indexPath])
+            markItemsAsRead(items: [modelViews[indexPath.row]])
         }
     }
     
     func tableNode(_ table: ConversationsTableNode, didDeselectRowAt indexPath: IndexPath) {
         if isEdittingMode{
-            listSelectedItemsInEdittingMode.remove(modelViews[indexPath.row])
-            editNavigationView.updateRightButtonInEditNavigation(numberOfItems: listSelectedItemsInEdittingMode.count)
-            editNavigationView.updateRightButtonInEditToolBar(numberOfItems: listSelectedItemsInEdittingMode.count)
+            let indexOfItem = listSelectedItemsInEdittingMode.firstIndex(of: modelViews[indexPath.row])
+            if indexOfItem != nil{
+                listSelectedItemsInEdittingMode.remove(at: indexOfItem!)
+            }
+            
+            editView.updateButtonInNavigationBarAndTabBar(numberOfItems: listSelectedItemsInEdittingMode.count)
+            
+            if listSelectedItemsInEdittingMode.count == 0{
+                exitEdittingMode()
+            }
         }else{
             
         }
     }
     
-    // MARK: Editting Mode
     func tableNodeBeginEdittingMode(_ table: ConversationsTableNode) {
         if isEdittingMode == false{
             isEdittingMode = true
             
-            navigationController?.navigationBar.addSubnode(editNavigationView.editNavigationView);
-            tabBarController?.tabBar.addSubnode(editNavigationView.editTabBarView)
+            editView.addSubNodeIntoNavigationBar(navigationController!.navigationBar,
+                                                           tabBar: tabBarController!.tabBar)
         }
     }
 }
 
 // MARK: DataSource
 extension ConversationsViewController : ConversationsDataSource{
-    func tableNode(_ table: ConversationsTableNode) -> NSMutableArray {
+    func tableNode(_ table: ConversationsTableNode) -> Array<ZAConversationViewModel> {
         return modelViews 
     }
 }
@@ -236,14 +314,8 @@ extension ConversationsViewController{
     }
     
     @objc func rightBottomButtonAction(button : ASButtonNode){
-        var indexPaths = Array<IndexPath>()
-        for item in listSelectedItemsInEdittingMode{
-            let indexPath = IndexPath(row: modelViews.index(of: item), section: 0)
-            indexPaths.append(indexPath)
-        }
-        
-        self.alertMarkItemsAsRead(at: indexPaths) {
+        self.alertMarkItemsAsRead(items: listSelectedItemsInEdittingMode, completion: {
             self.exitEdittingMode()
-        }
+        })
     }
 }

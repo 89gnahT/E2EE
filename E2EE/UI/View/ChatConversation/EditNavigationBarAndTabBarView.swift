@@ -9,15 +9,16 @@
 import UIKit
 import AsyncDisplayKit
 
-class EditNavigationView: NSObject {
+class EditNavigationBarAndTabBarView: NSObject {
     
-    let leftButtonInEditNavigation = ASButtonNode()
-    let rightButtonInEditNavigation = ASButtonNode()
-    let editNavigationView = ASDisplayNode()
+    private let editNavigationBar = ASDisplayNode()
+    private let editTabBar = ASDisplayNode()
     
-    let leftButtonInEditTabBar = ASButtonNode ()
-    let rightButtonInEditTabBar = ASButtonNode()
-    let editTabBarView = ASDisplayNode()
+    private let leftButtonInNavigationBar = ASButtonNode()
+    private let rightButtonInNavigationBar = ASButtonNode()
+    
+    private let leftButtonInTabBar = ASButtonNode ()
+    private let rightButtonInTabBar = ASButtonNode()
     
     private let fontSize : CGFloat = 15
     
@@ -33,96 +34,112 @@ class EditNavigationView: NSObject {
         
         let edgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         // NavigationBar
-        editNavigationView.frame = navigationViewFrame
-        editNavigationView.backgroundColor = .white
+        editNavigationBar.frame = navigationViewFrame
+        editNavigationBar.backgroundColor = .white
         
         updateLeftButtonInEditNavigation()
-        leftButtonInEditNavigation.addTarget(target,
+        leftButtonInNavigationBar.addTarget(target,
                                              action: leftTopButtonAction,
                                              forControlEvents: .touchUpInside)
         
         updateRightButtonInEditNavigation(numberOfItems: 1)
-        rightButtonInEditNavigation.addTarget(target,
+        rightButtonInNavigationBar.addTarget(target,
                                               action: rightTopButtonAction,
                                               forControlEvents: .touchUpInside)
         
-        editNavigationView.automaticallyManagesSubnodes = true
+        editNavigationBar.automaticallyManagesSubnodes = true
         
-        editNavigationView.layoutSpecBlock = { (node : ASDisplayNode, constrainedSize : ASSizeRange) -> ASLayoutSpec in
+        editNavigationBar.layoutSpecBlock = { (node : ASDisplayNode, constrainedSize : ASSizeRange) -> ASLayoutSpec in
             let contentStack = ASStackLayoutSpec.horizontal()
-            contentStack.children = [self.leftButtonInEditNavigation, self.rightButtonInEditNavigation]
+            contentStack.children = [self.leftButtonInNavigationBar, self.rightButtonInNavigationBar]
             contentStack.justifyContent = .spaceBetween
             
             return ASInsetLayoutSpec(insets: edgeInsets, child: contentStack)
         }
-        editNavigationView.setNeedsLayout()
+        editNavigationBar.setNeedsLayout()
         
-        // ToolBar
-        editTabBarView.frame = toolBarViewFrame
-        editTabBarView.backgroundColor = .white
+        // TabBar
+        editTabBar.frame = toolBarViewFrame
+        editTabBar.backgroundColor = .white
         
-        updateLeftButtonInEditToolBar()
-        leftButtonInEditTabBar.addTarget(target,
+        updateLeftButtonInEditTabBar()
+        leftButtonInTabBar.addTarget(target,
                                          action: leftBottomButtonAction,
                                          forControlEvents: .touchUpInside)
         
-        updateRightButtonInEditToolBar(numberOfItems: 1)
-        rightButtonInEditTabBar.addTarget(target,
+        updateRightButtonInEditTabBar(numberOfItems: 1)
+        rightButtonInTabBar.addTarget(target,
                                           action: rightBottomButtonAction,
                                           forControlEvents: .touchUpInside)
         
-        editTabBarView.automaticallyManagesSubnodes = true
+        editTabBar.automaticallyManagesSubnodes = true
         
-        editTabBarView.layoutSpecBlock = { (node : ASDisplayNode, constrainedSize : ASSizeRange) -> ASLayoutSpec in
+        editTabBar.layoutSpecBlock = { (node : ASDisplayNode, constrainedSize : ASSizeRange) -> ASLayoutSpec in
             let contentStack = ASStackLayoutSpec.horizontal()
-            contentStack.children = [self.leftButtonInEditTabBar, self.rightButtonInEditTabBar]
+            contentStack.children = [self.leftButtonInTabBar, self.rightButtonInTabBar]
             contentStack.justifyContent = .spaceBetween
             
             return ASInsetLayoutSpec(insets: edgeInsets, child: contentStack)
         }
-        editTabBarView.setNeedsLayout()
+        editTabBar.setNeedsLayout()
     }
     
+    func addSubNodeIntoNavigationBar(_ navigationBar : UINavigationBar, tabBar : UITabBar){
+        navigationBar.addSubnode(editNavigationBar)
+        tabBar.addSubnode(editTabBar)
+    }
     
-    func updateLeftButtonInEditNavigation(){
+    func removeFromSupernode(){
+        editNavigationBar.removeFromSupernode()
+        editTabBar.removeFromSupernode()
+    }
+    
+    func updateButtonInNavigationBarAndTabBar(numberOfItems : Int){
+        updateRightButtonInEditTabBar(numberOfItems: numberOfItems)
+        updateRightButtonInEditNavigation(numberOfItems: numberOfItems)
+    }
+    
+    private func updateLeftButtonInEditNavigation(){
         let atributedString = atributed(string: "Huỷ", isBold: false, foregroundColor: UIColor.systemBlue)
-        leftButtonInEditNavigation.setAttributedTitle(atributedString, for: .normal)
+        leftButtonInNavigationBar.setAttributedTitle(atributedString, for: .normal)
     }
     
-    func updateRightButtonInEditNavigation(numberOfItems : Int){
+    private func updateRightButtonInEditNavigation(numberOfItems : Int){
         var atributedString : NSAttributedString
         
         if numberOfItems > 0{
             let title = "Xoá (" + String(numberOfItems) + ")"
             atributedString = atributed(string: title, isBold: true, foregroundColor: UIColor.systemRed)
-            rightButtonInEditNavigation.isEnabled = true
+            rightButtonInNavigationBar.isEnabled = true
         }else{
             atributedString = atributed(string: "Xoá", isBold: true, foregroundColor: UIColor.darkGray)
-            rightButtonInEditNavigation.isEnabled = false
+            rightButtonInNavigationBar.isEnabled = false
         }
         
-        rightButtonInEditNavigation.setAttributedTitle(atributedString, for: .normal)
+        rightButtonInNavigationBar.setAttributedTitle(atributedString, for: .normal)
     }
     
-    func updateLeftButtonInEditToolBar(){
+    private func updateLeftButtonInEditTabBar(){
         let atributedString = atributed(string: "Chọn tất cả", isBold: false, foregroundColor: UIColor.systemBlue)
-        leftButtonInEditTabBar.setAttributedTitle(atributedString, for: .normal)
+        leftButtonInTabBar.setAttributedTitle(atributedString, for: .normal)
     }
     
-    func updateRightButtonInEditToolBar(numberOfItems : Int){
+    private func updateRightButtonInEditTabBar(numberOfItems : Int){
         var atributedString : NSAttributedString
         
         if numberOfItems > 0{
             let title = "Đánh dấu đã đọc (" + String(numberOfItems) + ")"
             atributedString = atributed(string: title, isBold: false, foregroundColor: UIColor.systemBlue)
-            rightButtonInEditTabBar.isEnabled = true
+            rightButtonInTabBar.isEnabled = true
         }else{
             atributedString = atributed(string: "Đánh dấu đã đọc", isBold: false, foregroundColor: UIColor.darkGray)
-            rightButtonInEditTabBar.isEnabled = false
+            rightButtonInTabBar.isEnabled = false
         }
         
-        rightButtonInEditTabBar.setAttributedTitle(atributedString, for: .normal)
+        rightButtonInTabBar.setAttributedTitle(atributedString, for: .normal)
     }
+    
+    
     
     private func atributed(string : String, isBold : Bool, foregroundColor : UIColor) -> NSAttributedString{
         var font : UIFont
@@ -135,4 +152,5 @@ class EditNavigationView: NSObject {
                                   attributes: [NSAttributedString.Key.font: font,
                                                NSAttributedString.Key.foregroundColor : foregroundColor])
     }
+
 }

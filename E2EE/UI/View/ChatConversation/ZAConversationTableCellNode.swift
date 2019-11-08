@@ -28,7 +28,7 @@ class ZAConversationTableCellNode: ASCellNode {
         
         imageNode = ASNetworkImageNode()
         imageNode?.url = viewModel.avatarURL!
-        imageNode?.style.preferredSize = CGSize(width: 60, height: 60)
+        imageNode?.style.preferredSize = CGSize(squareEdge: 60)
         imageNode?.imageModificationBlock = ASImageNodeRoundBorderModificationBlock(0, nil)
         
         
