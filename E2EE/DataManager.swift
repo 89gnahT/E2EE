@@ -33,16 +33,42 @@ class DataManager: NSObject {
         }
     }
     
+    public func conversationWithID(_ id : ConversationID) -> Conversation?{
+        return DataStore.shared.conversations.first { (c) -> Bool in
+            id == c.id
+        }
+    }
+    
     public func markMessageAsRead(msg : Message){
         msg.time.seen = Date.timeIntervalSinceReferenceDate
     }
     
+    public func markMessageAsRead(msgID : MsgID){
+        
+    }
+    
     public func markConversationAsRead(cvs : Conversation){
         for m in DataStore.shared.messages{
-            if m.conversationID == cvs.cvsID{
+            if m.conversationID == cvs.id{
                 markMessageAsRead(msg: m)
             }
         }
+    }
+    
+    public func markConversationAsRead(cvsID : ConversationID){
+       
+    }
+    
+    public func muteConversation(cvsID : ConversationID, time : TimeInterval){
+        let conversation = conversationWithID(cvsID)
+        if time != MsgTime.TimeInvalidate{
+            conversation?.muteTime = time
+        }
+    }
+    
+    public func unmuteConversation(cvsID : ConversationID){
+        let conversation = conversationWithID(cvsID)
+        conversation?.muteTime = MsgTime.TimeInvalidate
     }
     
     public func deleteConversation(_ cvs : Conversation){

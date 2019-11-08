@@ -22,7 +22,7 @@ import AsyncDisplayKit
 
 protocol ConversationsDataSource: NSObjectProtocol {
     
-    func tableNode(_ table: ConversationsTableNode) -> NSMutableArray
+    func tableNode(_ table: ConversationsTableNode) -> Array<ZAConversationViewModel>
 }
 
 
@@ -32,7 +32,7 @@ class ConversationsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
     weak public var dataSource : ConversationsDataSource?
     
     private let tableNode = ASTableNode()
-    private var modelViews = NSMutableArray()
+    private var modelViews = Array<ZAConversationViewModel>()
     
     public var isInEdittingMode : Bool = false{
         didSet{
@@ -70,7 +70,7 @@ class ConversationsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
     
     private func setEditing(_ editing: Bool, animated: Bool){
         tableNode.allowsMultipleSelectionDuringEditing = true
-        tableNode.view.setEditing(editing, animated: true)
+        tableNode.view.setEditing(editing, animated: animated)
     }
     
     public func reloadData(){
@@ -83,10 +83,14 @@ class ConversationsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
     }
     
     public func deleteRows(at indexPaths : [IndexPath], withAnimation animation : UITableView.RowAnimation){
+        for indexPath in indexPaths{
+            modelViews.remove(at: indexPath.row)
+        }
         tableNode.deleteRows(at: indexPaths, with: animation)
     }
     
     public func insertRows(at indexPaths : [IndexPath], withAnimation animation : UITableView.RowAnimation){
+        modelViews = (dataSource?.tableNode(self))!
         tableNode.insertRows(at: indexPaths, with: animation)
     }
 }
@@ -103,7 +107,7 @@ extension ConversationsTableNode: ASTableDelegate{
     
     func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
         return {
-            let cellNode  = ZAConversationTableCellNode(viewModel: self.modelViews.object(at: indexPath.row) as! ZAConversationViewModel)
+            let cellNode  = ZAConversationTableCellNode(viewModel: self.modelViews[indexPath.row])
             return cellNode
         }
     }
@@ -142,6 +146,7 @@ extension ConversationsTableNode{
         }
         
         let p = longPressGesture.location(in: self.tableNode.view)
+        
         let indexPath = self.tableNode.indexPathForRow(at: p)
         
         if indexPath == nil {
@@ -149,8 +154,11 @@ extension ConversationsTableNode{
         } else
             if longPressGesture.state == UIGestureRecognizer.State.began {
                 isInEdittingMode = true
+                
                 delegate?.tableNodeBeginEdittingMode?(self)
+                
                 tableNode.selectRow(at: indexPath!, animated: true, scrollPosition: .none)
+                
                 delegate?.tableNode?(self, didSelectRowAt: indexPath!)
         }
     }
