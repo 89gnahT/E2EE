@@ -6,6 +6,7 @@ target 'E2EE' do
   use_frameworks!
   pod 'SwiftProtobuf', '~> 1.7.0'
   pod 'Curve25519'
+  pod "Texture"
   # Pods for E2EE
 
   target 'E2EETests' do
