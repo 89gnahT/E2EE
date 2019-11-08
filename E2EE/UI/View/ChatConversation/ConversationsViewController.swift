@@ -72,20 +72,15 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     }
     
     func markItemsAsRead(items : [ZAConversationViewModel]){
-        var indexPaths = Array<IndexPath>()
-        
         for item in items {
             let indexOfItem = self.modelViews.firstIndex(of: item)
-            if indexOfItem != nil{
-                indexPaths.append(IndexPath(row: indexOfItem!, section: 0))
-            }
             
-            DataManager.shared.markConversationAsRead(cvs: item.model!)
+            if indexOfItem != nil{
+                DataManager.shared.markConversationAsRead(cvs: item.model!)
+                tableNode.reloadRow(at: IndexPath(row: indexOfItem!, section: 0), with: .automatic)
+            }
         }
-        
-        tableNode.reloadRows(at: indexPaths, with: .automatic)
     }
-    
     
     
     func exitEdittingMode(){
@@ -99,38 +94,31 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     }
     
     func deleteItems(items : Array<ZAConversationViewModel>){
-        var indexPaths = Array<IndexPath>()
-        
         for item in items {
             let indexOfItem = self.modelViews.firstIndex(of: item)
+            
             if indexOfItem != nil{
-                indexPaths.append(IndexPath(row: indexOfItem!, section: 0))
+                self.modelViews.remove(at: indexOfItem!)
+                
+                self.tableNode.deleteRow(at: IndexPath(row: indexOfItem!, section: 0), withAnimation: .automatic)
             }
         }
         
-        for indexPath in indexPaths{
-            self.modelViews.remove(at: indexPath.row)
-        }
-        
-        self.tableNode.deleteRows(at: indexPaths, withAnimation: .automatic)
     }
-    
     
     func muteItem(at indexPath : IndexPath, time : TimeInterval){
         let cvsID = modelViews[indexPath.row].model?.id
         DataManager.shared.muteConversation(cvsID: cvsID!, time: time)
         
-        tableNode.reloadRows(at: [indexPath], with: .automatic)
+        tableNode.reloadRow(at: indexPath, with: .automatic)
     }
     
     func unmuteItem(at indexPath : IndexPath){
         let cvsID = modelViews[indexPath.row].model?.id
         DataManager.shared.unmuteConversation(cvsID: cvsID!)
         
-        tableNode.reloadRows(at: [indexPath], with: .automatic)
+        tableNode.reloadRow(at: indexPath, with: .automatic)
     }
-    
-    
 }
 
 // MARK: Display alert
