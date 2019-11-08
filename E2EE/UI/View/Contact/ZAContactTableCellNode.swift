@@ -47,8 +47,7 @@ class ZAContactTableCellNode: ASCellNode {
             titleNode!.truncationMode = .byTruncatingTail
             titleNode!.maximumNumberOfLines = 1
             
-            let attributedText = NSAttributedString(string: viewModel.title!,
-                                                    attributes: [NSAttributedString.Key.font : UIFont.defaultFont(ofSize: 16), NSAttributedString.Key.foregroundColor : UIColor.black])
+            let attributedText = atributedString(viewModel.title!, fontSize: 16, isBold: false, foregroundColor: .black)
             titleNode!.attributedText = attributedText
         }
         
@@ -57,8 +56,8 @@ class ZAContactTableCellNode: ASCellNode {
             subTitleNode = ASTextNode()
             subTitleNode!.truncationMode = .byTruncatingTail
             subTitleNode!.maximumNumberOfLines = 1
-            let attributedText = NSAttributedString(string: viewModel.subTitle!,
-                                                    attributes: [NSAttributedString.Key.font : UIFont.boldDefaultFont(ofSize: 14), NSAttributedString.Key.foregroundColor : UIColor.black])
+            
+            let attributedText = atributedString(viewModel.subTitle!, fontSize: 14, isBold: false, foregroundColor: .darkGray)
             subTitleNode!.attributedText = attributedText
         }
         
@@ -73,6 +72,21 @@ class ZAContactTableCellNode: ASCellNode {
             icon2RightTitleNode = icon
             icon2RightTitleNode!.style.preferredSize = CGSize(width: 20, height: 20)
         }
+    }
+    
+    private func atributedString(_ string : String,
+                                 fontSize : CGFloat,
+                                 isBold : Bool,
+                                 foregroundColor : UIColor) -> NSAttributedString{
+        var font : UIFont
+        if isBold{
+            font = UIFont.boldDefaultFont(ofSize: fontSize)
+        }else{
+            font = UIFont.defaultFont(ofSize: fontSize)
+        }
+        
+        return NSAttributedString(string: string,
+                                  attributes: [NSAttributedString.Key.font : font, NSAttributedString.Key.foregroundColor : foregroundColor])
     }
     
     //        ---------------------------------------------

@@ -24,7 +24,11 @@ class User: NSObject {
     var avatarURL : String?
     var gender : Gender
     
-    init(id : String, name : String, avatarURL : String? = nil,gender : Gender = .none) {
+    init(id : String,
+         name : String,
+         avatarURL : String? = nil,
+         gender : Gender = .none)
+    {
         self.id = id
         self.name = name
         self.nickName = name

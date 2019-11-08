@@ -85,7 +85,7 @@ class EditNavigationView: NSObject {
     
     
     func updateLeftButtonInEditNavigation(){
-        let atributedString = atributed(string: "Huỷ", with: UIColor.systemBlue)
+        let atributedString = atributed(string: "Huỷ", isBold: false, foregroundColor: UIColor.systemBlue)
         leftButtonInEditNavigation.setAttributedTitle(atributedString, for: .normal)
     }
     
@@ -94,10 +94,10 @@ class EditNavigationView: NSObject {
         
         if numberOfItems > 0{
             let title = "Xoá (" + String(numberOfItems) + ")"
-            atributedString = atributed(string: title, with: UIColor.systemRed)
+            atributedString = atributed(string: title, isBold: true, foregroundColor: UIColor.systemRed)
             rightButtonInEditNavigation.isEnabled = true
         }else{
-            atributedString = atributed(string: "Xoá", with: UIColor.darkGray)
+            atributedString = atributed(string: "Xoá", isBold: true, foregroundColor: UIColor.darkGray)
             rightButtonInEditNavigation.isEnabled = false
         }
         
@@ -105,7 +105,7 @@ class EditNavigationView: NSObject {
     }
     
     func updateLeftButtonInEditToolBar(){
-        let atributedString = atributed(string: "Chọn tất cả", with: UIColor.systemBlue)
+        let atributedString = atributed(string: "Chọn tất cả", isBold: false, foregroundColor: UIColor.systemBlue)
         leftButtonInEditTabBar.setAttributedTitle(atributedString, for: .normal)
     }
     
@@ -114,19 +114,25 @@ class EditNavigationView: NSObject {
         
         if numberOfItems > 0{
             let title = "Đánh dấu đã đọc (" + String(numberOfItems) + ")"
-            atributedString = atributed(string: title, with: UIColor.systemBlue)
+            atributedString = atributed(string: title, isBold: false, foregroundColor: UIColor.systemBlue)
             rightButtonInEditTabBar.isEnabled = true
         }else{
-            atributedString = atributed(string: "Đánh dấu đã đọc", with: UIColor.darkGray)
+            atributedString = atributed(string: "Đánh dấu đã đọc", isBold: false, foregroundColor: UIColor.darkGray)
             rightButtonInEditTabBar.isEnabled = false
         }
         
         rightButtonInEditTabBar.setAttributedTitle(atributedString, for: .normal)
     }
     
-    private func atributed(string : String, with foregroundColor : UIColor) -> NSAttributedString{
+    private func atributed(string : String, isBold : Bool, foregroundColor : UIColor) -> NSAttributedString{
+        var font : UIFont
+        if isBold{
+            font = UIFont.boldDefaultFont(ofSize: fontSize)
+        }else{
+            font = UIFont.defaultFont(ofSize: fontSize)
+        }
         return NSAttributedString(string: string,
-                                  attributes: [NSAttributedString.Key.font: UIFont.defaultFont(ofSize: fontSize),
+                                  attributes: [NSAttributedString.Key.font: font,
                                                NSAttributedString.Key.foregroundColor : foregroundColor])
     }
 }

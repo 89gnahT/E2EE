@@ -9,7 +9,17 @@
 import UIKit
 
 class GroupChatConversation: Conversation {
-     init(cvsID: ConversationID, membersID: Array<UserID>, nameConversation: String, lastMsg: Message, muteTime : TimeInterval) {
-        super.init(cvsID: cvsID, type: .groupChat, membersID: membersID, nameConversation: nameConversation, lastMsg: lastMsg, muteTime: muteTime)
+    init(cvsID: ConversationID,
+         membersID: Array<UserID>,
+         nameConversation: String,
+         lastMsg: Message,
+         muteTime : TimeInterval)
+    {
+        super.init(cvsID: cvsID,
+                   type: .groupChat,
+                   membersID: membersID,
+                   nameConversation: nameConversation,
+                   lastMsg: lastMsg,
+                   muteTime: muteTime)
     }
 }

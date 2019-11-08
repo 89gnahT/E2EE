@@ -233,8 +233,8 @@ extension DataManager{
         }
         
         private class func randomMsgTime()->MsgTime{
-            let sent = Date.timeIntervalSinceReferenceDate - Double(Int.random(in: 0...3600*24*10))
-            var deliveried : TimeInterval = sent + Double(Int.random(in: 1...1000))
+            let sent = Date.timeIntervalSinceReferenceDate - Double(Int.random(in: 0...3600*24*30))
+            let deliveried : TimeInterval = sent + Double(Int.random(in: 1...1000))
             var seen : TimeInterval = deliveried + Double(Int.random(in: 1...1000))
             
             if Int.random(in: 0...100) % 2 == 0{
@@ -251,7 +251,7 @@ extension DataManager{
         private class func randomID(length: Int = 7)->String{
             
             enum s {
-                static let c = Array("abcdefghjklmnpqrstuvwxyz12345789")
+                static let c = Array("abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ012345789")
                 static let k = UInt32(c.count)
             }
             

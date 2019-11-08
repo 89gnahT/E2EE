@@ -103,18 +103,20 @@ class ContactViewController: ASViewController<ASDisplayNode>{
 // MARK: Delegate
 extension ContactViewController : ContactDelegate{
     func tableNode(_ table: ContactTableNode, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        var more, hide, delete : UITableViewRowAction
-        more = UITableViewRowAction(style: .normal, title: "More", handler: { (viewAction, indexPath) in
-            print("More")
+        
+        let more = UITableViewRowAction(style: .normal, title: "More", handler: { (viewAction, indexPath) in
+            let action = UIAlertAction(title: "OK", style: .cancel, handler: { action in })
+            self.displayAlert(title: "Thông báo", message: "Tính năng đang cập nhật", actions: [action], preferredStyle: .actionSheet)
         })
         more.backgroundColor = UIColor.lightGray
         
-        hide = UITableViewRowAction(style: .default, title: "Hide", handler: { (viewAction, indexPath) in
-            print("Hide")
+        let hide = UITableViewRowAction(style: .default, title: "Hide", handler: { (viewAction, indexPath) in
+            let action = UIAlertAction(title: "OK", style: .cancel, handler: { action in })
+            self.displayAlert(title: "Thông báo", message: "Tính năng đang cập nhật", actions: [action], preferredStyle: .actionSheet)
         })
         hide.backgroundColor = UIColor.systemPurple
         
-        delete = UITableViewRowAction(style: .destructive, title: "Delete", handler: { (viewAction, indexPath) in
+        let delete = UITableViewRowAction(style: .destructive, title: "Delete", handler: { (viewAction, indexPath) in
             self.alertDeleteItem(at: indexPath, completion: nil)
         })
         delete.backgroundColor = UIColor.systemRed

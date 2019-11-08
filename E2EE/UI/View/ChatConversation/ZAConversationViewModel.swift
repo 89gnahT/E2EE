@@ -42,22 +42,23 @@ class ZAConversationViewModel  : NSObject{
             return String(Int(x + 0.5))
         }
         
-        if deltaTime < 60{
+        if deltaTime < MINUTE{
             timeString = "Vừa xong"
         }else
-            if deltaTime < 3600{
-                timeString = round(deltaTime / 60 + 0.5) + " phút"
+            if deltaTime < HOURS{
+                timeString = round(deltaTime / MINUTE) + " phút"
             }else
-                if deltaTime < 24 * 3600{
-                    timeString = round(deltaTime / 3600 + 0.5) + " giờ"
+                if deltaTime < DAY{
+                    timeString = round(deltaTime / HOURS) + " giờ"
                 }else
-                    if deltaTime < 24 * 3600 * 7 {
-                        timeString = round(deltaTime / 24 / 3600 + 0.5) + " ngày"
+                    if deltaTime < WEEK {
+                        timeString = round(deltaTime / DAY) + " ngày"
                     }else{
                         func getTimeWithFormath(time : TimeInterval, format : String) -> String{
                             let date = Date(timeIntervalSinceReferenceDate: time)
                             let formatter = DateFormatter()
                             formatter.dateFormat = format
+                            
                             return formatter.string(from: date as Date)
                         }
                         
@@ -115,6 +116,7 @@ class ZAConversationViewModel  : NSObject{
     public var avatar : ASImageNode?{
         return ASImageNode()
     }
+    
     public func getAvatarImage(completionHanlder : @escaping ImageDownloadCompletionClosure){
         DispatchQueue.global().async {
             let user = DataManager.shared.friendWithID((self.model?.membersID.last)!)
