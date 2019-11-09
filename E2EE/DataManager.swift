@@ -36,38 +36,38 @@ class DataManager: NSObject {
     private override init() {
         super.init()
         rooms = DataStore.shared.rooms
-//        taskQueue.async {
-//            var time : TimeInterval = 2
-//            
-//            for m in DataStore.shared.incomingMessages{
-//                
-//                m.time = MsgTime(sent: Date.timeIntervalSinceReferenceDate)
-//                
-//                self.taskQueue.asyncAfter(deadline: DispatchTime.now() + time) {
-//                    let cvsID = m.conversationID
-//
-//                    if self.rooms[cvsID] != nil{
-//                        // New message
-//                        // Update conversation
-//                        let cvs = self.conversationWithID_unsafe(cvsID)
-//                        cvs?.lastMsg = m
-//
-//                        // Append message
-//                        self.rooms[cvsID]?.append(m)
-//
-//                        self.listenerCallbackForConversationChanged(cvsID: cvsID)
-//                    }else{
-//                        // New conversation
-//                        let cvs = ChatConversation(cvsID: cvsID, membersID: [self.you.id, m.senderId], nameConversation: self.friendWithID_unsafe(m.senderId)!.name, lastMsg: m)
-//                        self.conversations.append(cvs)
-//                        self.rooms.updateValue([m], forKey: cvsID)
-//
-//                        self.listenerCallbackForNewConversation(conversation: cvs)
-//                    }
-//                }
-//                time += 2
-//            }
-//        }
+        taskQueue.async {
+            var time : TimeInterval = 2
+            return
+            for m in DataStore.shared.incomingMessages{
+                
+                m.time = MsgTime(sent: Date.timeIntervalSinceReferenceDate)
+                
+                self.taskQueue.asyncAfter(deadline: DispatchTime.now() + time) {
+                    let cvsID = m.conversationID
+
+                    if self.rooms[cvsID] != nil{
+                        // New message
+                        // Update conversation
+                        let cvs = self.conversationWithID_unsafe(cvsID)
+                        cvs?.lastMsg = m
+
+                        // Append message
+                        self.rooms[cvsID]?.append(m)
+
+                        self.listenerCallbackForConversationChanged(cvsID: cvsID)
+                    }else{
+                        // New conversation
+                        let cvs = ChatConversation(cvsID: cvsID, membersID: [self.you.id, m.senderId], nameConversation: self.friendWithID_unsafe(m.senderId)!.name, lastMsg: m)
+                        self.conversations.append(cvs)
+                        self.rooms.updateValue([m], forKey: cvsID)
+
+                        self.listenerCallbackForNewConversation(conversation: cvs)
+                    }
+                }
+                time += 0.1
+            }
+        }
     }
     
     public var you : User{
@@ -167,19 +167,19 @@ extension DataManager{
         }
     }
     
-    public func muteConversation(cvsID : ConversationID, time : TimeInterval){
+    public func muteConversation(cvsID : ConversationID, time : TimeInterval, completion : @escaping () -> Void?){
         taskQueue.async {
             let conversation = self.conversationWithID_unsafe(cvsID)
-            if time != MsgTime.TimeInvalidate{
-                conversation?.muteTime = time
-            }
+            conversation?.muteTime = time
+            completion()
         }
     }
     
-    public func unmuteConversation(cvsID : ConversationID){
+    public func unmuteConversation(cvsID : ConversationID, completion : @escaping () -> Void?){
         taskQueue.async {
             let conversation = self.conversationWithID_unsafe(cvsID)
             conversation?.muteTime = MsgTime.TimeInvalidate
+            completion()
         }
     }
     

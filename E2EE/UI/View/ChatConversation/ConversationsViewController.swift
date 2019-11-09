@@ -84,7 +84,7 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
             
             if indexOfItem != nil{
                 DataManager.shared.markConversationAsReadWithID(item.modelID!)
-                tableNode.reloadRow(at: IndexPath(row: indexOfItem!, section: 0), with: .automatic)
+                tableNode.reloadDataInCellNode(at: IndexPath(row: indexOfItem!, section: 0))
             }
         }
     }
@@ -115,16 +115,21 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     
     func muteItem(at indexPath : IndexPath, time : TimeInterval){
         let cvsID = viewModels[indexPath.row].modelID
-        DataManager.shared.muteConversation(cvsID: cvsID!, time: time)
-        
-        tableNode.reloadRow(at: indexPath, with: .automatic)
+        DataManager.shared.muteConversation(cvsID: cvsID!, time: time) { () -> Void? in
+            DispatchQueue.main.async {
+                self.tableNode.reloadDataInCellNode(at: indexPath)
+            }
+        }
     }
     
     func unmuteItem(at indexPath : IndexPath){
         let cvsID = viewModels[indexPath.row].modelID
-        DataManager.shared.unmuteConversation(cvsID: cvsID!)
-        
-        tableNode.reloadRow(at: indexPath, with: .automatic)
+        DataManager.shared.unmuteConversation(cvsID: cvsID!) { () -> Void? in
+            DispatchQueue.main.async {
+                self.tableNode.reloadDataInCellNode(at: indexPath)
+            }
+        }
+       
     }
 }
 
@@ -319,7 +324,7 @@ extension ConversationsViewController : DataManagerListenerDelegate{
     func createNewConversation(_ cvs: Conversation) {
         let modelView = ZAConversationViewModel(conversation: cvs as! ChatConversation)
         viewModels.insert(modelView, at: 0)
-        
+
         tableNode.insertRow(at: IndexPath(row: 0, section: 0), withAnimation: .automatic)
     }
     
@@ -328,10 +333,14 @@ extension ConversationsViewController : DataManagerListenerDelegate{
             return c.modelID == cvsID
         }
         if index != nil{
-            let item = viewModels.remove(at: index!)
-            viewModels.insert(item, at: 0)
+            if index! != 0{
+                let item = viewModels.remove(at: index!)
+                viewModels.insert(item, at: 0)
 
-            tableNode.moveRow(at: IndexPath(row: index!, section: 0), to: IndexPath(row: 0, section: 0))
+                tableNode.moveRow(at: IndexPath(row: index!, section: 0), to: IndexPath(row: 0, section: 0))
+            }else{
+                tableNode.reloadDataInCellNode(at: IndexPath(row: 0, section: 0))
+            }
         }
     }
 }
