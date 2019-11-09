@@ -13,7 +13,7 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     
     let tableNode = ConversationsTableNode()
     
-    var modelViews = Array<ZAConversationViewModel>()
+    var viewModels = Array<ZAConversationViewModel>()
     
     var listSelectedItemsInEdittingMode = Array<ZAConversationViewModel>()
     
@@ -28,12 +28,12 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         let toolBarViewFrame = (tabBarController?.tabBar.bounds)!
         
         return EditNavigationBarAndTabBarView(target: self,
-                                  navigationViewFrame: navigationViewFrame,
-                                  toolBarViewFrame: toolBarViewFrame,
-                                  leftTopButtonAction: #selector(leftTopButtonAction(button:)),
-                                  rightTopButtonAction: #selector(rightTopButtonAction(button:)),
-                                  leftBottomButtonAction: #selector(leftBottomButtonAction(button:)),
-                                  rightBottomButtonAction: #selector(rightBottomButtonAction(button:)))
+                                              navigationViewFrame: navigationViewFrame,
+                                              toolBarViewFrame: toolBarViewFrame,
+                                              leftTopButtonAction: #selector(leftTopButtonAction(button:)),
+                                              rightTopButtonAction: #selector(rightTopButtonAction(button:)),
+                                              leftBottomButtonAction: #selector(leftBottomButtonAction(button:)),
+                                              rightBottomButtonAction: #selector(rightBottomButtonAction(button:)))
     }()
     
     init() {
@@ -46,7 +46,7 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+      
         setup()
     }
     
@@ -56,27 +56,34 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         tableNode.setNeedsLayout()
         tableNode.layoutIfNeeded()
         
-        var t = DataManager.shared.conversations
-        t.sort { (a, b) -> Bool in
-            if a.lastMsg.time.sent < b.lastMsg.time.sent{
-                return false
+        DataManager.shared.addObserver(target: self, callBackQueue: DispatchQueue.main)
+        
+        // Fetch data
+        DataManager.shared.fetchConversations( { (conversations) in
+            var t = conversations
+            t.sort { (a, b) -> Bool in
+                if a.lastMsg.time.sent < b.lastMsg.time.sent{
+                    return false
+                }
+                return true
             }
-            return true
-        }
-        
-        for c in t{
-            modelViews.append(ZAConversationViewModel(conversation: c as! ChatConversation))
-        }
-        
-        tableNode.reloadData()
+            
+            for c in t{
+                self.viewModels.append(ZAConversationViewModel(conversation: c as! ChatConversation))
+            }
+            
+            DispatchQueue.main.async {
+                self.tableNode.reloadData()
+            }
+        })
     }
     
     func markItemsAsRead(items : [ZAConversationViewModel]){
         for item in items {
-            let indexOfItem = self.modelViews.firstIndex(of: item)
+            let indexOfItem = self.viewModels.firstIndex(of: item)
             
             if indexOfItem != nil{
-                DataManager.shared.markConversationAsRead(cvs: item.model!)
+                DataManager.shared.markConversationAsReadWithID(item.modelID!)
                 tableNode.reloadRow(at: IndexPath(row: indexOfItem!, section: 0), with: .automatic)
             }
         }
@@ -95,10 +102,10 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     
     func deleteItems(items : Array<ZAConversationViewModel>){
         for item in items {
-            let indexOfItem = self.modelViews.firstIndex(of: item)
+            let indexOfItem = self.viewModels.firstIndex(of: item)
             
             if indexOfItem != nil{
-                self.modelViews.remove(at: indexOfItem!)
+                self.viewModels.remove(at: indexOfItem!)
                 
                 self.tableNode.deleteRow(at: IndexPath(row: indexOfItem!, section: 0), withAnimation: .automatic)
             }
@@ -107,14 +114,14 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     }
     
     func muteItem(at indexPath : IndexPath, time : TimeInterval){
-        let cvsID = modelViews[indexPath.row].model?.id
+        let cvsID = viewModels[indexPath.row].modelID
         DataManager.shared.muteConversation(cvsID: cvsID!, time: time)
         
         tableNode.reloadRow(at: indexPath, with: .automatic)
     }
     
     func unmuteItem(at indexPath : IndexPath){
-        let cvsID = modelViews[indexPath.row].model?.id
+        let cvsID = viewModels[indexPath.row].modelID
         DataManager.shared.unmuteConversation(cvsID: cvsID!)
         
         tableNode.reloadRow(at: indexPath, with: .automatic)
@@ -213,7 +220,7 @@ extension ConversationsViewController : ConversationsDelegate{
             let cancel = UIAlertAction(title: "Huỷ", style: .cancel, handler: { action in })
             
             var actions = Array<UIAlertAction>()
-            if self.modelViews[indexPath.row].isMute{
+            if self.viewModels[indexPath.row].isMute{
                 actions = [unmute, cancel]
             }else{
                 actions = [mute, cancel]
@@ -232,7 +239,7 @@ extension ConversationsViewController : ConversationsDelegate{
         
         // Delete Item
         let delete = UITableViewRowAction(style: .destructive, title: "Delete", handler: { (viewAction, indexPath) in
-            self.alertDeleteItems(items: [self.modelViews[indexPath.row]], completion: nil)
+            self.alertDeleteItems(items: [self.viewModels[indexPath.row]], completion: nil)
         })
         delete.backgroundColor = UIColor.systemRed
         
@@ -241,17 +248,17 @@ extension ConversationsViewController : ConversationsDelegate{
     
     func tableNode(_ table: ConversationsTableNode, didSelectRowAt indexPath: IndexPath) {
         if isEdittingMode{
-            listSelectedItemsInEdittingMode.append(modelViews[indexPath.row])
+            listSelectedItemsInEdittingMode.append(viewModels[indexPath.row])
             
             editView.updateButtonInNavigationBarAndTabBar(numberOfItems: listSelectedItemsInEdittingMode.count)
         }else{
-            markItemsAsRead(items: [modelViews[indexPath.row]])
+            markItemsAsRead(items: [viewModels[indexPath.row]])
         }
     }
     
     func tableNode(_ table: ConversationsTableNode, didDeselectRowAt indexPath: IndexPath) {
         if isEdittingMode{
-            let indexOfItem = listSelectedItemsInEdittingMode.firstIndex(of: modelViews[indexPath.row])
+            let indexOfItem = listSelectedItemsInEdittingMode.firstIndex(of: viewModels[indexPath.row])
             if indexOfItem != nil{
                 listSelectedItemsInEdittingMode.remove(at: indexOfItem!)
             }
@@ -271,7 +278,7 @@ extension ConversationsViewController : ConversationsDelegate{
             isEdittingMode = true
             
             editView.addSubNodeIntoNavigationBar(navigationController!.navigationBar,
-                                                           tabBar: tabBarController!.tabBar)
+                                                 tabBar: tabBarController!.tabBar)
         }
     }
 }
@@ -279,7 +286,7 @@ extension ConversationsViewController : ConversationsDelegate{
 // MARK: DataSource
 extension ConversationsViewController : ConversationsDataSource{
     func tableNode(_ table: ConversationsTableNode) -> Array<ZAConversationViewModel> {
-        return modelViews 
+        return viewModels 
     }
 }
 
@@ -305,5 +312,26 @@ extension ConversationsViewController{
         self.alertMarkItemsAsRead(items: listSelectedItemsInEdittingMode, completion: {
             self.exitEdittingMode()
         })
+    }
+}
+
+extension ConversationsViewController : DataManagerListenerDelegate{
+    func createNewConversation(_ cvs: Conversation) {
+        let modelView = ZAConversationViewModel(conversation: cvs as! ChatConversation)
+        viewModels.insert(modelView, at: 0)
+        
+        tableNode.insertRow(at: IndexPath(row: 0, section: 0), withAnimation: .automatic)
+    }
+    
+    func conversationChanged(cvsID: ConversationID) {
+        let index = viewModels.firstIndex { (c) -> Bool in
+            return c.modelID == cvsID
+        }
+        if index != nil{
+            let item = viewModels.remove(at: index!)
+            viewModels.insert(item, at: 0)
+
+            tableNode.moveRow(at: IndexPath(row: index!, section: 0), to: IndexPath(row: 0, section: 0))
+        }
     }
 }

@@ -16,6 +16,10 @@ public class ZAContactViewModel {
         self.model = model
     }
     
+    public var modelID : UserID?{
+        return model?.id
+    }
+    
     public var avatarURL : URL?{
         return URL(string: model!.avatarURL!)
     }

@@ -32,7 +32,7 @@ class ConversationsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
     weak public var dataSource : ConversationsDataSource?
     
     private let tableNode = ASTableNode()
-    private var modelViews = Array<ZAConversationViewModel>()
+    private var viewModels = Array<ZAConversationViewModel>()
     
     public var isInEdittingMode : Bool = false{
         didSet{
@@ -74,7 +74,7 @@ class ConversationsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
     }
     
     public func reloadData(){
-        modelViews = (dataSource?.tableNode(self))!
+        viewModels = (dataSource?.tableNode(self))!
         tableNode.reloadData()
     }
     
@@ -83,13 +83,21 @@ class ConversationsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
     }
     
     public func deleteRow(at indexPath : IndexPath, withAnimation animation : UITableView.RowAnimation){
-        modelViews.remove(at: indexPath.row)
+        viewModels.remove(at: indexPath.row)
         tableNode.deleteRows(at: [indexPath], with: animation)
     }
     
     public func insertRow(at indexPath : IndexPath, withAnimation animation : UITableView.RowAnimation){
-        modelViews = (dataSource?.tableNode(self))!
+        viewModels = (dataSource?.tableNode(self))!
         tableNode.insertRows(at: [indexPath], with: animation)
+    }
+    
+    public func moveRow(at indexPath : IndexPath, to newIndexPath : IndexPath){
+        let item = viewModels.remove(at: indexPath.row)
+        tableNode.deleteRows(at: [indexPath], with: .none)
+
+        viewModels.insert(item, at: newIndexPath.row)
+        tableNode.insertRows(at: [newIndexPath], with: .none)
     }
 }
 
@@ -105,7 +113,7 @@ extension ConversationsTableNode: ASTableDelegate{
     
     func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
         return {
-            let cellNode  = ZAConversationTableCellNode(viewModel: self.modelViews[indexPath.row])
+            let cellNode  = ZAConversationTableCellNode(viewModel: self.viewModels[indexPath.row])
             return cellNode
         }
     }
@@ -132,7 +140,7 @@ extension ConversationsTableNode: ASTableDataSource{
     }
     
     func tableNode(_ tableNode: ASTableNode, numberOfRowsInSection section: Int) -> Int {
-        return modelViews.count
+        return viewModels.count
     }
 }
 

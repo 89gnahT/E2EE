@@ -12,11 +12,14 @@ import AsyncDisplayKit
 class TabBarViewController: UIViewController, UITabBarControllerDelegate {
     let tabBarCtl = ASTabBarController()
     
-    let chatListVC = ConversationsViewController()
-    let friendListVC = ContactViewController()
-    let groupChatListVC = ASViewController<ASTableNode>()
+    var chatListVC : ConversationsViewController!
+    var friendListVC : ContactViewController!
+    var groupChatListVC : ASViewController<ASTableNode>!
     
     override func viewDidLoad() {
+        chatListVC = ConversationsViewController()
+        friendListVC = ContactViewController()
+        groupChatListVC = ASViewController<ASTableNode>()
         
         chatListVC.title = "Tin nhắn"
         chatListVC.tabBarItem.image = UIImage(named: "message_icon")

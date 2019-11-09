@@ -29,8 +29,8 @@ class ContactTableNode: ASDisplayNode {
     weak public var dataSource : ContactDataSource?
     
     private let tableNode = ASTableNode()
-    private var modelViews = Array<Array<ZAContactViewModel>>()
-    private var keyModelViews = Array<String>()
+    private var viewModels = Array<Array<ZAContactViewModel>>()
+    private var keyViewModels = Array<String>()
     
     override init() {
         super.init()
@@ -55,19 +55,19 @@ class ContactTableNode: ASDisplayNode {
     }
     
     public func reloadData(){
-        modelViews = (dataSource?.modelViews(for: self))!
-        keyModelViews = (dataSource?.sectionIndexTitles(for: self))!
+        viewModels = (dataSource?.modelViews(for: self))!
+        keyViewModels = (dataSource?.sectionIndexTitles(for: self))!
         
         tableNode.reloadData()
     }
     
     public func deleteRow(at indexPath : IndexPath, withAnimation animation : UITableView.RowAnimation){
         let section = indexPath.section
-        modelViews[section].remove(at: indexPath.row)
+        viewModels[section].remove(at: indexPath.row)
         
-        if modelViews[section].count == 0{
-            keyModelViews.remove(at: section)
-            modelViews.remove(at: section)
+        if viewModels[section].count == 0{
+            keyViewModels.remove(at: section)
+            viewModels.remove(at: section)
             
             tableNode.deleteSections(IndexSet(integer: section), with: animation)
         }else{
@@ -76,8 +76,8 @@ class ContactTableNode: ASDisplayNode {
     }
     
     public func insertRow(at indexPath : IndexPath, withAnimation animation : UITableView.RowAnimation){
-        modelViews = (dataSource?.modelViews(for: self))!
-        keyModelViews = (dataSource?.sectionIndexTitles(for: self))!
+        viewModels = (dataSource?.modelViews(for: self))!
+        keyViewModels = (dataSource?.sectionIndexTitles(for: self))!
         tableNode.insertRows(at: [indexPath], with: animation)
     }
 }
@@ -95,7 +95,7 @@ extension ContactTableNode: ASTableDelegate{
     
     func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
         return {
-            let cellNode  = ZAContactTableCellNode(viewModel: self.modelViews[indexPath.section][indexPath.row])
+            let cellNode  = ZAContactTableCellNode(viewModel: self.viewModels[indexPath.section][indexPath.row])
             return cellNode
         }
     }
@@ -111,17 +111,17 @@ extension ContactTableNode: ASTableDelegate{
 extension ContactTableNode: ASTableDataSource{
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return keyModelViews[section]
+        return keyViewModels[section]
     }
     func numberOfSections(in tableNode: ASTableNode) -> Int {
-        return keyModelViews.count
+        return keyViewModels.count
     }
     
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        return keyModelViews
+        return keyViewModels
     }
     
     func tableNode(_ tableNode: ASTableNode, numberOfRowsInSection section: Int) -> Int {
-        return modelViews[section].count
+        return viewModels[section].count
     }
 }

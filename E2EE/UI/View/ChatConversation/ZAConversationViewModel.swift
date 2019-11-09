@@ -12,11 +12,15 @@ import AsyncDisplayKit
 public typealias ImageDownloadCompletionClosure = (_ image: UIImage? ) -> Void
 
 class ZAConversationViewModel  : NSObject{
-    public var model : ChatConversation?
+    private var model : ChatConversation?
     
     init(conversation : ChatConversation) {
         super.init()
         self.model = conversation
+    }
+    
+    public var modelID : ConversationID?{
+        return model?.id
     }
     
     public var avatarURL : URL?{
