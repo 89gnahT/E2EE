@@ -27,6 +27,12 @@ struct MsgTime {
         self.deliveried = deliveried
         self.seen = seen
     }
+    
+    init(sent : TimeInterval) {
+        self.sent = sent
+        self.deliveried = MsgTime.TimeInvalidate
+        self.seen = MsgTime.TimeInvalidate
+    }
 }
 
 class Message: NSObject {

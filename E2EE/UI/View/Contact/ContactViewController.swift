@@ -13,8 +13,8 @@ class ContactViewController: ASViewController<ASDisplayNode>{
     
     let tableNode = ContactTableNode()
     
-    var modelViews = Array<Array<ZAContactViewModel>>()
-    var keyModelViews = Array<String>()
+    var viewModels = Array<Array<ZAContactViewModel>>()
+    var keyViewModels = Array<String>()
     
     init() {
         super.init(node: tableNode)
@@ -36,44 +36,50 @@ class ContactViewController: ASViewController<ASDisplayNode>{
         tableNode.setNeedsLayout()
         tableNode.layoutIfNeeded()
 
-        let temp = DataManager.shared.friends
-        var modelViewsTemp = Array<ZAContactViewModel>()
-        for i in temp{
-            modelViewsTemp.append(ZAContactViewModel(model: i))
-        }
-        handleInputModel(input: &modelViewsTemp)
+        DataManager.shared.fetchContacts (completion: { (friends) in
+            func handleInputModel(input : inout Array<ZAContactViewModel>){
+                input.sort { (a, b) -> Bool in
+                    return (a.title?.first)!.uppercased() < (b.title?.first)!.uppercased()
+                }
+                
+                var lastKey : String = ""
+                for m in input {
+                    let c = String((m.title?.first?.uppercased())!)
+                    if (c != lastKey){
+                        lastKey = c
+                        self.keyViewModels.append(c)
+                        self.viewModels.append(Array<ZAContactViewModel>())
+                    }
+                    self.viewModels[self.viewModels.count - 1].append(m)
+                }
+            }
+            
+            var modelViewsTemp = Array<ZAContactViewModel>()
+            for i in friends{
+                modelViewsTemp.append(ZAContactViewModel(model: i))
+            }
+            handleInputModel(input: &modelViewsTemp)
+            
+            DispatchQueue.main.async {
+                self.tableNode.reloadData()
+            }
+        })
         
-        tableNode.reloadData()
     }
     
-    private func handleInputModel(input : inout Array<ZAContactViewModel>){
-        input.sort { (a, b) -> Bool in
-            return (a.title?.first)!.uppercased() < (b.title?.first)!.uppercased()
-        }
-        
-        var lastKey : String = ""
-        for m in input {
-            let c = String((m.title?.first?.uppercased())!)
-            if (c != lastKey){
-                lastKey = c
-                keyModelViews.append(c)
-                modelViews.append(Array<ZAContactViewModel>())
-            }
-            modelViews[modelViews.count - 1].append(m)
-        }
-    }
+    
     
     func deleteItem(at indexPath : IndexPath){
-        modelViews[indexPath.section].remove(at: indexPath.row)
-        if modelViews[indexPath.section].count == 0{
-            keyModelViews.remove(at: indexPath.section)
-            modelViews.remove(at: indexPath.section)
+        viewModels[indexPath.section].remove(at: indexPath.row)
+        if viewModels[indexPath.section].count == 0{
+            keyViewModels.remove(at: indexPath.section)
+            viewModels.remove(at: indexPath.section)
         }
         self.tableNode.deleteRow(at: indexPath, withAnimation: .automatic)
     }
     
     func alertDeleteItem(at indexPath : IndexPath, completion: (() -> Void)?){
-        let name = modelViews[indexPath.section][indexPath.row].title!
+        let name = viewModels[indexPath.section][indexPath.row].title!
         let message = "Bạn có muốn xoá bạn với " + name + "?"
         
         let delete = UIAlertAction(title: "Không", style: .cancel, handler: { action in })
@@ -128,11 +134,11 @@ extension ContactViewController : ContactDelegate{
 // MARK: DataSource
 extension ContactViewController : ContactDataSource{
     func sectionIndexTitles(for table: ContactTableNode) -> [String]? {
-        return keyModelViews
+        return keyViewModels
     }
     
     func modelViews(for table: ContactTableNode) -> Array<Array<ZAContactViewModel>> {
-        return modelViews
+        return viewModels
     }
     
 }

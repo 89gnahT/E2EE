@@ -8,7 +8,7 @@
 
 import UIKit
 
-typealias UserID = String
+public typealias UserID = String
 
 enum Gender {
     case male
