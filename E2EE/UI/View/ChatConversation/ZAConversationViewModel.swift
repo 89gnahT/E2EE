@@ -47,7 +47,7 @@ class ZAConversationViewModel  : NSObject{
         }
         
         if deltaTime < MINUTE{
-            timeString = "Vừa xong"
+            timeString = round(deltaTime) + " giây"
         }else
             if deltaTime < HOURS{
                 timeString = round(deltaTime / MINUTE) + " phút"

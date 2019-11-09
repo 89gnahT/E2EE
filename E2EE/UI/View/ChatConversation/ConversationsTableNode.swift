@@ -95,9 +95,14 @@ class ConversationsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
     public func moveRow(at indexPath : IndexPath, to newIndexPath : IndexPath){
         let item = viewModels.remove(at: indexPath.row)
         tableNode.deleteRows(at: [indexPath], with: .none)
-
+      
         viewModels.insert(item, at: newIndexPath.row)
         tableNode.insertRows(at: [newIndexPath], with: .none)
+    }
+    
+    // Not reloadRow, this func does not create cellNode and just reload data from view model
+    public func reloadDataInCellNode(at indexPath : IndexPath){
+        (tableNode.nodeForRow(at: indexPath) as! ZAConversationTableCellNode).reloadData()
     }
 }
 
@@ -107,12 +112,17 @@ extension ConversationsTableNode: ASTableDelegate{
         delegate?.tableNode?(self, didSelectRowAt: indexPath)
     }
     
+    func tableNode(_ tableNode: ASTableNode, willDisplayRowWith node: ASCellNode) {
+        (node as! ZAConversationTableCellNode).reloadData()
+    }
+    
     func tableNode(_ tableNode: ASTableNode, didDeselectRowAt indexPath: IndexPath) {
         delegate?.tableNode?(self, didDeselectRowAt: indexPath)
     }
     
     func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
         return {
+            print("create cell node")
             let cellNode  = ZAConversationTableCellNode(viewModel: self.viewModels[indexPath.row])
             return cellNode
         }

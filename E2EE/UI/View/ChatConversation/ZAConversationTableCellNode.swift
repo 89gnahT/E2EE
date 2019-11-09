@@ -19,6 +19,7 @@ class ZAConversationTableCellNode: ASCellNode {
     var subTitleNode : ASTextNode?
     var iconRightSubTitleNode : ASTextNode?
     
+    private var viewModel : ZAConversationViewModel!
     
     init(viewModel : ZAConversationViewModel) {
         super.init()
@@ -26,71 +27,12 @@ class ZAConversationTableCellNode: ASCellNode {
         self.backgroundColor = UIColor.white
         self.automaticallyManagesSubnodes = true
         
-        imageNode = ASNetworkImageNode()
-        imageNode?.url = viewModel.avatarURL!
-        imageNode?.style.preferredSize = CGSize(squareEdge: 60)
-        imageNode?.imageModificationBlock = ASImageNodeRoundBorderModificationBlock(0, nil)
+        self.viewModel = viewModel
         
-        
-        // Setup ImageNode
-        //        imageNode = node.avatar
-        //        if (imageNode != nil){
-        //            node.getAvatarImage { (image) in
-        //                self.imageNode?.image = image
-        //            }
-        //
-        //            imageNode?.style.preferredSize = CGSize(width: 60, height: 60)
-        //            //imageNode?.imageModificationBlock = ASImageNodeRoundBorderModificationBlock(0, nil)
-        //        }
-        
-        let isReadMsg = viewModel.isReadMsg ?? false
-        
-        // Setup titleNode
-        if viewModel.title != nil{
-            titleNode = ASTextNode()
-            titleNode!.truncationMode = .byTruncatingTail
-            titleNode!.maximumNumberOfLines = 1
-            setAtributedStringForASTextNode(titleNode!,
-                                            string: viewModel.title!,
-                                            fontSize: 16,
-                                            isHighLight: !isReadMsg,
-                                            highLightColor: .black,
-                                            normalColor: .black)
-        }
-        
-        // Setup subTitleNode
-        if viewModel.subTitle != nil{
-            subTitleNode = ASTextNode()
-            subTitleNode!.truncationMode = .byTruncatingTail
-            subTitleNode!.maximumNumberOfLines = 1
-            setAtributedStringForASTextNode(subTitleNode!,
-                                            string: viewModel.subTitle!,
-                                            fontSize: 14,
-                                            isHighLight: !isReadMsg,
-                                            highLightColor: .black,
-                                            normalColor: .darkGray)
-            
-        }
-        
-        // Setup rightTitleNode
-        if viewModel.rightTitle != nil{
-            rightTitleNode = ASTextNode()
-            rightTitleNode!.style.maxWidth = ASDimensionMake("80pt")
-            setAtributedStringForASTextNode(rightTitleNode!,
-                                            string: viewModel.rightTitle!,
-                                            fontSize: 12,
-                                            isHighLight: !isReadMsg,
-                                            highLightColor: .black,
-                                            normalColor: .darkGray)
-        }
-        
-        let icon = viewModel.iconRightSubTitle
-        if icon != nil{
-            iconRightTitleNode = icon
-            iconRightTitleNode!.style.preferredSize = CGSize(width: 12, height: 15)
-        }
-        
+        self.updateDataCellNode()
     }
+    
+
     
     private func setAtributedStringForASTextNode(_ textNode : ASTextNode,
                                                  string : String,
@@ -121,6 +63,96 @@ class ZAConversationTableCellNode: ASCellNode {
             attributedText = atributedString(string, fontSize: fontSize, isBold: false, foregroundColor: normalColor)
         }
         textNode.attributedText = attributedText
+    }
+    
+    public func reloadData(){
+        DispatchQueue.global().async {
+            self.updateDataCellNode()
+        }
+    }
+    
+    public func updateDataCellNode(){
+        if viewModel == nil{
+            return
+        }
+    
+        let avatarURL = viewModel.avatarURL
+        if avatarURL != nil{
+            if imageNode == nil{
+                imageNode = ASNetworkImageNode()
+                imageNode?.style.preferredSize = CGSize(squareEdge: 60)
+                imageNode?.imageModificationBlock = ASImageNodeRoundBorderModificationBlock(0, nil)
+            }
+            if imageNode?.url != avatarURL{
+                imageNode?.url = avatarURL
+            }
+        }else{
+            imageNode = nil
+        }
+        
+        let isReadMsg = viewModel.isReadMsg ?? false
+        
+        // Setup titleNode
+        if viewModel.title != nil{
+            if titleNode == nil{
+                titleNode = ASTextNode()
+                titleNode!.truncationMode = .byTruncatingTail
+                titleNode!.maximumNumberOfLines = 1
+            }
+            setAtributedStringForASTextNode(titleNode!,
+                                            string: viewModel.title!,
+                                            fontSize: 16,
+                                            isHighLight: !isReadMsg,
+                                            highLightColor: .black,
+                                            normalColor: .black)
+        }else{
+            titleNode = nil
+        }
+        
+        // Setup subTitleNode
+        if viewModel.subTitle != nil{
+            if subTitleNode == nil{
+                subTitleNode = ASTextNode()
+                subTitleNode!.truncationMode = .byTruncatingTail
+                subTitleNode!.maximumNumberOfLines = 1
+            }
+            setAtributedStringForASTextNode(subTitleNode!,
+                                            string: viewModel.subTitle!,
+                                            fontSize: 14,
+                                            isHighLight: !isReadMsg,
+                                            highLightColor: .black,
+                                            normalColor: .darkGray)
+            
+        }else{
+            subTitleNode = nil
+        }
+        
+        // Setup rightTitleNode
+        if viewModel.rightTitle != nil{
+            if rightTitleNode == nil{
+                rightTitleNode = ASTextNode()
+                rightTitleNode!.style.maxWidth = ASDimensionMake("80pt")
+            }
+            setAtributedStringForASTextNode(rightTitleNode!,
+                                            string: viewModel.rightTitle!,
+                                            fontSize: 12,
+                                            isHighLight: !isReadMsg,
+                                            highLightColor: .black,
+                                            normalColor: .darkGray)
+        }else{
+            rightTitleNode = nil
+        }
+        
+        let icon = viewModel.iconRightSubTitle
+        if icon != nil{
+            iconRightTitleNode = icon
+            iconRightTitleNode!.style.preferredSize = CGSize(width: 12, height: 15)
+        }else{
+            iconRightTitleNode = nil
+        }
+        
+        self.setNeedsLayout()
+        self.layoutIfNeeded()
     }
     
     
@@ -195,6 +227,4 @@ class ZAConversationTableCellNode: ASCellNode {
         
         return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12), child: contentStack)
     }
-    
-    
 }
