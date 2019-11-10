@@ -10,6 +10,7 @@
 		0670785F10ACD65243E377E8 /* Pods_E2EE_E2EEUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 669DCAAD94F20C41F7BA0FBC /* Pods_E2EE_E2EEUITests.framework */; };
 		480AEFA723764EBB009B1179 /* Listener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480AEFA623764EBB009B1179 /* Listener.swift */; };
 		480AEFA923766275009B1179 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480AEFA823766275009B1179 /* DataStore.swift */; };
+		480AEFAD2378473E009B1179 /* Color.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 480AEFAC2378473E009B1179 /* Color.xcassets */; };
 		483020EB2375A770002AC97B /* CGSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483020EA2375A770002AC97B /* CGSize.swift */; };
 		4883F83E23751A0E004C3F83 /* TextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4883F82623751A0D004C3F83 /* TextMessage.swift */; };
 		4883F83F23751A0E004C3F83 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4883F82723751A0D004C3F83 /* Message.swift */; };
@@ -120,6 +121,7 @@
 		317644017F8F555E3EE757CF /* Pods_E2EE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_E2EE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		480AEFA623764EBB009B1179 /* Listener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Listener.swift; sourceTree = "<group>"; };
 		480AEFA823766275009B1179 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		480AEFAC2378473E009B1179 /* Color.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Color.xcassets; sourceTree = "<group>"; };
 		483020EA2375A770002AC97B /* CGSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSize.swift; sourceTree = "<group>"; };
 		4883F82623751A0D004C3F83 /* TextMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextMessage.swift; sourceTree = "<group>"; };
 		4883F82723751A0D004C3F83 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
@@ -373,6 +375,7 @@
 				480AEFA623764EBB009B1179 /* Listener.swift */,
 				4883F8522375720E004C3F83 /* Common.swift */,
 				814F61C023595A3700A6AA44 /* Main.storyboard */,
+				480AEFAC2378473E009B1179 /* Color.xcassets */,
 				814F61C323595A3A00A6AA44 /* Assets.xcassets */,
 				814F61C523595A3A00A6AA44 /* LaunchScreen.storyboard */,
 				814F61C823595A3A00A6AA44 /* Info.plist */,
@@ -658,6 +661,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				814F61C723595A3A00A6AA44 /* LaunchScreen.storyboard in Resources */,
+				480AEFAD2378473E009B1179 /* Color.xcassets in Resources */,
 				814F61C423595A3A00A6AA44 /* Assets.xcassets in Resources */,
 				814F61C223595A3700A6AA44 /* Main.storyboard in Resources */,
 			);
@@ -1043,7 +1047,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = V4K6YSYUT4;
 				INFOPLIST_FILE = E2EE/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1065,7 +1069,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = V4K6YSYUT4;
 				INFOPLIST_FILE = E2EE/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

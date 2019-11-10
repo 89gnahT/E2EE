@@ -80,6 +80,11 @@ class ContactTableNode: ASDisplayNode {
         keyViewModels = (dataSource?.sectionIndexTitles(for: self))!
         tableNode.insertRows(at: [indexPath], with: animation)
     }
+    
+    // Not reloadRow, this func does not create cellNode and just reload data from view model
+    public func reloadDataInCellNode(at indexPath : IndexPath){
+        (tableNode.nodeForRow(at: indexPath) as! ZAConversationTableCellNode).reloadData()
+    }
 }
 
 // MARK: Delegate
@@ -87,6 +92,10 @@ extension ContactTableNode: ASTableDelegate{
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         return delegate?.tableNode!(self, editActionsForRowAt: indexPath)
+    }
+    
+    func tableNode(_ tableNode: ASTableNode, willDisplayRowWith node: ASCellNode) {
+        (node as! ZAContactTableCellNode).reloadData()
     }
     
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {

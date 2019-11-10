@@ -18,60 +18,17 @@ class ZAContactTableCellNode: ASCellNode {
     var icon1RightTitleNode : ASImageNode?
     var icon2RightTitleNode : ASImageNode?
     
+    private var viewModel : ZAContactViewModel!
+    
     init(viewModel : ZAContactViewModel) {
         super.init()
         
-        self.backgroundColor = UIColor.white
+        self.backgroundColor = UIColor(named: "contact_cell_color")
         self.automaticallyManagesSubnodes = true
         
-        imageNode = ASNetworkImageNode()
-        imageNode?.url = viewModel.avatarURL
-        imageNode?.style.preferredSize = CGSize(squareEdge: 48)
-        imageNode?.imageModificationBlock = ASImageNodeRoundBorderModificationBlock(0, nil)
+        self.viewModel = viewModel
         
-        
-        // Setup ImageNode
-        //        imageNode = node.avatar
-        //        if (imageNode != nil){
-        //            node.getAvatarImage { (image) in
-        //                self.imageNode?.image = image
-        //            }
-        //
-        //            imageNode?.style.preferredSize = CGSize(width: 48, height: 48)
-        //            //imageNode?.imageModificationBlock = ASImageNodeRoundBorderModificationBlock(0, nil)
-        //        }
-        
-        // Setup titleNode
-        if viewModel.title != nil{
-            titleNode = ASTextNode()
-            titleNode!.truncationMode = .byTruncatingTail
-            titleNode!.maximumNumberOfLines = 1
-            
-            let attributedText = atributedString(viewModel.title!, fontSize: 16, isBold: false, foregroundColor: .black)
-            titleNode!.attributedText = attributedText
-        }
-        
-        // Setup subTitleNode
-        if viewModel.subTitle != nil{
-            subTitleNode = ASTextNode()
-            subTitleNode!.truncationMode = .byTruncatingTail
-            subTitleNode!.maximumNumberOfLines = 1
-            
-            let attributedText = atributedString(viewModel.subTitle!, fontSize: 14, isBold: false, foregroundColor: .darkGray)
-            subTitleNode!.attributedText = attributedText
-        }
-        
-        var icon = viewModel.icon1RightTitle
-        if icon != nil{
-            icon1RightTitleNode = icon
-            icon1RightTitleNode!.style.preferredSize = CGSize(squareEdge: 17)
-        }
-        
-        icon = viewModel.icon2RightTitle
-        if icon != nil{
-            icon2RightTitleNode = icon
-            icon2RightTitleNode!.style.preferredSize = CGSize(squareEdge: 20)
-        }
+        self.updateDataCellNode()
     }
     
     private func atributedString(_ string : String,
@@ -87,6 +44,82 @@ class ZAContactTableCellNode: ASCellNode {
         
         return NSAttributedString(string: string,
                                   attributes: [NSAttributedString.Key.font : font, NSAttributedString.Key.foregroundColor : foregroundColor])
+    }
+    
+    public func reloadData(){
+           DispatchQueue.global().async {
+               self.updateDataCellNode()
+           }
+       }
+    
+    private func updateDataCellNode(){
+        if viewModel == nil{
+            return
+        }
+        
+        let avatarURL = viewModel.avatarURL
+        if avatarURL != nil{
+            if imageNode == nil{
+                imageNode = ASNetworkImageNode()
+                imageNode?.style.preferredSize = CGSize(squareEdge: 48)
+                imageNode?.imageModificationBlock = ASImageNodeRoundBorderModificationBlock(0, nil)
+            }
+            if imageNode?.url != avatarURL{
+                imageNode?.url = avatarURL
+            }
+        }else{
+            imageNode = nil
+        }
+        
+        // Setup titleNode
+        if viewModel.title != nil{
+            if titleNode == nil{
+                titleNode = ASTextNode()
+                titleNode!.truncationMode = .byTruncatingTail
+                titleNode!.maximumNumberOfLines = 1
+            }
+            let attributedText = atributedString(viewModel.title!,
+                                                 fontSize: 16,
+                                                 isBold: false,
+                                                 foregroundColor: UIColor(named: "title_in_cell_color")!)
+            titleNode!.attributedText = attributedText
+        }else{
+            titleNode = nil
+        }
+        
+        // Setup subTitleNode
+        if viewModel.subTitle != nil{
+            if subTitleNode == nil{
+                subTitleNode = ASTextNode()
+                subTitleNode!.truncationMode = .byTruncatingTail
+                subTitleNode!.maximumNumberOfLines = 1
+            }
+            let attributedText = atributedString(viewModel.subTitle!,
+                                                 fontSize: 14,
+                                                 isBold: false,
+                                                 foregroundColor: UIColor(named: "normal_sub_title_in_cell_color")!)
+            subTitleNode!.attributedText = attributedText
+            
+        }else{
+            subTitleNode = nil
+        }
+        
+        
+        var icon = viewModel.icon1RightTitle
+        if icon != nil{
+            icon1RightTitleNode = icon
+            icon1RightTitleNode!.style.preferredSize = CGSize(squareEdge: 17)
+        }else{
+            icon1RightTitleNode = nil
+        }
+        
+        icon = viewModel.icon2RightTitle
+        if icon != nil{
+            icon2RightTitleNode = icon
+            icon2RightTitleNode!.style.preferredSize = CGSize(squareEdge: 20)
+        }else{
+            icon2RightTitleNode = nil
+        }
     }
     
     //        ---------------------------------------------

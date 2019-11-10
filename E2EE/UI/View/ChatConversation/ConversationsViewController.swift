@@ -344,3 +344,15 @@ extension ConversationsViewController : DataManagerListenerDelegate{
         }
     }
 }
+
+extension ConversationsViewController{
+    private func reloadUI(){
+        tableNode.reloadData()
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        
+        reloadUI()
+    }
+}

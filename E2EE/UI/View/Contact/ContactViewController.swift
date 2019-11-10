@@ -70,10 +70,12 @@ class ContactViewController: ASViewController<ASDisplayNode>{
     
     
     func deleteItem(at indexPath : IndexPath){
-        viewModels[indexPath.section].remove(at: indexPath.row)
-        if viewModels[indexPath.section].count == 0{
-            keyViewModels.remove(at: indexPath.section)
-            viewModels.remove(at: indexPath.section)
+        let section = indexPath.section
+        viewModels[section].remove(at: indexPath.row)
+        
+        if viewModels[section].count == 0{
+            keyViewModels.remove(at: section)
+            viewModels.remove(at: section)
         }
         self.tableNode.deleteRow(at: indexPath, withAnimation: .automatic)
     }
@@ -143,3 +145,14 @@ extension ContactViewController : ContactDataSource{
     
 }
 
+extension ContactViewController{
+    private func reloadUI(){
+        tableNode.reloadData()
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        
+        reloadUI()
+    }
+}
