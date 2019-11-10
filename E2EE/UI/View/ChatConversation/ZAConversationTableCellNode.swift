@@ -24,7 +24,7 @@ class ZAConversationTableCellNode: ASCellNode {
     init(viewModel : ZAConversationViewModel) {
         super.init()
         
-        self.backgroundColor = UIColor.white
+        self.backgroundColor = UIColor(named: "conversation_cell_color")
         self.automaticallyManagesSubnodes = true
         
         self.viewModel = viewModel
@@ -103,8 +103,8 @@ class ZAConversationTableCellNode: ASCellNode {
                                             string: viewModel.title!,
                                             fontSize: 16,
                                             isHighLight: !isReadMsg,
-                                            highLightColor: .black,
-                                            normalColor: .black)
+                                            highLightColor: UIColor(named: "title_in_cell_color")!,
+                                            normalColor: UIColor(named: "title_in_cell_color")!)
         }else{
             titleNode = nil
         }
@@ -120,8 +120,8 @@ class ZAConversationTableCellNode: ASCellNode {
                                             string: viewModel.subTitle!,
                                             fontSize: 14,
                                             isHighLight: !isReadMsg,
-                                            highLightColor: .black,
-                                            normalColor: .darkGray)
+                                            highLightColor: UIColor(named: "highlight_sub_title_in_cell_color")!,
+                                            normalColor: UIColor(named: "normal_sub_title_in_cell_color")!)
             
         }else{
             subTitleNode = nil
@@ -137,8 +137,8 @@ class ZAConversationTableCellNode: ASCellNode {
                                             string: viewModel.rightTitle!,
                                             fontSize: 12,
                                             isHighLight: !isReadMsg,
-                                            highLightColor: .black,
-                                            normalColor: .darkGray)
+                                            highLightColor: UIColor(named: "highlight_sub_title_in_cell_color")!,
+                                            normalColor: UIColor(named: "normal_sub_title_in_cell_color")!)
         }else{
             rightTitleNode = nil
         }
@@ -208,7 +208,7 @@ class ZAConversationTableCellNode: ASCellNode {
             arrayOfRightSubTopContent.append(rightTitleNode!)
         }
         rightSubTopContentStack.children = arrayOfRightSubTopContent
-        rightSubTopContentStack.spacing = 5
+        rightSubTopContentStack.spacing = 10
         
         // BottomSubContent
         var arrayOfBottomSubContent = Array<ASLayoutElement>()

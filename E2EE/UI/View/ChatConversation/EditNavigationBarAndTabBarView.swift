@@ -35,7 +35,7 @@ class EditNavigationBarAndTabBarView: NSObject {
         let edgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         // NavigationBar
         editNavigationBar.frame = navigationViewFrame
-        editNavigationBar.backgroundColor = .white
+        editNavigationBar.backgroundColor = UIColor(named: "navigationbar_color")!
         
         updateLeftButtonInEditNavigation()
         leftButtonInNavigationBar.addTarget(target,
@@ -60,7 +60,7 @@ class EditNavigationBarAndTabBarView: NSObject {
         
         // TabBar
         editTabBar.frame = toolBarViewFrame
-        editTabBar.backgroundColor = .white
+        editTabBar.backgroundColor = UIColor(named: "tabbar_color")!
         
         updateLeftButtonInEditTabBar()
         leftButtonInTabBar.addTarget(target,
