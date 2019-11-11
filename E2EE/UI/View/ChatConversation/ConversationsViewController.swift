@@ -36,6 +36,25 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
                                               rightBottomButtonAction: #selector(rightBottomButtonAction(button:)))
     }()
     
+    var numberOfNewMsg : Int = 0{
+        didSet{
+            var badgeValue : String?
+            
+            let maxNumberOfUnreadMsg = 99
+            if self.numberOfNewMsg > maxNumberOfUnreadMsg{
+                badgeValue = String(maxNumberOfUnreadMsg) + "+"
+            }else if self.numberOfNewMsg > 0{
+                badgeValue = String(self.numberOfNewMsg)
+            }else{
+                badgeValue = nil
+            }
+            
+            DispatchQueue.main.async {
+                self.tabBarItem.badgeValue = badgeValue
+            }
+        }
+    }
+    
     init() {
         super.init(node: tableNode)
     }
@@ -46,7 +65,7 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-      
+        
         setup()
     }
     
@@ -56,8 +75,7 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         tableNode.setNeedsLayout()
         tableNode.layoutIfNeeded()
         
-        DataManager.shared.addObserver(target: self, callBackQueue: DispatchQueue.main)
-        
+        DataManager.shared.addObserver(for: .conversation, target: self, callBackQueue: DispatchQueue.main)
         // Fetch data
         DataManager.shared.fetchConversations( { (conversations) in
             var t = conversations
@@ -68,9 +86,15 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
                 return true
             }
             
+            var numberOfUnreadMsg = 0
             for c in t{
                 self.viewModels.append(ZAConversationViewModel(conversation: c as! ChatConversation))
+                
+                // Count how many unread message
+                numberOfUnreadMsg += c.numberOfNewMsg
             }
+            
+            self.numberOfNewMsg = numberOfUnreadMsg
             
             DispatchQueue.main.async {
                 self.tableNode.reloadData()
@@ -81,10 +105,15 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     func markItemsAsRead(items : [ZAConversationViewModel]){
         for item in items {
             let indexOfItem = self.viewModels.firstIndex(of: item)
+            let numberOfUnreadMsgInModel = item.subTitleDetailValue
             
             if indexOfItem != nil{
-                DataManager.shared.markConversationAsReadWithID(item.modelID!)
-                tableNode.reloadDataInCellNode(at: IndexPath(row: indexOfItem!, section: 0))
+                DataManager.shared.markConversationAsReadWithID(item.modelID!, completion: {() -> Void in
+                    DispatchQueue.main.async {
+                        self.tableNode.reloadDataInCellNode(at: IndexPath(row: indexOfItem!, section: 0))
+                        self.numberOfNewMsg -= numberOfUnreadMsgInModel
+                    }
+                })
             }
         }
     }
@@ -103,11 +132,17 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     func deleteItems(items : Array<ZAConversationViewModel>){
         for item in items {
             let indexOfItem = self.viewModels.firstIndex(of: item)
+            let numberOfUnreadMsgInModel = item.subTitleDetailValue
             
             if indexOfItem != nil{
-                self.viewModels.remove(at: indexOfItem!)
-                
-                self.tableNode.deleteRow(at: IndexPath(row: indexOfItem!, section: 0), withAnimation: .automatic)
+                DataManager.shared.deleteConversationWithID(item.modelID!) {
+                    DispatchQueue.main.async {
+                        self.numberOfNewMsg -= numberOfUnreadMsgInModel
+                        
+                        self.viewModels.remove(at: indexOfItem!)
+                        self.tableNode.deleteRow(at: IndexPath(row: indexOfItem!, section: 0), withAnimation: .automatic)
+                    }
+                }
             }
         }
         
@@ -115,7 +150,7 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     
     func muteItem(at indexPath : IndexPath, time : TimeInterval){
         let cvsID = viewModels[indexPath.row].modelID
-        DataManager.shared.muteConversation(cvsID: cvsID!, time: time) { () -> Void? in
+        DataManager.shared.muteConversation(cvsID: cvsID!, time: time) {
             DispatchQueue.main.async {
                 self.tableNode.reloadDataInCellNode(at: indexPath)
             }
@@ -124,12 +159,11 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     
     func unmuteItem(at indexPath : IndexPath){
         let cvsID = viewModels[indexPath.row].modelID
-        DataManager.shared.unmuteConversation(cvsID: cvsID!) { () -> Void? in
+        DataManager.shared.unmuteConversation(cvsID: cvsID!) {
             DispatchQueue.main.async {
                 self.tableNode.reloadDataInCellNode(at: indexPath)
             }
         }
-       
     }
 }
 
@@ -177,16 +211,16 @@ extension ConversationsViewController{
         let message = "Không thông báo tin nhắn mới của hội thoại này"
         
         let mute1h = UIAlertAction(title: "Trong 1 tiếng", style: .default, handler: { action in
-            self.muteItem(at: indexPath, time: Date.timeIntervalSinceReferenceDate + HOURS)
+            self.muteItem(at: indexPath, time: thePresentTime + HOURS)
         })
         let mute4h = UIAlertAction(title: "Trong 4 tiếng", style: .default, handler: { action in
-            self.muteItem(at: indexPath, time: Date.timeIntervalSinceReferenceDate + 4 * HOURS)
+            self.muteItem(at: indexPath, time: thePresentTime + 4 * HOURS)
         })
         let mute8h = UIAlertAction(title: "Trong 8 tiếng", style: .default, handler: { action in
-            self.muteItem(at: indexPath, time: Date.timeIntervalSinceReferenceDate + 8 * HOURS)
+            self.muteItem(at: indexPath, time: thePresentTime + 8 * HOURS)
         })
         let muteUnlimited = UIAlertAction(title: "Cho đến khi được mở lại", style: .default, handler: { action in
-            self.muteItem(at: indexPath, time: 2 * Date.timeIntervalSinceReferenceDate)
+            self.muteItem(at: indexPath, time: 2 * thePresentTime)
         })
         
         let cancel = UIAlertAction(title: "Huỷ", style: .cancel, handler: { action in })
@@ -321,26 +355,44 @@ extension ConversationsViewController{
 }
 
 extension ConversationsViewController : DataManagerListenerDelegate{
-    func createNewConversation(_ cvs: Conversation) {
-        let modelView = ZAConversationViewModel(conversation: cvs as! ChatConversation)
-        viewModels.insert(modelView, at: 0)
-
-        tableNode.insertRow(at: IndexPath(row: 0, section: 0), withAnimation: .automatic)
+    func messageChanged(_ msg: Message, dataChanged: DataChangedType) {
+        
     }
     
-    func conversationChanged(cvsID: ConversationID) {
-        let index = viewModels.firstIndex { (c) -> Bool in
-            return c.modelID == cvsID
-        }
-        if index != nil{
-            if index! != 0{
-                let item = viewModels.remove(at: index!)
-                viewModels.insert(item, at: 0)
+    func userChanged(_ user: User, dataChanged: DataChangedType) {
+        
+    }
 
-                tableNode.moveRow(at: IndexPath(row: index!, section: 0), to: IndexPath(row: 0, section: 0))
-            }else{
-                tableNode.reloadDataInCellNode(at: IndexPath(row: 0, section: 0))
+    func conversationChanged(_ cvs: Conversation, dataChanged: DataChangedType) {
+        switch dataChanged {
+        case .new:
+            numberOfNewMsg += 1
+            
+            let modelView = ZAConversationViewModel(conversation: cvs as! ChatConversation)
+            viewModels.insert(modelView, at: 0)
+            
+            tableNode.insertRow(at: IndexPath(row: 0, section: 0), withAnimation: .automatic)
+            
+        case .changed:
+            let index = viewModels.firstIndex { (c) -> Bool in
+                return c.modelID == cvs.id
             }
+            if index != nil{
+                
+                numberOfNewMsg += 1
+                
+                if index! != 0{
+                    let item = viewModels.remove(at: index!)
+                    viewModels.insert(item, at: 0)
+                    
+                    tableNode.moveRow(at: IndexPath(row: index!, section: 0), to: IndexPath(row: 0, section: 0))
+                }else{
+                    tableNode.reloadDataInCellNode(at: IndexPath(row: 0, section: 0))
+                }
+            }
+        
+        case .delete:
+            print("Delete conversation")
         }
     }
 }

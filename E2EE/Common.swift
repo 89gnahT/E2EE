@@ -13,3 +13,7 @@ let HOURS = TimeInterval(3600)
 let DAY = TimeInterval(86400)
 let WEEK = TimeInterval(604800)
 
+var thePresentTime : TimeInterval{
+    return Date.timeIntervalSinceReferenceDate
+}
+

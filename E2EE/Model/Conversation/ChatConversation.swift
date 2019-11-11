@@ -13,13 +13,15 @@ class ChatConversation: Conversation {
          membersID: Array<UserID>,
          nameConversation: String,
          lastMsg: Message,
-         muteTime : TimeInterval = MsgTime.TimeInvalidate)
+         muteTime : TimeInterval = MsgTime.TimeInvalidate,
+         numberOfUnreadMsg : Int = 0)
     {
         super.init(cvsID: cvsID,
                    type: .chat,
                    membersID: membersID,
                    nameConversation: nameConversation,
                    lastMsg: lastMsg,
-                   muteTime: muteTime)
+                   muteTime: muteTime,
+                   numberOfUnreadMsg: numberOfUnreadMsg)
     }
 }

@@ -60,4 +60,17 @@ class Message: NSObject {
         
         super.init()
     }
+    
+    func isUnread() -> Bool{
+        return time.seen == MsgTime.TimeInvalidate || time.seen < time.sent
+    }
+    
+    func markAsRead() -> Bool{
+        if isUnread(){
+            time.seen = thePresentTime
+            return true
+        }else{
+            return false
+        }
+    }
 }

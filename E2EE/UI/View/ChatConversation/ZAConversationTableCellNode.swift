@@ -17,7 +17,7 @@ class ZAConversationTableCellNode: ASCellNode {
     var iconRightTitleNode : ASImageNode?
     
     var subTitleNode : ASTextNode?
-    var iconRightSubTitleNode : ASTextNode?
+    var subTitleDetailNode : ASTextNode?
     
     private var viewModel : ZAConversationViewModel!
     
@@ -122,10 +122,29 @@ class ZAConversationTableCellNode: ASCellNode {
                                             isHighLight: !isReadMsg,
                                             highLightColor: UIColor(named: "highlight_sub_title_in_cell_color")!,
                                             normalColor: UIColor(named: "normal_sub_title_in_cell_color")!)
-            
+
         }else{
             subTitleNode = nil
         }
+        
+        if viewModel.subTitleDetail != nil{
+            if subTitleDetailNode == nil{
+                subTitleDetailNode = ASTextNode()
+                subTitleDetailNode?.backgroundColor = .systemRed
+                subTitleDetailNode?.cornerRadius = 7
+                subTitleDetailNode?.clipsToBounds = true
+            }
+            setAtributedStringForASTextNode(subTitleDetailNode!,
+                                            string: viewModel.subTitleDetail!,
+                                            fontSize: 12,
+                                            isHighLight: !isReadMsg,
+                                            highLightColor: .white,
+                                            normalColor: .white)
+            
+        }else{
+            subTitleDetailNode = nil
+        }
+        
         
         // Setup rightTitleNode
         if viewModel.rightTitle != nil{
@@ -218,11 +237,10 @@ class ZAConversationTableCellNode: ASCellNode {
             
             arrayOfBottomSubContent.append(subTitleNode!)
         }
-        if iconRightSubTitleNode != nil{
-            arrayOfBottomSubContent.append(iconRightSubTitleNode!)
+        if subTitleDetailNode != nil{
+            arrayOfBottomSubContent.append(subTitleDetailNode!)
         }
         bottomSubContentStack.children = arrayOfBottomSubContent
-        bottomSubContentStack.spacing = 10
         bottomSubContentStack.justifyContent = .spaceBetween
         
         return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12), child: contentStack)
