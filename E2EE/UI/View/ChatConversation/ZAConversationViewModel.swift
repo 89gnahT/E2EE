@@ -41,7 +41,7 @@ class ZAConversationViewModel  : NSObject{
         }
         var timeString : String
         
-        let deltaTime = Date.timeIntervalSinceReferenceDate - time!
+        let deltaTime = thePresentTime - time!
         func round(_ x : Double)->String{
             return String(Int(x + 0.5))
         }
@@ -68,7 +68,7 @@ class ZAConversationViewModel  : NSObject{
                         
                         timeString = getTimeWithFormath(time: time!, format: "dd/MM/yyyy")
                         
-                        if timeString.hasSuffix(getTimeWithFormath(time: Date.timeIntervalSinceReferenceDate, format: "yyyy")){
+                        if timeString.hasSuffix(getTimeWithFormath(time: thePresentTime, format: "yyyy")){
                             timeString = getTimeWithFormath(time: time!, format: "dd/MM")
                         }
         }
@@ -77,7 +77,7 @@ class ZAConversationViewModel  : NSObject{
     }
     
     public var subTitle : String?{
-        guard (model != nil) else {
+        guard (model != nil && model?.lastMsg != nil) else {
             return nil
         }
         
@@ -92,19 +92,41 @@ class ZAConversationViewModel  : NSObject{
         return subTitle
     }
     
+    public var subTitleDetailValue : Int{
+        guard (model != nil) else {
+            return 0
+        }
+        return model!.numberOfNewMsg
+    }
+    
+    public var subTitleDetail : String?{
+        guard (model != nil) else {
+            return nil
+        }
+        
+        var string : String?
+        let value = subTitleDetailValue
+        if value <= 0{
+            string = nil
+        }else{
+            if value > 5{
+                string = " 5+ "
+            }else{
+                string = "  " + String(value) + "  "
+            }
+        }
+        return string
+    }
+    
     public var isReadMsg : Bool?{
         guard (model != nil && model?.lastMsg != nil) else {
             return nil
         }
-        let msgTime = model?.lastMsg.time
-        if msgTime?.seen != MsgTime.TimeInvalidate{
-            return true
-        }
-        return false
+        return !(model?.lastMsg.isUnread())!
     }
     
     public var isMute : Bool{
-        return !(Date.timeIntervalSinceReferenceDate > model?.muteTime ?? 0)
+        return !(thePresentTime > model?.muteTime ?? 0)
     }
     
     public var iconRightSubTitle : ASImageNode?{

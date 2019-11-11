@@ -22,13 +22,15 @@ class Conversation: NSObject {
     var lastMsg : Message
     var type : ConversationType
     var muteTime : TimeInterval
+    var numberOfNewMsg : Int
     
     init(cvsID : ConversationID,
          type : ConversationType,
          membersID : Array<UserID>,
          nameConversation : String,
          lastMsg : Message,
-         muteTime : TimeInterval)
+         muteTime : TimeInterval,
+         numberOfUnreadMsg : Int = 0)
     {
         self.id = cvsID
         self.type = type
@@ -36,6 +38,7 @@ class Conversation: NSObject {
         self.nameConversation = nameConversation
         self.lastMsg = lastMsg
         self.muteTime = muteTime
+        self.numberOfNewMsg = numberOfUnreadMsg
         
         super.init()
     }

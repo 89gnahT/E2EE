@@ -24,7 +24,7 @@ class TabBarViewController: UIViewController, UITabBarControllerDelegate {
         chatListVC.title = "Tin nhắn"
         chatListVC.tabBarItem.image = UIImage(named: "message_icon")
         chatListVC.tabBarItem.selectedImage = UIImage(named: "message_selected_icon")
-     
+        
         friendListVC.title = "Danh bạ"
         friendListVC.tabBarItem.image = UIImage(named: "contact_icon")
         friendListVC.tabBarItem.selectedImage = UIImage(named: "contact_selected_icon")
@@ -43,7 +43,7 @@ class TabBarViewController: UIViewController, UITabBarControllerDelegate {
         tabBarCtl.tabBar.backgroundColor = UIColor(named: "tabbar_color")!
         tabBarCtl.tabBar.barTintColor = UIColor(named: "tabbar_color")!
         self.view.addSubview(tabBarCtl.view)
-        
+
         navigationController?.setNavigationBarHidden(true, animated: true)
     }
 }
