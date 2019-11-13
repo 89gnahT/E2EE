@@ -1,14 +1,21 @@
 //
-//  Conversation.swift
-//  LearnTextureKit
+//  ConversationEntity.swift
+//  E2EE
 //
-//  Created by CPU12015 on 10/23/19.
-//  Copyright © 2019 CPU12015. All rights reserved.
+//  Created by CPU12015 on 11/13/19.
+//  Copyright © 2019 ThangNVH. All rights reserved.
 //
 
 import UIKit
 
-class Conversation: NSObject {
+typealias ConversationID = String
+
+enum ConversationType {
+    case chat
+    case groupChat
+}
+
+class ConversationEntity {
     var id : ConversationID
     var membersID : Array<UserID>
     var nameConversation : String
@@ -32,7 +39,5 @@ class Conversation: NSObject {
         self.lastMsg = lastMsg
         self.muteTime = muteTime
         self.numberOfNewMsg = numberOfUnreadMsg
-        
-        super.init()
     }
 }

@@ -1,14 +1,23 @@
 //
-//  User.swift
-//  LearnTextureKit
+//  UserEntity.swift
+//  E2EE
 //
-//  Created by CPU12015 on 10/23/19.
-//  Copyright © 2019 CPU12015. All rights reserved.
+//  Created by CPU12015 on 11/13/19.
+//  Copyright © 2019 ThangNVH. All rights reserved.
 //
 
 import UIKit
 
-class User: NSObject {
+public typealias UserID = String
+
+enum Gender {
+    case male
+    case female
+    case other
+    case none
+}
+
+class UserEntity {
     var id : UserID
     var name : String
     var nickName : String
@@ -25,7 +34,5 @@ class User: NSObject {
         self.nickName = name
         self.gender = gender
         self.avatarURL = avatarURL
-        
-        super.init()
     }
 }

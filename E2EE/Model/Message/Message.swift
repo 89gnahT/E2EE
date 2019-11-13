@@ -8,12 +8,6 @@
 
 import UIKit
 
-typealias MsgID = String
-
-enum MsgType {
-    case text
-    case image
-}
 
 struct MsgTime {
     var sent : TimeInterval

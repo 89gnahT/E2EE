@@ -93,6 +93,9 @@
 		C2763789236BD981007A563D /* SessionSignedPreKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2763758236BD981007A563D /* SessionSignedPreKey.swift */; };
 		C276378A236BD981007A563D /* SessionSignedPreKeyPublic.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2763759236BD981007A563D /* SessionSignedPreKeyPublic.swift */; };
 		C276378B236BD981007A563D /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C276375A236BD981007A563D /* SessionState.swift */; };
+		DD410253237BA1BD00DD4D72 /* MessageEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD410252237BA1BD00DD4D72 /* MessageEntity.swift */; };
+		DD410255237BA1CA00DD4D72 /* UserEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD410254237BA1CA00DD4D72 /* UserEntity.swift */; };
+		DD410257237BA20600DD4D72 /* ConversationEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD410256237BA20600DD4D72 /* ConversationEntity.swift */; };
 		F4D44E6B86E36F0F0BBDB786 /* Pods_E2EETests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4F3E4287CAF0019291820F /* Pods_E2EETests.framework */; };
 /* End PBXBuildFile section */
 
@@ -212,6 +215,9 @@
 		C2763759236BD981007A563D /* SessionSignedPreKeyPublic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionSignedPreKeyPublic.swift; sourceTree = "<group>"; };
 		C276375A236BD981007A563D /* SessionState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
 		CB87BCF5BB3B7F7B68654098 /* Pods-E2EE.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EE.release.xcconfig"; path = "Target Support Files/Pods-E2EE/Pods-E2EE.release.xcconfig"; sourceTree = "<group>"; };
+		DD410252237BA1BD00DD4D72 /* MessageEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEntity.swift; sourceTree = "<group>"; };
+		DD410254237BA1CA00DD4D72 /* UserEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEntity.swift; sourceTree = "<group>"; };
+		DD410256237BA20600DD4D72 /* ConversationEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationEntity.swift; sourceTree = "<group>"; };
 		FEEAD81F2887B72589C0187B /* Pods-E2EE.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EE.debug.xcconfig"; path = "Target Support Files/Pods-E2EE/Pods-E2EE.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -369,12 +375,13 @@
 				4883F82423751A0D004C3F83 /* Model */,
 				4883F82E23751A0E004C3F83 /* UI */,
 				4883F8502375557A004C3F83 /* DataManager.swift */,
+				DD410251237BA17400DD4D72 /* Entity */,
 				480AEFA823766275009B1179 /* DataStore.swift */,
 				4883F8522375720E004C3F83 /* Common.swift */,
-				814F61C023595A3700A6AA44 /* Main.storyboard */,
 				480AEFAC2378473E009B1179 /* Color.xcassets */,
 				814F61C323595A3A00A6AA44 /* Assets.xcassets */,
 				814F61C523595A3A00A6AA44 /* LaunchScreen.storyboard */,
+				814F61C023595A3700A6AA44 /* Main.storyboard */,
 				814F61C823595A3A00A6AA44 /* Info.plist */,
 			);
 			path = E2EE;
@@ -546,6 +553,16 @@
 				2B4F3E4287CAF0019291820F /* Pods_E2EETests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DD410251237BA17400DD4D72 /* Entity */ = {
+			isa = PBXGroup;
+			children = (
+				DD410252237BA1BD00DD4D72 /* MessageEntity.swift */,
+				DD410254237BA1CA00DD4D72 /* UserEntity.swift */,
+				DD410256237BA20600DD4D72 /* ConversationEntity.swift */,
+			);
+			path = Entity;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -811,11 +828,13 @@
 				C25D7282236BDD0B00359C11 /* DeviceConsistencySignature.swift in Sources */,
 				C2763780236BD981007A563D /* SenderChain.swift in Sources */,
 				C2763785236BD981007A563D /* SessionPreKey.swift in Sources */,
+				DD410255237BA1CA00DD4D72 /* UserEntity.swift in Sources */,
 				C2763771236BD981007A563D /* SignalMessage.swift in Sources */,
 				4883F84823751A0E004C3F83 /* ZAContactTableCellNode.swift in Sources */,
 				C276377F236BD981007A563D /* ReceiverChain.swift in Sources */,
 				C276375F236BD981007A563D /* GroupCipher.swift in Sources */,
 				C276376C236BD981007A563D /* SignedPreKeyStore.swift in Sources */,
+				DD410253237BA1BD00DD4D72 /* MessageEntity.swift in Sources */,
 				C2763789236BD981007A563D /* SessionSignedPreKey.swift in Sources */,
 				C2763787236BD981007A563D /* SessionPreKeyPublic.swift in Sources */,
 				C2763769236BD981007A563D /* PreKeyStore.swift in Sources */,
@@ -829,6 +848,7 @@
 				C2763765236BD981007A563D /* ScannableFingerprint.swift in Sources */,
 				C2763762236BD981007A563D /* SignalError.swift in Sources */,
 				C2763770236BD981007A563D /* SenderKeyMessage.swift in Sources */,
+				DD410257237BA20600DD4D72 /* ConversationEntity.swift in Sources */,
 				814F61BF23595A3700A6AA44 /* ViewController.swift in Sources */,
 				C276376E236BD981007A563D /* PreKeySignalMessage.swift in Sources */,
 				4883F83E23751A0E004C3F83 /* TextMessage.swift in Sources */,
