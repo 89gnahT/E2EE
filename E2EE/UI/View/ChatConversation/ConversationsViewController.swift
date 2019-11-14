@@ -13,9 +13,9 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     
     let tableNode = ConversationsTableNode()
     
-    var viewModels = Array<ZAConversationViewModel>()
+    var viewModels = Array<ChatConversationViewModel>()
     
-    var listSelectedItemsInEdittingMode = Array<ZAConversationViewModel>()
+    var listSelectedItemsInEdittingMode = Array<ChatConversationViewModel>()
     
     var isEdittingMode : Bool = false{
         didSet{
@@ -70,52 +70,47 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     }
     
     func setup(){
+        title = "Tin nhắn"
+        tabBarItem.image = UIImage(named: "message_icon")
+        tabBarItem.selectedImage = UIImage(named: "message_selected_icon")
         tableNode.dataSource = self
         tableNode.delegate = self
         tableNode.setNeedsLayout()
         tableNode.layoutIfNeeded()
         
-        DataManager.shared.addObserver(for: .conversation, target: self, callBackQueue: DispatchQueue.main)
+        CDataManager.shared.addObserver(for: .conversation, target: self, callBackQueue: DispatchQueue.main)
         // Fetch data
-        DataManager.shared.fetchConversations( { (conversations) in
-            var t = conversations
-            t.sort { (a, b) -> Bool in
-                if a.lastMsg.time.sent < b.lastMsg.time.sent{
-                    return false
-                }
-                return true
-            }
-            
+        CDataManager.shared.fetchConversations( { (conversations) in
             var numberOfUnreadMsg = 0
-            for c in t{
-                self.viewModels.append(ZAConversationViewModel(conversation: c as! ChatConversation))
-                
+            for c in conversations{
+                self.viewModels.append(ChatConversationViewModel(model: c as! ChatConversationModel))
+
                 // Count how many unread message
-                numberOfUnreadMsg += c.numberOfNewMsg
+                numberOfUnreadMsg += c.numberOfUnreadMessages()
             }
-            
+
             self.numberOfNewMsg = numberOfUnreadMsg
-            
+
             DispatchQueue.main.async {
                 self.tableNode.reloadData()
             }
         })
     }
     
-    func markItemsAsRead(items : [ZAConversationViewModel]){
-        for item in items {
-            let indexOfItem = self.viewModels.firstIndex(of: item)
-            let numberOfUnreadMsgInModel = item.subTitleDetailValue
-            
-            if indexOfItem != nil{
-                DataManager.shared.markConversationAsReadWithID(item.modelID!, completion: {() -> Void in
-                    DispatchQueue.main.async {
-                        self.tableNode.reloadDataInCellNode(at: IndexPath(row: indexOfItem!, section: 0))
-                        self.numberOfNewMsg -= numberOfUnreadMsgInModel
-                    }
-                })
-            }
-        }
+    func markItemsAsRead(items : [ChatConversationViewModel]){
+//        for item in items {
+//            let indexOfItem = self.viewModels.firstIndex(of: item)
+//            let numberOfUnreadMsgInModel = item.subTitleDetailValue
+//
+//            if indexOfItem != nil{
+////                CDataManager.shared.markConversationAsReadWithID(item.modelID!, completion: {() -> Void in
+////                    DispatchQueue.main.async {
+////                        self.tableNode.reloadDataInCellNode(at: IndexPath(row: indexOfItem!, section: 0))
+////                        self.numberOfNewMsg -= numberOfUnreadMsgInModel
+////                    }
+////                })
+//            }
+//        }
     }
     
     
@@ -129,48 +124,48 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         }
     }
     
-    func deleteItems(items : Array<ZAConversationViewModel>){
-        for item in items {
-            let indexOfItem = self.viewModels.firstIndex(of: item)
-            let numberOfUnreadMsgInModel = item.subTitleDetailValue
-            
-            if indexOfItem != nil{
-                DataManager.shared.deleteConversationWithID(item.modelID!) {
-                    DispatchQueue.main.async {
-                        self.numberOfNewMsg -= numberOfUnreadMsgInModel
-                        
-                        self.viewModels.remove(at: indexOfItem!)
-                        self.tableNode.deleteRow(at: IndexPath(row: indexOfItem!, section: 0), withAnimation: .automatic)
-                    }
-                }
-            }
-        }
+    func deleteItems(items : Array<ChatConversationViewModel>){
+//        for item in items {
+//            let indexOfItem = self.viewModels.firstIndex(of: item)
+//            let numberOfUnreadMsgInModel = item.subTitleDetailValue
+//
+//            if indexOfItem != nil{
+////                CDataManager.shared.deleteConversationWithID(item.modelID!) {
+////                    DispatchQueue.main.async {
+////                        self.numberOfNewMsg -= numberOfUnreadMsgInModel
+////
+////                        self.viewModels.remove(at: indexOfItem!)
+////                        self.tableNode.deleteRow(at: IndexPath(row: indexOfItem!, section: 0), withAnimation: .automatic)
+////                    }
+////                }
+//            }
+//        }
         
     }
     
     func muteItem(at indexPath : IndexPath, time : TimeInterval){
-        let cvsID = viewModels[indexPath.row].modelID
-        DataManager.shared.muteConversation(cvsID: cvsID!, time: time) {
-            DispatchQueue.main.async {
-                self.tableNode.reloadDataInCellNode(at: indexPath)
-            }
-        }
+        //let cvsID = viewModels[indexPath.row].modelID
+//        CDataManager.shared.muteConversation(cvsID: cvsID!, time: time) {
+//            DispatchQueue.main.async {
+//                self.tableNode.reloadDataInCellNode(at: indexPath)
+//            }
+//        }
     }
     
     func unmuteItem(at indexPath : IndexPath){
-        let cvsID = viewModels[indexPath.row].modelID
-        DataManager.shared.unmuteConversation(cvsID: cvsID!) {
-            DispatchQueue.main.async {
-                self.tableNode.reloadDataInCellNode(at: indexPath)
-            }
-        }
+        //let cvsID = viewModels[indexPath.row].modelID
+//        CDataManager.shared.unmuteConversation(cvsID: cvsID!) {
+//            DispatchQueue.main.async {
+//                self.tableNode.reloadDataInCellNode(at: indexPath)
+//            }
+//        }
     }
 }
 
 // MARK: Display alert
 extension ConversationsViewController{
     
-    func alertMarkItemsAsRead(items : [ZAConversationViewModel], completion: (() -> Void)?){
+    func alertMarkItemsAsRead(items : [ChatConversationViewModel], completion: (() -> Void)?){
         let message = "Đánh dấu đã đọc " + String(items.count) + " cuộc trò chuyện này?"
         
         let delete = UIAlertAction(title: "Không", style: .cancel, handler: { action in })
@@ -186,7 +181,7 @@ extension ConversationsViewController{
         displayAlert(title: "Xác nhận", message: message, actions: [delete, dontDelete], preferredStyle: .alert)
     }
     
-    func alertDeleteItems(items : Array<ZAConversationViewModel>, completion: (() -> Void)?){
+    func alertDeleteItems(items : Array<ChatConversationViewModel>, completion: (() -> Void)?){
         var message : String
         if items.count > 1{
             message = "Bạn có muốn xoá " + String(items.count) + " cuộc trò chuyện đã chọn?"
@@ -259,11 +254,11 @@ extension ConversationsViewController : ConversationsDelegate{
             let cancel = UIAlertAction(title: "Huỷ", style: .cancel, handler: { action in })
             
             var actions = Array<UIAlertAction>()
-            if self.viewModels[indexPath.row].isMute{
-                actions = [unmute, cancel]
-            }else{
-                actions = [mute, cancel]
-            }
+//            if self.viewModels[indexPath.row].isMute{
+//                actions = [unmute, cancel]
+//            }else{
+//                actions = [mute, cancel]
+//            }
             
             self.displayAlert(title: "Tuỳ chọn", message: "", actions: actions, preferredStyle: .actionSheet)
         })
@@ -297,16 +292,16 @@ extension ConversationsViewController : ConversationsDelegate{
     
     func tableNode(_ table: ConversationsTableNode, didDeselectRowAt indexPath: IndexPath) {
         if isEdittingMode{
-            let indexOfItem = listSelectedItemsInEdittingMode.firstIndex(of: viewModels[indexPath.row])
-            if indexOfItem != nil{
-                listSelectedItemsInEdittingMode.remove(at: indexOfItem!)
-            }
-            
-            editView.updateButtonInNavigationBarAndTabBar(numberOfItems: listSelectedItemsInEdittingMode.count)
-            
-            if listSelectedItemsInEdittingMode.count == 0{
-                exitEdittingMode()
-            }
+//            let indexOfItem = listSelectedItemsInEdittingMode.firstIndex(of: viewModels[indexPath.row])
+//            if indexOfItem != nil{
+//                listSelectedItemsInEdittingMode.remove(at: indexOfItem!)
+//            }
+//
+//            editView.updateButtonInNavigationBarAndTabBar(numberOfItems: listSelectedItemsInEdittingMode.count)
+//
+//            if listSelectedItemsInEdittingMode.count == 0{
+//                exitEdittingMode()
+//            }
         }else{
             
         }
@@ -324,7 +319,7 @@ extension ConversationsViewController : ConversationsDelegate{
 
 // MARK: DataSource
 extension ConversationsViewController : ConversationsDataSource{
-    func tableNode(_ table: ConversationsTableNode) -> Array<ZAConversationViewModel> {
+    func tableNode(_ table: ConversationsTableNode) -> Array<ChatConversationViewModel> {
         return viewModels 
     }
 }
@@ -355,45 +350,45 @@ extension ConversationsViewController{
 }
 
 extension ConversationsViewController : DataManagerListenerDelegate{
-    func messageChanged(_ msg: Message, dataChanged: DataChangedType) {
+    func messageChanged(_ msg: MessageModel, dataChanged: DataChangedType) {
         
     }
     
-    func userChanged(_ user: User, dataChanged: DataChangedType) {
+    func userChanged(_ user: UserModel, dataChanged: DataChangedType) {
         
     }
 
-    func conversationChanged(_ cvs: Conversation, dataChanged: DataChangedType) {
-        switch dataChanged {
-        case .new:
-            numberOfNewMsg += 1
-            
-            let modelView = ZAConversationViewModel(conversation: cvs as! ChatConversation)
-            viewModels.insert(modelView, at: 0)
-            
-            tableNode.insertRow(at: IndexPath(row: 0, section: 0), withAnimation: .automatic)
-            
-        case .changed:
-            let index = viewModels.firstIndex { (c) -> Bool in
-                return c.modelID == cvs.id
-            }
-            if index != nil{
-                
-                numberOfNewMsg += 1
-                
-                if index! != 0{
-                    let item = viewModels.remove(at: index!)
-                    viewModels.insert(item, at: 0)
-                    
-                    tableNode.moveRow(at: IndexPath(row: index!, section: 0), to: IndexPath(row: 0, section: 0))
-                }else{
-                    tableNode.reloadDataInCellNode(at: IndexPath(row: 0, section: 0))
-                }
-            }
-        
-        case .delete:
-            print("Delete conversation")
-        }
+    func conversationChanged(_ cvs: ConversationModel, dataChanged: DataChangedType) {
+//        switch dataChanged {
+//        case .new:
+//            numberOfNewMsg += 1
+//            
+//            let modelView = ChatConversationViewModel(model: cvs as! ChatConversationModel)
+//            viewModels.insert(modelView, at: 0)
+//            
+//            tableNode.insertRow(at: IndexPath(row: 0, section: 0), withAnimation: .automatic)
+//            
+//        case .changed:
+//            let index = viewModels.firstIndex { (c) -> Bool in
+//                return c.modelID == cvs.id
+//            }
+//            if index != nil{
+//                
+//                numberOfNewMsg += 1
+//                
+//                if index! != 0{
+//                    let item = viewModels.remove(at: index!)
+//                    viewModels.insert(item, at: 0)
+//                    
+//                    tableNode.moveRow(at: IndexPath(row: index!, section: 0), to: IndexPath(row: 0, section: 0))
+//                }else{
+//                    tableNode.reloadDataInCellNode(at: IndexPath(row: 0, section: 0))
+//                }
+//            }
+//        
+//        case .delete:
+//            print("Delete conversation")
+//        }
     }
 }
 

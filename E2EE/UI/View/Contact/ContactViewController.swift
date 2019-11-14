@@ -13,7 +13,7 @@ class ContactViewController: ASViewController<ASDisplayNode>{
     
     let tableNode = ContactTableNode()
     
-    var viewModels = Array<Array<ZAContactViewModel>>()
+    var viewModels = Array<Array<ContactViewModel>>()
     var keyViewModels = Array<String>()
     
     init() {
@@ -31,35 +31,39 @@ class ContactViewController: ASViewController<ASDisplayNode>{
     }
     
     func setup(){
+        title = "Danh bạ"
+        tabBarItem.image = UIImage(named: "contact_icon")
+        tabBarItem.selectedImage = UIImage(named: "contact_selected_icon")
+        
         tableNode.dataSource = self
         tableNode.delegate = self
         tableNode.setNeedsLayout()
         tableNode.layoutIfNeeded()
 
-        DataManager.shared.fetchContacts (completion: { (friends) in
-            func handleInputModel(input : inout Array<ZAContactViewModel>){
+        CDataManager.shared.fetchContacts (completion: { (friends) in
+            func handleInputModel(input : inout Array<ContactViewModel>){
                 input.sort { (a, b) -> Bool in
-                    return (a.title?.first)!.uppercased() < (b.title?.first)!.uppercased()
+                    return (a.model.name.first)!.uppercased() < (b.model.name.first)!.uppercased()
                 }
-                
+
                 var lastKey : String = ""
                 for m in input {
-                    let c = String((m.title?.first?.uppercased())!)
+                    let c = String(m.model.name.first!.uppercased())
                     if (c != lastKey){
                         lastKey = c
                         self.keyViewModels.append(c)
-                        self.viewModels.append(Array<ZAContactViewModel>())
+                        self.viewModels.append(Array<ContactViewModel>())
                     }
                     self.viewModels[self.viewModels.count - 1].append(m)
                 }
             }
-            
-            var modelViewsTemp = Array<ZAContactViewModel>()
+
+            var modelViewsTemp = Array<ContactViewModel>()
             for i in friends{
-                modelViewsTemp.append(ZAContactViewModel(model: i))
+                modelViewsTemp.append(ContactViewModel(model: i))
             }
             handleInputModel(input: &modelViewsTemp)
-            
+
             DispatchQueue.main.async {
                 self.tableNode.reloadData()
             }
@@ -81,20 +85,20 @@ class ContactViewController: ASViewController<ASDisplayNode>{
     }
     
     func alertDeleteItem(at indexPath : IndexPath, completion: (() -> Void)?){
-        let name = viewModels[indexPath.section][indexPath.row].title!
-        let message = "Bạn có muốn xoá bạn với " + name + "?"
-        
-        let delete = UIAlertAction(title: "Không", style: .cancel, handler: { action in })
+//        let name = viewModels[indexPath.section][indexPath.row].title!
+//        let message = "Bạn có muốn xoá bạn với " + name + "?"
+//
+//        let delete = UIAlertAction(title: "Không", style: .cancel, handler: { action in })
+//
+//        let dontDelete = UIAlertAction(title: "Có", style: .destructive, handler: { action in
+//            self.deleteItem(at: indexPath)
+//
+//            if (completion != nil){
+//                completion!()
+//            }
+//        })
 
-        let dontDelete = UIAlertAction(title: "Có", style: .destructive, handler: { action in
-            self.deleteItem(at: indexPath)
-
-            if (completion != nil){
-                completion!()
-            }
-        })
-
-        displayAlert(title: "Xác nhận", message: message, actions: [delete, dontDelete], preferredStyle: .alert)
+//        displayAlert(title: "Xác nhận", message: message, actions: [delete, dontDelete], preferredStyle: .alert)
     }
     
     func displayAlert(title : String, message : String, actions : [UIAlertAction], preferredStyle: UIAlertController.Style, completion: (() -> Void)? = nil){
@@ -139,7 +143,7 @@ extension ContactViewController : ContactDataSource{
         return keyViewModels
     }
     
-    func modelViews(for table: ContactTableNode) -> Array<Array<ZAContactViewModel>> {
+    func modelViews(for table: ContactTableNode) -> Array<Array<ContactViewModel>> {
         return viewModels
     }
     

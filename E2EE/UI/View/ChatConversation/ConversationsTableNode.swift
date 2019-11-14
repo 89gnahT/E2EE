@@ -22,7 +22,7 @@ import AsyncDisplayKit
 
 protocol ConversationsDataSource: NSObjectProtocol {
     
-    func tableNode(_ table: ConversationsTableNode) -> Array<ZAConversationViewModel>
+    func tableNode(_ table: ConversationsTableNode) -> Array<ChatConversationViewModel>
 }
 
 
@@ -32,7 +32,7 @@ class ConversationsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
     weak public var dataSource : ConversationsDataSource?
     
     private let tableNode = ASTableNode()
-    private var viewModels = Array<ZAConversationViewModel>()
+    private var viewModels = Array<ChatConversationViewModel>()
     
     public var isInEdittingMode : Bool = false{
         didSet{
@@ -102,7 +102,7 @@ class ConversationsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
     
     // Not reloadRow, this func does not create cellNode and just reload data from view model
     public func reloadDataInCellNode(at indexPath : IndexPath){
-        (tableNode.nodeForRow(at: indexPath) as! ZAConversationTableCellNode).reloadData()
+        (tableNode.nodeForRow(at: indexPath) as! ConversationViewCell).reloadData()
     }
 }
 
@@ -113,20 +113,13 @@ extension ConversationsTableNode: ASTableDelegate{
     }
     
     func tableNode(_ tableNode: ASTableNode, willDisplayRowWith node: ASCellNode) {
-        (node as! ZAConversationTableCellNode).reloadData()
+        (node as! ConversationViewCell).reloadData()
     }
     
     func tableNode(_ tableNode: ASTableNode, didDeselectRowAt indexPath: IndexPath) {
         delegate?.tableNode?(self, didDeselectRowAt: indexPath)
     }
     
-    func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
-        return {
-            print("create cell node")
-            let cellNode  = ZAConversationTableCellNode(viewModel: self.viewModels[indexPath.row])
-            return cellNode
-        }
-    }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         return delegate?.tableNode!(self, editActionsForRowAt: indexPath)
@@ -145,6 +138,14 @@ extension ConversationsTableNode: ASTableDelegate{
 
     // MARK: DataSource
 extension ConversationsTableNode: ASTableDataSource{
+    func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
+        return {
+            print("create cell node")
+            let cellNode  = ConversationViewCell(viewModel: self.viewModels[indexPath.row])
+            return cellNode
+        }
+    }
+    
     func numberOfSections(in tableNode: ASTableNode) -> Int {
         return 1
     }

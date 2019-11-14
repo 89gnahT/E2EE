@@ -17,16 +17,17 @@ enum Gender {
     case none
 }
 
-class UserEntity {
+struct UserEntity {
     var id : UserID
     var name : String
     var nickName : String
-    var avatarURL : String?
+    var avatarURL : String
+    var phoneNumber : String = ""
     var gender : Gender
     
-    init(id : String,
-         name : String,
-         avatarURL : String? = nil,
+    init(id : String = "",
+         name : String = "",
+         avatarURL : String = "",
          gender : Gender = .none)
     {
         self.id = id

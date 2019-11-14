@@ -19,7 +19,7 @@ import AsyncDisplayKit
 protocol ContactDataSource: NSObjectProtocol {
     
     func sectionIndexTitles(for table: ContactTableNode) -> [String]?
-    func modelViews(for table: ContactTableNode) -> Array<Array<ZAContactViewModel>>
+    func modelViews(for table: ContactTableNode) -> Array<Array<ContactViewModel>>
 }
 
 
@@ -29,7 +29,7 @@ class ContactTableNode: ASDisplayNode {
     weak public var dataSource : ContactDataSource?
     
     private let tableNode = ASTableNode()
-    private var viewModels = Array<Array<ZAContactViewModel>>()
+    private var viewModels = Array<Array<ContactViewModel>>()
     private var keyViewModels = Array<String>()
     
     override init() {
@@ -83,7 +83,7 @@ class ContactTableNode: ASDisplayNode {
     
     // Not reloadRow, this func does not create cellNode and just reload data from view model
     public func reloadDataInCellNode(at indexPath : IndexPath){
-        (tableNode.nodeForRow(at: indexPath) as! ZAConversationTableCellNode).reloadData()
+        (tableNode.nodeForRow(at: indexPath) as! ContactTableViewCell).reloadData()
     }
 }
 
@@ -95,7 +95,7 @@ extension ContactTableNode: ASTableDelegate{
     }
     
     func tableNode(_ tableNode: ASTableNode, willDisplayRowWith node: ASCellNode) {
-        (node as! ZAContactTableCellNode).reloadData()
+        (node as! ContactTableViewCell).reloadData()
     }
     
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {
@@ -104,7 +104,7 @@ extension ContactTableNode: ASTableDelegate{
     
     func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
         return {
-            let cellNode  = ZAContactTableCellNode(viewModel: self.viewModels[indexPath.section][indexPath.row])
+            let cellNode  = ContactTableViewCell(viewModel: self.viewModels[indexPath.section][indexPath.row])
             return cellNode
         }
     }

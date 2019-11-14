@@ -8,36 +8,30 @@
 
 import UIKit
 
-typealias ConversationID = String
+public typealias ConversationID = String
 
-enum ConversationType {
+public enum ConversationType {
     case chat
     case groupChat
 }
 
-class ConversationEntity {
+struct ConversationEntity {
     var id : ConversationID
-    var membersID : Array<UserID>
+    var membersID : [UserID]
     var nameConversation : String
-    var lastMsg : Message
     var type : ConversationType
     var muteTime : TimeInterval
-    var numberOfNewMsg : Int
     
-    init(cvsID : ConversationID,
-         type : ConversationType,
-         membersID : Array<UserID>,
-         nameConversation : String,
-         lastMsg : Message,
-         muteTime : TimeInterval,
-         numberOfUnreadMsg : Int = 0)
+    init(cvsID : ConversationID = "",
+         type : ConversationType = .chat,
+         membersID : [UserID] = [],
+         nameConversation : String = "",
+         muteTime : TimeInterval = 0)
     {
         self.id = cvsID
         self.type = type
         self.membersID = membersID
         self.nameConversation = nameConversation
-        self.lastMsg = lastMsg
         self.muteTime = muteTime
-        self.numberOfNewMsg = numberOfUnreadMsg
     }
 }
