@@ -13,9 +13,9 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     
     let tableNode = ConversationsTableNode()
     
-    var viewModels = Array<ChatConversationViewModel>()
+    var viewModels : [ChatConversationViewModel] = []
     
-    var listSelectedItemsInEdittingMode = Array<ChatConversationViewModel>()
+    var listSelectedItemsInEdittingMode : [ChatConversationViewModel] = []
     
     var isEdittingMode : Bool = false{
         didSet{
@@ -69,18 +69,25 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         setup()
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+    }
+    
     func setup(){
         title = "Tin nhắn"
         tabBarItem.image = UIImage(named: "message_icon")
         tabBarItem.selectedImage = UIImage(named: "message_selected_icon")
+        
         tableNode.dataSource = self
         tableNode.delegate = self
         tableNode.setNeedsLayout()
         tableNode.layoutIfNeeded()
         
         CDataManager.shared.addObserver(for: .conversation, target: self, callBackQueue: DispatchQueue.main)
+    
         // Fetch data
         CDataManager.shared.fetchConversations( { (conversations) in
+            
             var numberOfUnreadMsg = 0
             for c in conversations{
                 self.viewModels.append(ChatConversationViewModel(model: c as! ChatConversationModel))
@@ -98,19 +105,18 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     }
     
     func markItemsAsRead(items : [ChatConversationViewModel]){
-//        for item in items {
-//            let indexOfItem = self.viewModels.firstIndex(of: item)
-//            let numberOfUnreadMsgInModel = item.subTitleDetailValue
-//
-//            if indexOfItem != nil{
-////                CDataManager.shared.markConversationAsReadWithID(item.modelID!, completion: {() -> Void in
-////                    DispatchQueue.main.async {
-////                        self.tableNode.reloadDataInCellNode(at: IndexPath(row: indexOfItem!, section: 0))
-////                        self.numberOfNewMsg -= numberOfUnreadMsgInModel
-////                    }
-////                })
-//            }
-//        }
+        for item in items {
+            let index = viewModels.firstIndex { (m) -> Bool in
+                return m === item
+            }
+            CDataManager.shared.markAsRead(conversationID: item.model.id) { (error) in
+                if error == .none{
+                    ASPerformBlockOnMainThread {
+                        self.tableNode.reloadDataInCellNode(at: IndexPath(row: index!, section: 0))
+                    }
+                }
+            }
+        }
     }
     
     
@@ -124,41 +130,37 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         }
     }
     
-    func deleteItems(items : Array<ChatConversationViewModel>){
-//        for item in items {
-//            let indexOfItem = self.viewModels.firstIndex(of: item)
-//            let numberOfUnreadMsgInModel = item.subTitleDetailValue
-//
-//            if indexOfItem != nil{
-////                CDataManager.shared.deleteConversationWithID(item.modelID!) {
-////                    DispatchQueue.main.async {
-////                        self.numberOfNewMsg -= numberOfUnreadMsgInModel
-////
-////                        self.viewModels.remove(at: indexOfItem!)
-////                        self.tableNode.deleteRow(at: IndexPath(row: indexOfItem!, section: 0), withAnimation: .automatic)
-////                    }
-////                }
-//            }
-//        }
+    func deleteItems(items : [ChatConversationViewModel]){
+        for item in items {
+            CDataManager.shared.deleteConversationWithID(item.model.id) { (error) in
+                if error == .none{
+                    
+                }
+            }
+        }
         
     }
     
-    func muteItem(at indexPath : IndexPath, time : TimeInterval){
-        //let cvsID = viewModels[indexPath.row].modelID
-//        CDataManager.shared.muteConversation(cvsID: cvsID!, time: time) {
-//            DispatchQueue.main.async {
-//                self.tableNode.reloadDataInCellNode(at: indexPath)
-//            }
-//        }
+    func muteItem(at indexPath : IndexPath, until time : TimeInterval){
+        let item = viewModels[indexPath.row]
+        CDataManager.shared.muteConversationWithID(item.model.id, until: time) { (error) in
+            if error == .none{
+                ASPerformBlockOnMainThread {
+                    self.tableNode.reloadDataInCellNode(at: indexPath)
+                }
+            }
+        }
     }
     
     func unmuteItem(at indexPath : IndexPath){
-        //let cvsID = viewModels[indexPath.row].modelID
-//        CDataManager.shared.unmuteConversation(cvsID: cvsID!) {
-//            DispatchQueue.main.async {
-//                self.tableNode.reloadDataInCellNode(at: indexPath)
-//            }
-//        }
+        let item = viewModels[indexPath.row]
+        CDataManager.shared.unmuteConversationWithID(item.model.id) { (error) in
+            if error == .none{
+                ASPerformBlockOnMainThread {
+                    self.tableNode.reloadDataInCellNode(at: indexPath)
+                }
+            }
+        }
     }
 }
 
@@ -206,16 +208,16 @@ extension ConversationsViewController{
         let message = "Không thông báo tin nhắn mới của hội thoại này"
         
         let mute1h = UIAlertAction(title: "Trong 1 tiếng", style: .default, handler: { action in
-            self.muteItem(at: indexPath, time: thePresentTime + HOURS)
+            self.muteItem(at: indexPath, until: thePresentTime + HOURS)
         })
         let mute4h = UIAlertAction(title: "Trong 4 tiếng", style: .default, handler: { action in
-            self.muteItem(at: indexPath, time: thePresentTime + 4 * HOURS)
+            self.muteItem(at: indexPath, until: thePresentTime + 4 * HOURS)
         })
         let mute8h = UIAlertAction(title: "Trong 8 tiếng", style: .default, handler: { action in
-            self.muteItem(at: indexPath, time: thePresentTime + 8 * HOURS)
+            self.muteItem(at: indexPath, until: thePresentTime + 8 * HOURS)
         })
         let muteUnlimited = UIAlertAction(title: "Cho đến khi được mở lại", style: .default, handler: { action in
-            self.muteItem(at: indexPath, time: 2 * thePresentTime)
+            self.muteItem(at: indexPath, until: 2 * thePresentTime)
         })
         
         let cancel = UIAlertAction(title: "Huỷ", style: .cancel, handler: { action in })
@@ -254,11 +256,11 @@ extension ConversationsViewController : ConversationsDelegate{
             let cancel = UIAlertAction(title: "Huỷ", style: .cancel, handler: { action in })
             
             var actions = Array<UIAlertAction>()
-//            if self.viewModels[indexPath.row].isMute{
-//                actions = [unmute, cancel]
-//            }else{
-//                actions = [mute, cancel]
-//            }
+            if self.viewModels[indexPath.row].model.isMuted(){
+                actions = [unmute, cancel]
+            }else{
+                actions = [mute, cancel]
+            }
             
             self.displayAlert(title: "Tuỳ chọn", message: "", actions: actions, preferredStyle: .actionSheet)
         })
@@ -292,16 +294,19 @@ extension ConversationsViewController : ConversationsDelegate{
     
     func tableNode(_ table: ConversationsTableNode, didDeselectRowAt indexPath: IndexPath) {
         if isEdittingMode{
-//            let indexOfItem = listSelectedItemsInEdittingMode.firstIndex(of: viewModels[indexPath.row])
-//            if indexOfItem != nil{
-//                listSelectedItemsInEdittingMode.remove(at: indexOfItem!)
-//            }
-//
-//            editView.updateButtonInNavigationBarAndTabBar(numberOfItems: listSelectedItemsInEdittingMode.count)
-//
-//            if listSelectedItemsInEdittingMode.count == 0{
-//                exitEdittingMode()
-//            }
+            let item = viewModels[indexPath.row]
+            let indexOfItem = listSelectedItemsInEdittingMode.firstIndex { (m) -> Bool in
+                return m.model.id == item.model.id
+            }
+            if indexOfItem != nil{
+                listSelectedItemsInEdittingMode.remove(at: indexOfItem!)
+            }
+
+            editView.updateButtonInNavigationBarAndTabBar(numberOfItems: listSelectedItemsInEdittingMode.count)
+
+            if listSelectedItemsInEdittingMode.count == 0{
+                exitEdittingMode()
+            }
         }else{
             
         }

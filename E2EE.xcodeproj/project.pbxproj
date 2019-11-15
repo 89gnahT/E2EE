@@ -299,8 +299,8 @@
 		483581FC237C595E00E9B51D /* Business Layer */ = {
 			isa = PBXGroup;
 			children = (
-				48BC3F0F237C5C1100B96361 /* SDataManager.swift */,
 				4883F8502375557A004C3F83 /* CDataManager.swift */,
+				48BC3F0F237C5C1100B96361 /* SDataManager.swift */,
 			);
 			path = "Business Layer";
 			sourceTree = "<group>";

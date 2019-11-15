@@ -28,7 +28,7 @@ class Database: NSObject {
     fileprivate var people = Dictionary<UserID, UserEntity>()
     fileprivate var friends = Dictionary<UserID, UserID>()
     fileprivate var conversations = Dictionary<ConversationID, ConversationEntity>()
-    fileprivate var rooms = Dictionary<ConversationID, Dictionary<MsgID, MessageEntity>>()
+    fileprivate var rooms = Dictionary<ConversationID, Dictionary<MessageID, MessageEntity>>()
     
     private override init() {
         
@@ -38,7 +38,7 @@ class Database: NSObject {
         _ friends : Dictionary<UserID, UserID>,
         _ people : Dictionary<UserID, UserEntity>,
         _ conversations : Dictionary<ConversationID, ConversationEntity>,
-        _ rooms : Dictionary<ConversationID, Dictionary<MsgID, MessageEntity>>) -> Void, callbackQueue : DispatchQueue?){
+        _ rooms : Dictionary<ConversationID, Dictionary<MessageID, MessageEntity>>) -> Void, callbackQueue : DispatchQueue?){
         taskQueue.async {
             self.fetchPeople()
             self.fetchOwnerData()
@@ -97,7 +97,7 @@ extension Database{
     
     private func fetchRoomsChat(){
         for c in self.conversations.values{
-            self.rooms.updateValue(Dictionary<MsgID, MessageEntity>(), forKey: c.id)
+            self.rooms.updateValue(Dictionary<MessageID, MessageEntity>(), forKey: c.id)
             let numberOfMessage = self.randomInt(10) + 1
             
             for _ in 0..<numberOfMessage{

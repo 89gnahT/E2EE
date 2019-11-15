@@ -73,6 +73,7 @@ class ConversationViewCell: ASCellNode {
         mutedIcon.image = viewModel.muteIcon
         
         notifyUnreadNode.attributedText = viewModel.numberOfUnreadMessage
+        
 //        self.setNeedsLayout()
 //        self.layoutIfNeeded()
     }

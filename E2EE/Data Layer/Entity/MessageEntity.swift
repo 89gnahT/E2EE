@@ -8,7 +8,7 @@
 
 import UIKit
 
-typealias MsgID = String
+typealias MessageID = String
 
 enum MessageType {
     case text
@@ -30,7 +30,7 @@ struct MessageTime {
 }
 
 struct MessageEntity {
-    var id : MsgID
+    var id : MessageID
     var conversationID : ConversationID
     var senderId : UserID
     var msgType : MessageType
@@ -40,7 +40,7 @@ struct MessageEntity {
     var deliveried : TimeInterval
     var seen : TimeInterval
     
-    init(id : MsgID = "",
+    init(id : MessageID = "",
          conversationID : ConversationID = "",
          senderId : UserID = "",
          type : MessageType = .text,
@@ -59,4 +59,7 @@ struct MessageEntity {
         self.seen = timeSeen
     }
     
+    func isRead() -> Bool{
+        return seen != MessageTime.TimeInvalidate
+    }
 }

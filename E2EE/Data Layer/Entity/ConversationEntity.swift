@@ -34,4 +34,8 @@ struct ConversationEntity {
         self.nameConversation = nameConversation
         self.muteTime = muteTime
     }
+    
+    func isMuted() -> Bool{
+        return muteTime > thePresentTime
+    }
 }

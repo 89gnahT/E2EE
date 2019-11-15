@@ -9,7 +9,7 @@
 import UIKit
 
 public class ImageMessageModel: MessageModel {
-    init(id : MsgID = "",
+    init(id : MessageID = "",
            conversationID : ConversationID = "",
            sender : UserModel = UserModel(),
            contents : [String] = [],

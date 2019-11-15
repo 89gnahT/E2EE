@@ -9,14 +9,14 @@
 import UIKit
 
 public class MessageModel: NSObject {
-    var id : MsgID
+    var id : MessageID
     var conversationID : ConversationID
     var sender : UserModel
     var type : MessageType
     var contents : [String]
     var time : MessageTime
     
-    init(id : MsgID = "",
+    init(id : MessageID = "",
          conversationID : ConversationID = "",
          sender : UserModel = UserModel(),
          type : MessageType = .text,

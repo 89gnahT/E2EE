@@ -8,7 +8,20 @@
 
 import UIKit
 
-protocol DataManagerListenerDelegate{
+
+enum DataChangedType {
+    case new
+    case changed
+    case delete
+}
+
+enum ListenForEvent{
+    case message
+    case conversation
+    case user
+}
+
+protocol DataManagerListenerDelegate : NSObjectProtocol{
     func messageChanged(_ msg : MessageModel, dataChanged : DataChangedType)
     
     func conversationChanged(_ cvs : ConversationModel, dataChanged : DataChangedType)
@@ -27,7 +40,7 @@ class CDataManager: NSObject {
                                               autoreleaseFrequency: .inherit,
                                               target: nil)
     
-    private var listenItems = Dictionary<Int, Array<ObserverItem>>()
+    private var listenItems = Dictionary<ListenForEvent, Array<ObserverItem>>()
     
     private var conversations = Dictionary<ConversationID, ConversationModel>()
     
@@ -35,7 +48,7 @@ class CDataManager: NSObject {
     
     private var people = Dictionary<UserID, UserModel>()
     
-    private var rooms = Dictionary<ConversationID, Dictionary<MsgID, MessageModel>>()
+    private var rooms = Dictionary<ConversationID, Dictionary<MessageID, MessageModel>>()
     
     public var you : UserModel!
     
@@ -60,7 +73,7 @@ class CDataManager: NSObject {
                 }
                 
                 for r in rooms{
-                    self?.rooms.updateValue(Dictionary<MsgID, MessageModel>(), forKey: r.key)
+                    self?.rooms.updateValue(Dictionary<MessageID, MessageModel>(), forKey: r.key)
                     
                     // Process message
                     for m in r.value.values{
@@ -102,10 +115,10 @@ class CDataManager: NSObject {
                     }
                     
                     let conversation = ChatConversationModel(cvsID: c!.id,
-                                                         members: member,
-                                                         nameConversation: c!.nameConversation,
-                                                         lastMsgs: lastMsg,
-                                                         muteTime: c!.muteTime)
+                                                             members: member,
+                                                             nameConversation: c!.nameConversation,
+                                                             lastMsgs: lastMsg,
+                                                             muteTime: c!.muteTime)
                     self?.conversations.updateValue(conversation, forKey: conversation.id)
                 }
                 
@@ -126,6 +139,7 @@ class CDataManager: NSObject {
                     contacts.append(u!)
                 }
             }
+            
             let queue = callBackQueue != nil ? callBackQueue : self!.callBackQueue
             queue?.async{
                 completion(contacts)
@@ -133,44 +147,153 @@ class CDataManager: NSObject {
         }
     }
     
-    public func fetchConversations(_ completion : @escaping ((_ array : Array<ConversationModel>) -> Void), callBackQueue : DispatchQueue? = nil){
+    public func fetchConversations(_ completion : @escaping ((_ array : [ConversationModel]) -> Void), callBackQueue : DispatchQueue? = nil){
         taskQueue.async { [weak self] in
             let conversations = self!.conversations.values.sorted { (a, b) -> Bool in
                 return a.lastMsgs.last!.time.sent > b.lastMsgs.last!.time.sent
             }
             
-           let queue = callBackQueue != nil ? callBackQueue : self!.callBackQueue
+            let queue = callBackQueue != nil ? callBackQueue : self!.callBackQueue
             queue?.async {
                 completion(conversations)
             }
         }
     }
     
-}
-enum DataChangedType {
-    case new
-    case changed
-    case delete
-}
-
-enum ListenForEvent{
-    case message
-    case conversation
-    case user
-    
-    public func toInt() -> Int{
-        switch self {
-        case .message:
-            return 0
-        case .conversation:
-            return 1
-        case .user:
-            return 2
+    public func fetchMessageInConversation(withID id : ConversationID, completion : @escaping ((_ array : [MessageModel]) -> Void), callBackQueue : DispatchQueue? = nil){
+        taskQueue.async { [weak self] in
+            let queue = callBackQueue != nil ? callBackQueue : self!.callBackQueue
+            queue?.async {
+                completion(Array(self!.rooms[id]!.values))
+            }
         }
     }
 }
 
-// MARK: Listener
+extension CDataManager{
+    public func markAsRead(conversationID id : ConversationID, completion :  ((_ error : DataError) -> Void)?){
+        taskQueue.async {
+            
+            guard let conversation = self.conversations[id] else{
+                self.callback(WithError: .notFound, completion: completion)
+                return
+            }
+            
+            for m in conversation.lastMsgs{
+                SDataManager.shared.markAsRead(messageID: m.id, conversationID: m.conversationID, completion: completion)
+            }
+        }
+    }
+    
+    public func deleteConversationWithID(_ id : ConversationID, completion :  ((_ error : DataError) -> Void)?){
+        taskQueue.async {
+            
+            guard self.conversations[id] != nil else{
+                self.callback(WithError: .notFound, completion: completion)
+                return
+            }
+            
+            SDataManager.shared.deleteConversationWithID(id, completion: completion)
+        }
+    }
+    
+    public func muteConversationWithID(_ id : ConversationID, until time : TimeInterval, completion :  ((_ error : DataError) -> Void)?){
+        taskQueue.async {
+            
+            guard self.conversations[id] != nil else{
+                self.callback(WithError: .notFound, completion: completion)
+                return
+            }
+            
+            SDataManager.shared.muteConversationWithID(id, until: time, completion: completion)
+        }
+    }
+    
+    public func unmuteConversationWithID(_ id : ConversationID, completion :  ((_ error : DataError) -> Void)?){
+        taskQueue.async {
+            guard self.conversations[id] != nil else{
+                self.callback(WithError: .notFound, completion: completion)
+                return
+            }
+            
+            SDataManager.shared.unmuteConversationWithID(id, completion: completion)
+        }
+    }
+}
+
+extension CDataManager{
+    private func u_markAsRead(conversation : ConversationModel){
+        for m in conversation.lastMsgs{
+            u_markAsRead(messageID: m.id, conversationID: m.conversationID)
+        }
+        
+        if conversation.lastMsgs.count > 1{
+            let last = conversation.lastMsgs.last!
+            conversation.lastMsgs.removeAll()
+            conversation.lastMsgs.append(last)
+        }
+    }
+    
+    private func u_markAsRead(messageID id : MessageID, conversationID cvsID : ConversationID){
+        guard let msg = self.rooms[cvsID]![id] else {
+            return
+        }
+        if !msg.isRead(){
+            msg.time.seen = thePresentTime
+        }
+    }
+    
+    private func u_deleteConversation(conversation : ConversationModel){
+        conversations.removeValue(forKey: conversation.id)
+        rooms[conversation.id]?.removeAll()
+        rooms.removeValue(forKey: conversation.id)
+    }
+    
+    private func u_muteConversation(conversation : ConversationModel, until time : TimeInterval){
+        conversation.muteTime = time
+    }
+    
+    private func u_unmuteConversation(conversation : ConversationModel){
+        conversation.muteTime = 0
+    }
+    
+    private func u_deleteConversationWithID(_ id : ConversationID) -> ConversationModel{
+        rooms[id]!.removeAll()
+        rooms.removeValue(forKey: id)
+        
+        return conversations.removeValue(forKey: id)!
+    }
+}
+
+// MARK: - Delegate
+extension CDataManager : SDataManagerListenerDelegate{
+    func messageChanged(_ msg: MessageEntity, dataChanged: DataChangedType) {
+        print(msg)
+    }
+    
+    func conversationChanged(_ cvs: ConversationEntity, dataChanged: DataChangedType) {
+        taskQueue.async {
+            switch dataChanged {
+            case .new:
+                print("create new cvs")
+            case .changed:
+                print("changed cvs")
+            case .delete:
+                let c = self.u_deleteConversationWithID(cvs.id)
+                self.callbackForDataChanged(object: c, forEvent: .conversation, dataChanged: .delete)
+                
+            }
+        }
+    }
+    
+    func userChanged(_ user: UserEntity, dataChanged: DataChangedType) {
+        
+    }
+    
+    
+}
+
+// MARK: Observer
 extension CDataManager{
     class ObserverItem : NSObject{
         var target : DataManagerListenerDelegate
@@ -189,46 +312,37 @@ extension CDataManager{
                 queue = callBackQueue!
             }
             let ob = ObserverItem(target: target, queue: queue)
-            if self.listenItems[event.toInt()] != nil{
-                self.listenItems[event.toInt()]?.append(ob)
+            if self.listenItems[event] != nil{
+                self.listenItems[event]?.append(ob)
             }else{
-                self.listenItems.updateValue([ob], forKey: event.toInt())
+                self.listenItems.updateValue([ob], forKey: event)
             }
         }
     }
     
     public func removeObserver(for event : ListenForEvent, target : DataManagerListenerDelegate){
         taskQueue.async {
-            self.listenItems.removeValue(forKey: event.toInt())
-        }
-    }
-    
-    
-    private func listenerCallbackForMessageChanged(msg : MessageModel, dataChanged : DataChangedType){
-        taskQueue.async {
-            for i in Array(self.listenItems[ListenForEvent.message.toInt()]!){
-                i.queue.async {
-                    i.target.messageChanged(msg, dataChanged: dataChanged)
-                }
+            self.listenItems[event]!.removeAll { (a) -> Bool in
+                return a.target.isEqual(target)
             }
         }
     }
     
-    private func listenerCallbackForUserChanged(user : UserModel, dataChanged : DataChangedType){
+    private func callbackForDataChanged(object : NSObject, forEvent event : ListenForEvent, dataChanged : DataChangedType){
         taskQueue.async {
-            for i in Array(self.listenItems[ListenForEvent.user.toInt()]!){
+            for i in Array(self.listenItems[event]!){
                 i.queue.async {
-                    i.target.userChanged(user, dataChanged: dataChanged)
-                }
-            }
-        }
-    }
-    
-    private func listenerCallbackForConversationChanged(cvs : ConversationModel, dataChanged : DataChangedType){
-        taskQueue.async {
-            for i in Array(self.listenItems[ListenForEvent.conversation.toInt()]!){
-                i.queue.async {
-                    i.target.conversationChanged(cvs, dataChanged: dataChanged)
+                    switch event{
+                        
+                    case .conversation:
+                        i.target.conversationChanged(object as! ConversationModel, dataChanged: dataChanged)
+                        
+                    case .message:
+                        i.target.messageChanged(object as! MessageModel, dataChanged: dataChanged)
+                        
+                    case .user:
+                        i.target.userChanged(object as! UserModel, dataChanged: dataChanged)
+                    }
                 }
             }
         }
@@ -236,41 +350,12 @@ extension CDataManager{
     
 }
 
-
-//        taskQueue.asyncAfter(deadline: DispatchTime.now() + 2) {
-//            var time : TimeInterval = 0
-//            //return
-//            for m in DataStore.shared.incomingMessages{
-//
-//                self.taskQueue.asyncAfter(deadline: DispatchTime.now() + time) {
-//
-//                    m.time = MsgTime(sent: thePresentTime)
-//
-//                    let cvsID = m.conversationID
-//
-//                    if self.rooms[cvsID] != nil{
-//                        // New message
-//                        // Update conversation
-//                        let cvs = self.conversationWithID_unsafe(cvsID)
-//                        cvs?.lastMsg = m
-//                        cvs?.numberOfNewMsg += 1
-//
-//                        // Append message
-//                        self.rooms[cvsID]?.updateValue(m, forKey: m.id)
-//                        self.listenerCallbackForConversationChanged(cvs: cvs!, dataChanged: .changed)
-//                    }else{
-//                        // New conversation
-//                        let cvs = ChatConversation(cvsID: cvsID,
-//                                                   membersID: [self.you.id, m.senderId],
-//                                                   nameConversation: self.friendWithID_unsafe(m.senderId)!.name,
-//                                                   lastMsg: m)
-//                        cvs.numberOfNewMsg += 1
-//                        self.conversations.updateValue(cvs, forKey: cvsID)
-//                        self.rooms.updateValue(Dictionary<MsgID, Message>(dictionaryLiteral: (m.id, m)),
-//                                               forKey: m.conversationID)
-//                        self.listenerCallbackForConversationChanged(cvs: cvs, dataChanged: .new)
-//                    }
-//                }
-//                time += 4
-//            }
-        //        }
+extension CDataManager{
+    private func callback(WithError error : DataError, completion : ((_ error : DataError) -> Void)?){
+        if completion != nil{
+            self.callBackQueue.async {
+                completion!(error)
+            }
+        }
+    }
+}
