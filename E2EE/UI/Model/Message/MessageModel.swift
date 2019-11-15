@@ -10,10 +10,15 @@ import UIKit
 
 public class MessageModel: NSObject {
     var id : MessageID
+    
     var conversationID : ConversationID
+    
     var sender : UserModel
+    
     var type : MessageType
+    
     var contents : [String]
+    
     var time : MessageTime
     
     init(id : MessageID = "",
@@ -33,7 +38,11 @@ public class MessageModel: NSObject {
         super.init()
     }
     
-    func isRead()->Bool{
+    func isMyMessage()->Bool{
+        return sender.id == CDataManager.shared.you.id
+    }
+    
+    func isRead() -> Bool{
         return time.seen != MessageTime.TimeInvalidate
     }
 }

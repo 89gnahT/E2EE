@@ -16,11 +16,11 @@ enum DataError {
 }
 
 protocol SDataManagerListenerDelegate{
-    func messageChanged(_ msg : MessageEntity, dataChanged : DataChangedType)
+    func messageChanged(_ msg : MessageEntity, dataChanged : DataChangedType, description : DataChangedDescription)
     
-    func conversationChanged(_ cvs : ConversationEntity, dataChanged : DataChangedType)
+    func conversationChanged(_ cvs : ConversationEntity, dataChanged : DataChangedType, description : DataChangedDescription)
     
-    func userChanged(_ user : UserEntity, dataChanged : DataChangedType)
+    func userChanged(_ user : UserEntity, dataChanged : DataChangedType, description : DataChangedDescription)
 }
 
 class SDataManager: NSObject {
@@ -44,7 +44,7 @@ class SDataManager: NSObject {
     
     private var rooms = Dictionary<ConversationID, Dictionary<MessageID, MessageEntity>>()
     
-    private var you : UserEntity = UserEntity()
+    public var you : UserEntity = UserEntity()
     
     private override init() {
         delegate = CDataManager.shared
@@ -113,7 +113,7 @@ class SDataManager: NSObject {
                 c.muteTime = time
                 
                 self.conversations.updateValue(c, forKey: c.id)
-                self.delegate?.conversationChanged(c, dataChanged: .changed)
+                self.delegate?.conversationChanged(c, dataChanged: .changed, description: DataChangedDescription(descriptions: [.conversationMuteTime]))
                 
                 self.callback(WithError: .none, completion: completion)
             }else{
@@ -133,7 +133,7 @@ class SDataManager: NSObject {
                 c.muteTime = 0
                 
                 self.conversations.updateValue(c, forKey: c.id)
-                self.delegate?.conversationChanged(c, dataChanged: .changed)
+                self.delegate?.conversationChanged(c, dataChanged: .changed, description: DataChangedDescription(descriptions: [.conversationMuteTime]))
                 
                 self.callback(WithError: .none, completion: completion)
             }else{
@@ -149,7 +149,7 @@ extension SDataManager{
             m.seen = thePresentTime
             
             rooms[m.conversationID]!.updateValue(m, forKey: m.id)
-            delegate?.messageChanged(m, dataChanged: .changed)
+            delegate?.messageChanged(m, dataChanged: .changed, description: DataChangedDescription(descriptions: [.messageTimeSeen]))
             
             // TODO: - Save in database
             
@@ -163,7 +163,7 @@ extension SDataManager{
         rooms[c.id]!.removeAll()
         rooms.removeValue(forKey: c.id)
         
-        delegate?.conversationChanged(c, dataChanged: .delete)
+        delegate?.conversationChanged(c, dataChanged: .delete, description: DataChangedDescription())
         
         return true
     }

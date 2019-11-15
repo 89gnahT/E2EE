@@ -10,10 +10,16 @@ import UIKit
 
 public class ConversationModel: NSObject {
     var id : ConversationID
+    
     var members : Dictionary<UserID, UserModel>
+    
     var nameConversation : String
+    
+    // Content 1 last message (read or unread) or more unread message
     var lastMsgs : [MessageModel]
+    
     var type : ConversationType
+    
     var muteTime : TimeInterval
     
     init(cvsID : ConversationID = "",
@@ -40,7 +46,7 @@ public class ConversationModel: NSObject {
     func numberOfUnreadMessages() -> Int{
         var count = 0
         for m in lastMsgs{
-            if !m.isRead(){
+            if !m.isRead() && !m.isMyMessage(){
                 count += 1
             }
         }

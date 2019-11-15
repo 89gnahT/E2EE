@@ -21,12 +21,36 @@ enum ListenForEvent{
     case user
 }
 
+enum AttributeChangedDescription {
+    case conversationAppendNewMessage
+    case conversationMuteTime
+    case conversationLastMessage
+    
+    case messageTimeSeen
+    
+    case userAvatarURL
+    case userNickname
+}
+
+struct DataChangedDescription {
+    var descriptions : [AttributeChangedDescription]
+    
+    init() {
+        descriptions = []
+    }
+    
+    init(descriptions : [AttributeChangedDescription]) {
+        self.descriptions = descriptions
+    }
+}
+
+
 protocol DataManagerListenerDelegate : NSObjectProtocol{
-    func messageChanged(_ msg : MessageModel, dataChanged : DataChangedType)
+    func messageChanged(_ msg : MessageModel, dataChanged : DataChangedType, description : DataChangedDescription)
     
-    func conversationChanged(_ cvs : ConversationModel, dataChanged : DataChangedType)
+    func conversationChanged(_ cvs : ConversationModel, dataChanged : DataChangedType, description : DataChangedDescription)
     
-    func userChanged(_ user : UserModel, dataChanged : DataChangedType)
+    func userChanged(_ user : UserModel, dataChanged : DataChangedType, description : DataChangedDescription)
 }
 
 class CDataManager: NSObject {
@@ -267,11 +291,41 @@ extension CDataManager{
 
 // MARK: - Delegate
 extension CDataManager : SDataManagerListenerDelegate{
-    func messageChanged(_ msg: MessageEntity, dataChanged: DataChangedType) {
-        print(msg)
+    func messageChanged(_ msg: MessageEntity, dataChanged: DataChangedType, description: DataChangedDescription) {
+        taskQueue.async {
+            switch dataChanged {
+                
+            case .new:
+                print("create new msg")
+                
+            case .changed:
+                guard let m = self.rooms[msg.conversationID]![msg.id] else {
+                    return
+                }
+                if description.descriptions.first! == .messageTimeSeen{
+                    m.time.seen = msg.seen
+                    self.rooms[m.conversationID]!.updateValue(m, forKey: m.id)
+                    
+                    // Check in lastMessage in conversation
+                    if let cvs = self.conversations[m.conversationID]{
+                        if (cvs.lastMsgs.count) > 1{
+                            cvs.lastMsgs.removeAll(where: { (a) -> Bool in
+                                return a === m
+                            })
+                        }
+                        self.callbackForDataChanged(object: cvs, forEvent: .conversation, dataChanged: .changed, description: DataChangedDescription(descriptions: [.conversationLastMessage]))
+                    }
+                    
+                    self.callbackForDataChanged(object: m, forEvent: .message, dataChanged: dataChanged, description: description)
+                }
+                
+            case .delete:
+                print("delete msg")
+            }
+        }
     }
     
-    func conversationChanged(_ cvs: ConversationEntity, dataChanged: DataChangedType) {
+    func conversationChanged(_ cvs: ConversationEntity, dataChanged: DataChangedType, description: DataChangedDescription) {
         taskQueue.async {
             switch dataChanged {
             case .new:
@@ -280,16 +334,15 @@ extension CDataManager : SDataManagerListenerDelegate{
                 print("changed cvs")
             case .delete:
                 let c = self.u_deleteConversationWithID(cvs.id)
-                self.callbackForDataChanged(object: c, forEvent: .conversation, dataChanged: .delete)
+                self.callbackForDataChanged(object: c, forEvent: .conversation, dataChanged: .delete, description: description)
                 
             }
         }
     }
     
-    func userChanged(_ user: UserEntity, dataChanged: DataChangedType) {
+    func userChanged(_ user: UserEntity, dataChanged: DataChangedType, description: DataChangedDescription) {
         
     }
-    
     
 }
 
@@ -307,11 +360,10 @@ extension CDataManager{
     
     public func addObserver(for event : ListenForEvent, target : DataManagerListenerDelegate, callBackQueue : DispatchQueue? = nil){
         taskQueue.async {
-            var queue = self.callBackQueue
-            if callBackQueue != nil{
-                queue = callBackQueue!
-            }
-            let ob = ObserverItem(target: target, queue: queue)
+            let queue = callBackQueue != nil ? callBackQueue : self.callBackQueue
+            
+            let ob = ObserverItem(target: target, queue: queue!)
+            
             if self.listenItems[event] != nil{
                 self.listenItems[event]?.append(ob)
             }else{
@@ -328,20 +380,23 @@ extension CDataManager{
         }
     }
     
-    private func callbackForDataChanged(object : NSObject, forEvent event : ListenForEvent, dataChanged : DataChangedType){
+    private func callbackForDataChanged(object : NSObject, forEvent event : ListenForEvent, dataChanged : DataChangedType, description : DataChangedDescription){
         taskQueue.async {
+            guard self.listenItems[event] != nil else{
+                return
+            }
             for i in Array(self.listenItems[event]!){
                 i.queue.async {
                     switch event{
                         
                     case .conversation:
-                        i.target.conversationChanged(object as! ConversationModel, dataChanged: dataChanged)
+                        i.target.conversationChanged(object as! ConversationModel, dataChanged: dataChanged, description: description)
                         
                     case .message:
-                        i.target.messageChanged(object as! MessageModel, dataChanged: dataChanged)
+                        i.target.messageChanged(object as! MessageModel, dataChanged: dataChanged, description: description)
                         
                     case .user:
-                        i.target.userChanged(object as! UserModel, dataChanged: dataChanged)
+                        i.target.userChanged(object as! UserModel, dataChanged: dataChanged, description: description)
                     }
                 }
             }

@@ -85,8 +85,14 @@ class EditNavigationBarAndTabBarView: NSObject {
     }
     
     func addSubNodeIntoNavigationBar(_ navigationBar : UINavigationBar, tabBar : UITabBar){
-        navigationBar.addSubnode(editNavigationBar)
-        tabBar.addSubnode(editTabBar)
+        UIView.transition(with: navigationBar, duration: 0.25, options: .transitionFlipFromTop, animations: {
+            navigationBar.addSubnode(self.editNavigationBar)
+        }, completion: nil)
+        
+        UIView.transition(with: tabBar, duration: 0.25, options: .transitionFlipFromBottom, animations: {
+            tabBar.addSubnode(self.editTabBar)
+        }, completion: nil)
+        
     }
     
     func removeFromSupernode(){

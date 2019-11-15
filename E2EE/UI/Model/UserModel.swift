@@ -11,9 +11,13 @@ import UIKit
 
 public class UserModel: NSObject {
     var id : UserID
+    
     var name : String
+    
     var nickName : String
+    
     var avatarURL : String
+    
     var gender : Gender
     
     init(id : String = "",

@@ -59,6 +59,10 @@ struct MessageEntity {
         self.seen = timeSeen
     }
     
+    func isMyMessage() -> Bool{
+        return senderId == SDataManager.shared.you.id
+    }
+    
     func isRead() -> Bool{
         return seen != MessageTime.TimeInvalidate
     }

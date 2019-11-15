@@ -84,20 +84,20 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         tableNode.layoutIfNeeded()
         
         CDataManager.shared.addObserver(for: .conversation, target: self, callBackQueue: DispatchQueue.main)
-    
+        
         // Fetch data
         CDataManager.shared.fetchConversations( { (conversations) in
             
             var numberOfUnreadMsg = 0
             for c in conversations{
                 self.viewModels.append(ChatConversationViewModel(model: c as! ChatConversationModel))
-
+                
                 // Count how many unread message
                 numberOfUnreadMsg += c.numberOfUnreadMessages()
             }
-
+            
             self.numberOfNewMsg = numberOfUnreadMsg
-
+            
             DispatchQueue.main.async {
                 self.tableNode.reloadData()
             }
@@ -110,11 +110,7 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
                 return m === item
             }
             CDataManager.shared.markAsRead(conversationID: item.model.id) { (error) in
-                if error == .none{
-                    ASPerformBlockOnMainThread {
-                        self.tableNode.reloadDataInCellNode(at: IndexPath(row: index!, section: 0))
-                    }
-                }
+                
             }
         }
     }
@@ -144,11 +140,7 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     func muteItem(at indexPath : IndexPath, until time : TimeInterval){
         let item = viewModels[indexPath.row]
         CDataManager.shared.muteConversationWithID(item.model.id, until: time) { (error) in
-            if error == .none{
-                ASPerformBlockOnMainThread {
-                    self.tableNode.reloadDataInCellNode(at: indexPath)
-                }
-            }
+            
         }
     }
     
@@ -156,9 +148,7 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         let item = viewModels[indexPath.row]
         CDataManager.shared.unmuteConversationWithID(item.model.id) { (error) in
             if error == .none{
-                ASPerformBlockOnMainThread {
-                    self.tableNode.reloadDataInCellNode(at: indexPath)
-                }
+                
             }
         }
     }
@@ -301,9 +291,9 @@ extension ConversationsViewController : ConversationsDelegate{
             if indexOfItem != nil{
                 listSelectedItemsInEdittingMode.remove(at: indexOfItem!)
             }
-
+            
             editView.updateButtonInNavigationBarAndTabBar(numberOfItems: listSelectedItemsInEdittingMode.count)
-
+            
             if listSelectedItemsInEdittingMode.count == 0{
                 exitEdittingMode()
             }
@@ -355,45 +345,73 @@ extension ConversationsViewController{
 }
 
 extension ConversationsViewController : DataManagerListenerDelegate{
-    func messageChanged(_ msg: MessageModel, dataChanged: DataChangedType) {
+    func messageChanged(_ msg: MessageModel, dataChanged: DataChangedType, description: DataChangedDescription) {
         
     }
     
-    func userChanged(_ user: UserModel, dataChanged: DataChangedType) {
+    func conversationChanged(_ cvs: ConversationModel, dataChanged: DataChangedType, description: DataChangedDescription) {
+        switch dataChanged {
+        case .new:
+            print("new conversation")
+            
+        case .changed:
+            guard let indexOfItem = viewModels.firstIndex(where: { (c) -> Bool in
+                return c.model.id == cvs.id
+            }) else {
+                return
+            }
+            if description.descriptions.first! != .conversationAppendNewMessage{
+                tableNode.reloadDataInCellNode(at: IndexPath(row: indexOfItem, section: 0))
+            }
+            
+        case .delete:
+            guard let indexOfItem = viewModels.firstIndex(where: { (c) -> Bool in
+                return c.model.id == cvs.id
+            }) else {
+                return
+            }
+            viewModels.remove(at: indexOfItem)
+            tableNode.deleteRow(at: IndexPath(row: indexOfItem, section: 0), withAnimation: .automatic)
+        }
+    }
+    
+    func userChanged(_ user: UserModel, dataChanged: DataChangedType, description: DataChangedDescription) {
         
     }
-
+    
+    
+    
     func conversationChanged(_ cvs: ConversationModel, dataChanged: DataChangedType) {
-//        switch dataChanged {
-//        case .new:
-//            numberOfNewMsg += 1
-//            
-//            let modelView = ChatConversationViewModel(model: cvs as! ChatConversationModel)
-//            viewModels.insert(modelView, at: 0)
-//            
-//            tableNode.insertRow(at: IndexPath(row: 0, section: 0), withAnimation: .automatic)
-//            
-//        case .changed:
-//            let index = viewModels.firstIndex { (c) -> Bool in
-//                return c.modelID == cvs.id
-//            }
-//            if index != nil{
-//                
-//                numberOfNewMsg += 1
-//                
-//                if index! != 0{
-//                    let item = viewModels.remove(at: index!)
-//                    viewModels.insert(item, at: 0)
-//                    
-//                    tableNode.moveRow(at: IndexPath(row: index!, section: 0), to: IndexPath(row: 0, section: 0))
-//                }else{
-//                    tableNode.reloadDataInCellNode(at: IndexPath(row: 0, section: 0))
-//                }
-//            }
-//        
-//        case .delete:
-//            print("Delete conversation")
-//        }
+        //        switch dataChanged {
+        //        case .new:
+        //            numberOfNewMsg += 1
+        //
+        //            let modelView = ChatConversationViewModel(model: cvs as! ChatConversationModel)
+        //            viewModels.insert(modelView, at: 0)
+        //
+        //            tableNode.insertRow(at: IndexPath(row: 0, section: 0), withAnimation: .automatic)
+        //
+        //        case .changed:
+        //            let index = viewModels.firstIndex { (c) -> Bool in
+        //                return c.modelID == cvs.id
+        //            }
+        //            if index != nil{
+        //
+        //                numberOfNewMsg += 1
+        //
+        //                if index! != 0{
+        //                    let item = viewModels.remove(at: index!)
+        //                    viewModels.insert(item, at: 0)
+        //
+        //                    tableNode.moveRow(at: IndexPath(row: index!, section: 0), to: IndexPath(row: 0, section: 0))
+        //                }else{
+        //                    tableNode.reloadDataInCellNode(at: IndexPath(row: 0, section: 0))
+        //                }
+        //            }
+        //
+        //        case .delete:
+        //            print("Delete conversation")
+        //        }
     }
 }
 
