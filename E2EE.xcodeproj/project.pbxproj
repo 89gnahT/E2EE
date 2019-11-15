@@ -31,6 +31,10 @@
 		4883F84F23751A0E004C3F83 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4883F83D23751A0E004C3F83 /* TabBarViewController.swift */; };
 		4883F8512375557A004C3F83 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4883F8502375557A004C3F83 /* DataManager.swift */; };
 		4883F8532375720E004C3F83 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4883F8522375720E004C3F83 /* Common.swift */; };
+		810383B4237BE1420023B37A /* ContactStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 810383B3237BE1420023B37A /* ContactStore.swift */; };
+		810383B6237BE1500023B37A /* ContactModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 810383B5237BE1500023B37A /* ContactModel.swift */; };
+		810383BA237E86EF0023B37A /* SPWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 810383B9237E86EF0023B37A /* SPWrapper.swift */; };
+		810383BC237E8CAE0023B37A /* TempUserKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 810383BB237E8CAE0023B37A /* TempUserKeyStore.swift */; };
 		814F61BB23595A3700A6AA44 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814F61BA23595A3700A6AA44 /* AppDelegate.swift */; };
 		814F61BD23595A3700A6AA44 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814F61BC23595A3700A6AA44 /* SceneDelegate.swift */; };
 		814F61BF23595A3700A6AA44 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814F61BE23595A3700A6AA44 /* ViewController.swift */; };
@@ -143,6 +147,10 @@
 		4883F8522375720E004C3F83 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		5EF4F8F96B03EC46DAEF9048 /* Pods-E2EE-E2EEUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EE-E2EEUITests.release.xcconfig"; path = "Target Support Files/Pods-E2EE-E2EEUITests/Pods-E2EE-E2EEUITests.release.xcconfig"; sourceTree = "<group>"; };
 		669DCAAD94F20C41F7BA0FBC /* Pods_E2EE_E2EEUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_E2EE_E2EEUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		810383B3237BE1420023B37A /* ContactStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactStore.swift; sourceTree = "<group>"; };
+		810383B5237BE1500023B37A /* ContactModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactModel.swift; sourceTree = "<group>"; };
+		810383B9237E86EF0023B37A /* SPWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPWrapper.swift; sourceTree = "<group>"; };
+		810383BB237E8CAE0023B37A /* TempUserKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempUserKeyStore.swift; sourceTree = "<group>"; };
 		814F61B723595A3700A6AA44 /* E2EE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = E2EE.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		814F61BA23595A3700A6AA44 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		814F61BC23595A3700A6AA44 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -337,6 +345,31 @@
 			path = ChatConversation;
 			sourceTree = "<group>";
 		};
+		810383B2237BE0E20023B37A /* Data Layer */ = {
+			isa = PBXGroup;
+			children = (
+				810383B3237BE1420023B37A /* ContactStore.swift */,
+				810383B5237BE1500023B37A /* ContactModel.swift */,
+			);
+			path = "Data Layer";
+			sourceTree = "<group>";
+		};
+		810383B7237E81910023B37A /* Business Contact */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Business Contact";
+			sourceTree = "<group>";
+		};
+		810383B8237E85720023B37A /* Message Exchange */ = {
+			isa = PBXGroup;
+			children = (
+				810383B9237E86EF0023B37A /* SPWrapper.swift */,
+				810383BB237E8CAE0023B37A /* TempUserKeyStore.swift */,
+			);
+			path = "Message Exchange";
+			sourceTree = "<group>";
+		};
 		814F61AE23595A3700A6AA44 = {
 			isa = PBXGroup;
 			children = (
@@ -362,6 +395,9 @@
 		814F61B923595A3700A6AA44 /* E2EE */ = {
 			isa = PBXGroup;
 			children = (
+				810383B8237E85720023B37A /* Message Exchange */,
+				810383B7237E81910023B37A /* Business Contact */,
+				810383B2237BE0E20023B37A /* Data Layer */,
 				C2763720236BD981007A563D /* Security */,
 				814F61BA23595A3700A6AA44 /* AppDelegate.swift */,
 				814F61BC23595A3700A6AA44 /* SceneDelegate.swift */,
@@ -789,8 +825,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				C276378B236BD981007A563D /* SessionState.swift in Sources */,
+				810383BA237E86EF0023B37A /* SPWrapper.swift in Sources */,
 				C2763761236BD981007A563D /* SenderKeyState.swift in Sources */,
 				C2763768236BD981007A563D /* KeyStore.swift in Sources */,
+				810383B4237BE1420023B37A /* ContactStore.swift in Sources */,
 				C2763786236BD981007A563D /* SessionPreKeyBundle.swift in Sources */,
 				C276376A236BD981007A563D /* SenderKeyStore.swift in Sources */,
 				4883F84023751A0E004C3F83 /* ImageMessage.swift in Sources */,
@@ -806,6 +844,7 @@
 				4883F84D23751A0E004C3F83 /* ZAConversationTableCellNode.swift in Sources */,
 				C2763773236BD981007A563D /* Fingerprint.proto in Sources */,
 				4883F84723751A0E004C3F83 /* ZAContactViewModel.swift in Sources */,
+				810383BC237E8CAE0023B37A /* TempUserKeyStore.swift in Sources */,
 				4883F84923751A0E004C3F83 /* ContactViewController.swift in Sources */,
 				4883F84223751A0E004C3F83 /* Conversation.swift in Sources */,
 				C25D7282236BDD0B00359C11 /* DeviceConsistencySignature.swift in Sources */,
@@ -845,6 +884,7 @@
 				C276377D236BD981007A563D /* RatchetMessageKey.swift in Sources */,
 				C276375E236BD981007A563D /* CommonSignalCrypto.swift in Sources */,
 				4883F84523751A0E004C3F83 /* UIFont+Default.swift in Sources */,
+				810383B6237BE1500023B37A /* ContactModel.swift in Sources */,
 				4883F84123751A0E004C3F83 /* User.swift in Sources */,
 				C2763783236BD981007A563D /* PendingPreKey.swift in Sources */,
 				4883F84623751A0E004C3F83 /* ContactTableNode.swift in Sources */,
@@ -1041,14 +1081,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = V4K6YSYUT4;
+				DEVELOPMENT_TEAM = SKQY859ZK7;
 				INFOPLIST_FILE = E2EE/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = truongnguyen.chatapp;
+				PRODUCT_BUNDLE_IDENTIFIER = fresher.E2EEChatApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -1063,14 +1103,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = V4K6YSYUT4;
+				DEVELOPMENT_TEAM = SKQY859ZK7;
 				INFOPLIST_FILE = E2EE/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = truongnguyen.chatapp;
+				PRODUCT_BUNDLE_IDENTIFIER = fresher.E2EEChatApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
