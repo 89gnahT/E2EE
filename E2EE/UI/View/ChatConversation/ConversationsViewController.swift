@@ -106,12 +106,7 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
     
     func markItemsAsRead(items : [ChatConversationViewModel]){
         for item in items {
-            let index = viewModels.firstIndex { (m) -> Bool in
-                return m === item
-            }
-            CDataManager.shared.markAsRead(conversationID: item.model.id) { (error) in
-                
-            }
+            CDataManager.shared.markAsRead(conversationID: item.model.id, completion: nil)
         }
     }
     
@@ -344,6 +339,7 @@ extension ConversationsViewController{
     }
 }
 
+// MARK: - Observer Delegate
 extension ConversationsViewController : DataManagerListenerDelegate{
     func messageChanged(_ msg: MessageModel, dataChanged: DataChangedType, description: DataChangedDescription) {
         
@@ -372,6 +368,8 @@ extension ConversationsViewController : DataManagerListenerDelegate{
             }
             viewModels.remove(at: indexOfItem)
             tableNode.deleteRow(at: IndexPath(row: indexOfItem, section: 0), withAnimation: .automatic)
+            
+            numberOfNewMsg -= cvs.numberOfUnreadMessages()
         }
     }
     

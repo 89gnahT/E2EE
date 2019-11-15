@@ -165,6 +165,8 @@ extension SDataManager{
         
         delegate?.conversationChanged(c, dataChanged: .delete, description: DataChangedDescription())
         
+        // TODO: - Save in database
+        
         return true
     }
 }
