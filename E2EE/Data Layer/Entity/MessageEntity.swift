@@ -29,9 +29,9 @@ struct MessageTime {
     }
 }
 
-struct MessageEntity {
+class MessageEntity {
     var id : MessageID
-    var conversationID : ConversationID
+    var conversationID : InboxID
     var senderId : UserID
     var msgType : MessageType
     var contents : [String]
@@ -41,7 +41,7 @@ struct MessageEntity {
     var seen : TimeInterval
     
     init(id : MessageID = "",
-         conversationID : ConversationID = "",
+         conversationID : InboxID = "",
          senderId : UserID = "",
          type : MessageType = .text,
          contents : [String] = [],
@@ -60,10 +60,22 @@ struct MessageEntity {
     }
     
     func isMyMessage() -> Bool{
-        return senderId == SDataManager.shared.you.id
+        return senderId == DataManager.shared.you.id
     }
     
     func isRead() -> Bool{
         return seen != MessageTime.TimeInvalidate
+    }
+    
+    func convertToModel(with sender : UserModel) -> MessageModel{
+        let time = MessageTime(sent: sent, deliveried: deliveried, seen: seen)
+        switch msgType {
+        case .image:
+           return ImageMessageModel(id: id, conversationID: conversationID, sender: sender, contents: contents, time: time)
+            
+        case .text:
+            return TextMessageModel(id: id, conversationID: conversationID, sender: sender, content: contents[0], time: time)
+        }
+    
     }
 }

@@ -9,13 +9,13 @@
 import UIKit
 import AsyncDisplayKit
 
-class ConversationsViewController: ASViewController<ASDisplayNode>{
+class InboxesViewController: ASViewController<ASDisplayNode>{
     
     let tableNode = ConversationsTableNode()
     
-    var viewModels : [ChatConversationViewModel] = []
+    var viewModels : [ChatInboxViewModel] = []
     
-    var listSelectedItemsInEdittingMode : [ChatConversationViewModel] = []
+    var listSelectedItemsInEdittingMode : [ChatInboxViewModel] = []
     
     var isEdittingMode : Bool = false{
         didSet{
@@ -83,17 +83,17 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         tableNode.setNeedsLayout()
         tableNode.layoutIfNeeded()
         
-        CDataManager.shared.addObserver(for: .conversation, target: self, callBackQueue: DispatchQueue.main)
+        DataManager.shared.addObserver(for: .conversationChanged, target: self, callBackQueue: DispatchQueue.main)
         
         // Fetch data
-        CDataManager.shared.fetchConversations( { (conversations) in
+        DataManager.shared.fetchConversationModels ( { (conversations) in
             
             var numberOfUnreadMsg = 0
             for c in conversations{
-                self.viewModels.append(ChatConversationViewModel(model: c as! ChatConversationModel))
+                self.viewModels.append(ChatInboxViewModel(model: c as! ChatInboxModel))
                 
                 // Count how many unread message
-                numberOfUnreadMsg += c.numberOfUnreadMessages()
+                numberOfUnreadMsg += c.isUnread() ? 1 : 0
             }
             
             self.numberOfNewMsg = numberOfUnreadMsg
@@ -101,12 +101,12 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
             DispatchQueue.main.async {
                 self.tableNode.reloadData()
             }
-        })
+        }, callbackQueue: nil)
     }
     
-    func markItemsAsRead(items : [ChatConversationViewModel]){
+    func markItemsAsRead(items : [ChatInboxViewModel]){
         for item in items {
-            CDataManager.shared.markAsRead(conversationID: item.model.id, completion: nil)
+            DataManager.shared.markAsRead(conversationID: item.modelID, completion: nil)
         }
     }
     
@@ -121,38 +121,29 @@ class ConversationsViewController: ASViewController<ASDisplayNode>{
         }
     }
     
-    func deleteItems(items : [ChatConversationViewModel]){
+    func deleteItems(items : [ChatInboxViewModel]){
         for item in items {
-            CDataManager.shared.deleteConversationWithID(item.model.id) { (error) in
-                if error == .none{
-                    
-                }
-            }
+            DataManager.shared.deleteConversationWithID(item.modelID, completion: nil)
         }
         
     }
     
     func muteItem(at indexPath : IndexPath, until time : TimeInterval){
         let item = viewModels[indexPath.row]
-        CDataManager.shared.muteConversationWithID(item.model.id, until: time) { (error) in
-            
-        }
+        DataManager.shared.muteConversationWithID(item.modelID, until: time, completion: nil)
     }
     
     func unmuteItem(at indexPath : IndexPath){
         let item = viewModels[indexPath.row]
-        CDataManager.shared.unmuteConversationWithID(item.model.id) { (error) in
-            if error == .none{
-                
-            }
-        }
+        DataManager.shared.unmuteConversationWithID(item.modelID, completion: nil)
+        
     }
 }
 
-// MARK: Display alert
-extension ConversationsViewController{
+// MARK: - Display alert
+extension InboxesViewController{
     
-    func alertMarkItemsAsRead(items : [ChatConversationViewModel], completion: (() -> Void)?){
+    func alertMarkItemsAsRead(items : [ChatInboxViewModel], completion: (() -> Void)?){
         let message = "Đánh dấu đã đọc " + String(items.count) + " cuộc trò chuyện này?"
         
         let delete = UIAlertAction(title: "Không", style: .cancel, handler: { action in })
@@ -168,7 +159,7 @@ extension ConversationsViewController{
         displayAlert(title: "Xác nhận", message: message, actions: [delete, dontDelete], preferredStyle: .alert)
     }
     
-    func alertDeleteItems(items : Array<ChatConversationViewModel>, completion: (() -> Void)?){
+    func alertDeleteItems(items : Array<ChatInboxViewModel>, completion: (() -> Void)?){
         var message : String
         if items.count > 1{
             message = "Bạn có muốn xoá " + String(items.count) + " cuộc trò chuyện đã chọn?"
@@ -223,8 +214,8 @@ extension ConversationsViewController{
 }
 
 
-// MARK: Delegate
-extension ConversationsViewController : ConversationsDelegate{
+// MARK: - TableNode Delegate
+extension InboxesViewController : InboxesDelegate{
     
     func tableNode(_ table: ConversationsTableNode, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         
@@ -307,15 +298,15 @@ extension ConversationsViewController : ConversationsDelegate{
     }
 }
 
-// MARK: DataSource
-extension ConversationsViewController : ConversationsDataSource{
-    func tableNode(_ table: ConversationsTableNode) -> Array<ChatConversationViewModel> {
+// MARK: - TableNode DataSource
+extension InboxesViewController : ConversationsDataSource{
+    func tableNode(_ table: ConversationsTableNode) -> Array<ChatInboxViewModel> {
         return viewModels 
     }
 }
 
-// MARK: Navigation In Editting mode
-extension ConversationsViewController{
+// MARK: - Navigation In Editting mode
+extension InboxesViewController{
     
     @objc func leftTopButtonAction(button : ASButtonNode){
         exitEdittingMode()
@@ -340,80 +331,52 @@ extension ConversationsViewController{
 }
 
 // MARK: - Observer Delegate
-extension ConversationsViewController : DataManagerListenerDelegate{
-    func messageChanged(_ msg: MessageModel, dataChanged: DataChangedType, description: DataChangedDescription) {
+extension InboxesViewController : DataManagerListenerDelegate{
+    func messageChanged(_ msg : MessageModel, updateType : UpdateType, oldValue : MessageModel?) {
         
     }
     
-    func conversationChanged(_ cvs: ConversationModel, dataChanged: DataChangedType, description: DataChangedDescription) {
-        switch dataChanged {
+   func conversationChanged(_ cvs : InboxModel, updateType : UpdateType, oldValue : InboxModel?) {
+                
+        switch updateType {
         case .new:
-            print("new conversation")
-            
+            print(1)
         case .changed:
-            guard let indexOfItem = viewModels.firstIndex(where: { (c) -> Bool in
-                return c.model.id == cvs.id
+            guard oldValue != nil, let index = viewModels.firstIndex(where: { (a) -> Bool in
+                return a.modelID == cvs.id
             }) else {
                 return
             }
-            if description.descriptions.first! != .conversationAppendNewMessage{
-                tableNode.reloadDataInCellNode(at: IndexPath(row: indexOfItem, section: 0))
+            
+            if cvs.lastMessage.id != oldValue!.lastMessage.id{
+                
+            }else{
+                tableNode.reloadDataInCellNode(at: index)
             }
+            
+            numberOfNewMsg -= oldValue!.isUnread() ? 1 : 0
             
         case .delete:
-            guard let indexOfItem = viewModels.firstIndex(where: { (c) -> Bool in
-                return c.model.id == cvs.id
+            guard let index = viewModels.firstIndex(where: { (a) -> Bool in
+                return a.modelID == cvs.id
             }) else {
                 return
             }
-            viewModels.remove(at: indexOfItem)
-            tableNode.deleteRow(at: IndexPath(row: indexOfItem, section: 0), withAnimation: .automatic)
-            
-            numberOfNewMsg -= cvs.numberOfUnreadMessages()
+
+            viewModels.remove(at: index)
+            tableNode.deleteRow(at: index)
+            numberOfNewMsg -= cvs.isUnread() ? 1 : 0
         }
     }
     
-    func userChanged(_ user: UserModel, dataChanged: DataChangedType, description: DataChangedDescription) {
+    func userChanged(_ user : UserModel, updateType : UpdateType, oldValue : UserModel?) {
         
     }
     
-    
-    
-    func conversationChanged(_ cvs: ConversationModel, dataChanged: DataChangedType) {
-        //        switch dataChanged {
-        //        case .new:
-        //            numberOfNewMsg += 1
-        //
-        //            let modelView = ChatConversationViewModel(model: cvs as! ChatConversationModel)
-        //            viewModels.insert(modelView, at: 0)
-        //
-        //            tableNode.insertRow(at: IndexPath(row: 0, section: 0), withAnimation: .automatic)
-        //
-        //        case .changed:
-        //            let index = viewModels.firstIndex { (c) -> Bool in
-        //                return c.modelID == cvs.id
-        //            }
-        //            if index != nil{
-        //
-        //                numberOfNewMsg += 1
-        //
-        //                if index! != 0{
-        //                    let item = viewModels.remove(at: index!)
-        //                    viewModels.insert(item, at: 0)
-        //
-        //                    tableNode.moveRow(at: IndexPath(row: index!, section: 0), to: IndexPath(row: 0, section: 0))
-        //                }else{
-        //                    tableNode.reloadDataInCellNode(at: IndexPath(row: 0, section: 0))
-        //                }
-        //            }
-        //
-        //        case .delete:
-        //            print("Delete conversation")
-        //        }
-    }
 }
 
-extension ConversationsViewController{
+
+extension InboxesViewController{
     private func reloadUI(){
         tableNode.reloadData()
     }

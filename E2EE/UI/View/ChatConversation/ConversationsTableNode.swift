@@ -9,7 +9,7 @@
 import UIKit
 import AsyncDisplayKit
 
-@objc protocol ConversationsDelegate: NSObjectProtocol{
+@objc protocol InboxesDelegate: NSObjectProtocol{
     @objc optional func tableNode(_ table: ConversationsTableNode, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
     
     @objc optional func tableNode(_ table: ConversationsTableNode, didSelectRowAt indexPath: IndexPath)
@@ -22,17 +22,17 @@ import AsyncDisplayKit
 
 protocol ConversationsDataSource: NSObjectProtocol {
     
-    func tableNode(_ table: ConversationsTableNode) -> Array<ChatConversationViewModel>
+    func tableNode(_ table: ConversationsTableNode) -> Array<ChatInboxViewModel>
 }
 
 
 class ConversationsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
     
-    weak public var delegate : ConversationsDelegate?
+    weak public var delegate : InboxesDelegate?
     weak public var dataSource : ConversationsDataSource?
     
     private let tableNode = ASTableNode()
-    private var viewModels = Array<ChatConversationViewModel>()
+    private var viewModels = Array<ChatInboxViewModel>()
     
     public var isInEdittingMode : Bool = false{
         didSet{
@@ -87,6 +87,10 @@ class ConversationsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
         tableNode.deleteRows(at: [indexPath], with: animation)
     }
     
+    public func deleteRow(at index : Int){
+        deleteRow(at: IndexPath(row: index, section: 0), withAnimation: .automatic)
+    }
+    
     public func insertRow(at indexPath : IndexPath, withAnimation animation : UITableView.RowAnimation){
         viewModels = (dataSource?.tableNode(self))!
         tableNode.insertRows(at: [indexPath], with: animation)
@@ -102,7 +106,11 @@ class ConversationsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
     
     // Not reloadRow, this func does not create cellNode and just reload data from view model
     public func reloadDataInCellNode(at indexPath : IndexPath){
-        (tableNode.nodeForRow(at: indexPath) as! ConversationViewCell).reloadData()
+        (tableNode.nodeForRow(at: indexPath) as! InboxViewCell).reloadData()
+    }
+    
+    public func reloadDataInCellNode(at index : Int){
+        reloadDataInCellNode(at: IndexPath(row: index, section: 0))
     }
 }
 
@@ -113,7 +121,7 @@ extension ConversationsTableNode: ASTableDelegate{
     }
     
     func tableNode(_ tableNode: ASTableNode, willDisplayRowWith node: ASCellNode) {
-        (node as! ConversationViewCell).reloadData()
+        (node as! InboxViewCell).reloadData()
     }
     
     func tableNode(_ tableNode: ASTableNode, didDeselectRowAt indexPath: IndexPath) {
@@ -141,7 +149,7 @@ extension ConversationsTableNode: ASTableDataSource{
     func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
         return {
             print("create cell node")
-            let cellNode  = ConversationViewCell(viewModel: self.viewModels[indexPath.row])
+            let cellNode  = InboxViewCell(viewModel: self.viewModels[indexPath.row])
             return cellNode
         }
     }

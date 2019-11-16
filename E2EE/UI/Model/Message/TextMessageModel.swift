@@ -10,16 +10,16 @@ import UIKit
 
 public class TextMessageModel: MessageModel {
     init(id : MessageID = "",
-         conversationID : ConversationID = "",
+         conversationID : InboxID = "",
          sender : UserModel = UserModel(),
-         contents : [String] = [],
+         content : String = "",
          time : MessageTime = MessageTime())
     {
         super.init(id: id,
                    conversationID: conversationID,
                    sender: sender,
                    type: .text,
-                   contents: contents,
+                   contents: [content],
                    time: time)
     }
     

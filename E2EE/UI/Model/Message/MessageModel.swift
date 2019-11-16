@@ -11,7 +11,7 @@ import UIKit
 public class MessageModel: NSObject {
     var id : MessageID
     
-    var conversationID : ConversationID
+    var conversationID : InboxID
     
     var sender : UserModel
     
@@ -22,7 +22,7 @@ public class MessageModel: NSObject {
     var time : MessageTime
     
     init(id : MessageID = "",
-         conversationID : ConversationID = "",
+         conversationID : InboxID = "",
          sender : UserModel = UserModel(),
          type : MessageType = .text,
          contents : [String] = [],
@@ -39,7 +39,7 @@ public class MessageModel: NSObject {
     }
     
     func isMyMessage()->Bool{
-        return sender.id == CDataManager.shared.you.id
+        return sender.id == DataManager.shared.you.id
     }
     
     func isRead() -> Bool{

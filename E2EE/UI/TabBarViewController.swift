@@ -12,7 +12,7 @@ import AsyncDisplayKit
 class TabBarViewController: UIViewController, UITabBarControllerDelegate {
     let tabBarCtl = ASTabBarController()
     
-    var chatListVC : ConversationsViewController!
+    var chatListVC : InboxesViewController!
     var friendListVC : ContactViewController!
     var groupChatListVC : ASViewController<ASTableNode>!
     var logoView = ASDisplayNode()
@@ -22,36 +22,33 @@ class TabBarViewController: UIViewController, UITabBarControllerDelegate {
         self.createLogoView()
         
         self.view.addSubnode(logoView)
-        
-        CDataManager.shared.batchFetchingAllData {
-            ASPerformBlockOnMainThread {[weak self] in
-                
-                self?.logoView.removeFromSupernode()
-                
-                self?.chatListVC = ConversationsViewController()
-                self?.friendListVC = ContactViewController()
-                self?.groupChatListVC = ASViewController<ASTableNode>()
-                
-                self?.tabBarCtl.viewControllers = [self?.chatListVC, self?.friendListVC, self?.groupChatListVC].map{
-                    UINavigationController.init(rootViewController: $0!)
-                    }
-                
-                UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont.defaultFont(ofSize: 10)], for: .normal)
-                self?.tabBarCtl.tabBar.backgroundColor = UIColor(named: "tabbar_color")!
-                self?.tabBarCtl.tabBar.barTintColor = UIColor(named: "tabbar_color")!
-                self?.view.addSubview(self?.tabBarCtl.view ?? UIView())
-                
-                self?.navigationController?.setNavigationBarHidden(true, animated: false)
+        DataManager.shared.batchFetchingAllData({[weak self] in
+           
+            self?.logoView.removeFromSupernode()
+            
+            self?.chatListVC = InboxesViewController()
+            self?.friendListVC = ContactViewController()
+            self?.groupChatListVC = ASViewController<ASTableNode>()
+            
+            self?.tabBarCtl.viewControllers = [self?.chatListVC, self?.friendListVC, self?.groupChatListVC].map{
+                UINavigationController.init(rootViewController: $0!)
             }
-        }
+            
+            UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont.defaultFont(ofSize: 10)], for: .normal)
+            self?.tabBarCtl.tabBar.backgroundColor = UIColor(named: "tabbar_color")!
+            self?.tabBarCtl.tabBar.barTintColor = UIColor(named: "tabbar_color")!
+            self?.view.addSubview(self?.tabBarCtl.view ?? UIView())
+            
+            self?.navigationController?.setNavigationBarHidden(true, animated: false)
+        }, callbackQueue: DispatchQueue.main)
         
     }
     
     private func createLogoView(){
         let imageNode = ASImageNode()
         imageNode.image = UIImage(named: "logo")!
-        imageNode.style.maxWidth = ASDimensionMake(100)
-        imageNode.style.maxHeight = ASDimensionMake(100)
+        imageNode.style.maxWidth = ASDimensionMake(200)
+        imageNode.style.maxHeight = ASDimensionMake(200)
         
         logoView.frame = self.view.frame
         logoView.backgroundColor = UIColor(named: "background_color")

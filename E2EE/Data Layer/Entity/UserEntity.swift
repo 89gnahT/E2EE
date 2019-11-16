@@ -17,12 +17,18 @@ enum Gender {
     case none
 }
 
-struct UserEntity {
+class UserEntity {
+    
     var id : UserID
+    
     var name : String
+    
     var nickName : String
+    
     var avatarURL : String
+    
     var phoneNumber : String = ""
+    
     var gender : Gender
     
     init(id : String = "",
@@ -35,5 +41,9 @@ struct UserEntity {
         self.nickName = name
         self.gender = gender
         self.avatarURL = avatarURL
+    }
+    
+    func convertToModel() -> UserModel{
+       return UserModel(id: id, name: name, avatarURL: avatarURL, gender: gender)
     }
 }

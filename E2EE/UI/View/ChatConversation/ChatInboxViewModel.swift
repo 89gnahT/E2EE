@@ -9,11 +9,15 @@
 import UIKit
 import AsyncDisplayKit
 
-class ChatConversationViewModel {
-    private(set) var model : ChatConversationModel
+class ChatInboxViewModel {
+    private(set) var model : ChatInboxModel
     
-    init(model : ChatConversationModel) {
+    init(model : ChatInboxModel) {
         self.model = model
+    }
+    
+    public var modelID : InboxID{
+        return model.id
     }
     
     public var nameConversation : NSAttributedString = NSAttributedString()
@@ -26,47 +30,46 @@ class ChatConversationViewModel {
     
     public var muteIcon : UIImage?
     
-    public var numberOfUnreadMessage : NSAttributedString = NSAttributedString()
+    public var notifyUnreadMessage : UIImage?
     
-    public func reloadData(){
-        guard let lastMsg = model.lastMsgs.last else {
-            return
+    public func reloadData(_ completion : (() -> Void)?){
+        ASPerformBlockOnBackgroundThread {
+           
+            let isRead = !self.model.isUnread()
+            
+            let friendChat = self.model.members.values.first { (a) -> Bool in
+                return a.id != DataManager.shared.you.id
+            }
+            self.avatarURL = URL(string: friendChat!.avatarURL)!
+            
+            self.nameConversation = atributedString(self.model.nameConversation, fontSize: 16, isHighLight: !isRead, highLightColor: UIColor(named: "title_in_cell_color")!,
+            normalColor: UIColor(named: "title_in_cell_color")!)
+            
+            self.messageContent = atributedString(self.messageString, fontSize: 14, isHighLight: !isRead, highLightColor: UIColor(named: "highlight_sub_title_in_cell_color")!,
+            normalColor: UIColor(named: "normal_sub_title_in_cell_color")!)
+            
+            self.timeConversation = atributedString(self.timeToString, fontSize: 12, isHighLight: !isRead, highLightColor: UIColor(named: "highlight_sub_title_in_cell_color")!,
+            normalColor: UIColor(named: "normal_sub_title_in_cell_color")!)
+            
+            self.muteIcon = self.model.isMuted() ? UIImage(named: "mute_icon") : nil
+            
+            self.notifyUnreadMessage = !isRead ? UIImage(named: "dot") : nil
+            
+            completion?()
         }
-        
-        let isReadMsg = lastMsg.isRead()
-        
-        let friendChat = model.members.values.first { (a) -> Bool in
-            return a.id != CDataManager.shared.you.id
-        }
-        avatarURL = URL(string: friendChat!.avatarURL)!
-        
-        nameConversation = atributedString(model.nameConversation, fontSize: 16, isHighLight: !isReadMsg, highLightColor: UIColor(named: "title_in_cell_color")!,
-        normalColor: UIColor(named: "title_in_cell_color")!)
-        
-        messageContent = atributedString(messageString, fontSize: 14, isHighLight: !isReadMsg, highLightColor: UIColor(named: "highlight_sub_title_in_cell_color")!,
-        normalColor: UIColor(named: "normal_sub_title_in_cell_color")!)
-        
-        timeConversation = atributedString(timeToString, fontSize: 12, isHighLight: !isReadMsg, highLightColor: UIColor(named: "highlight_sub_title_in_cell_color")!,
-        normalColor: UIColor(named: "normal_sub_title_in_cell_color")!)
-        
-        muteIcon = model.isMuted() ? UIImage(named: "mute_icon.png") : nil
-        
-        numberOfUnreadMessage = atributedString(numberOfUnreadMessageString, fontSize: 12, isBold: true, foregroundColor: .white)
     }
 }
 
-extension ChatConversationViewModel{
+extension ChatInboxViewModel{
     
     private var messageString : String{
-        guard let lastMsg = model.lastMsgs.last else {
-            return ""
-        }
+        let lastMsg = model.lastMessage 
         
         return lastMsg.type == .text ? lastMsg.contents.first! : "[Hình ảnh]"
     }
     
     private var numberOfUnreadMessageString : String{
-        let value = model.numberOfUnreadMessages()
+        let value = model.numberOfNewMessage
         var string : String
         if value <= 0{
             string = ""
@@ -81,14 +84,11 @@ extension ChatConversationViewModel{
     }
     
     private var timeToString : String{
-        let time = model.lastMsgs.last?.time.sent
+        let time = model.lastMessage.time.sent
         
-        guard time != nil else {
-            return ""
-        }
         var timeString : String
         
-        let deltaTime = thePresentTime - time!
+        let deltaTime = thePresentTime - time
         
         if deltaTime < MINUTE{
             timeString = round(deltaTime) + " giây"
@@ -110,10 +110,10 @@ extension ChatConversationViewModel{
                             return formatter.string(from: date as Date)
                         }
                         
-                        timeString = getTimeWithFormath(time: time!, format: "dd/MM/yyyy")
+                        timeString = getTimeWithFormath(time: time, format: "dd/MM/yyyy")
                         
                         if timeString.hasSuffix(getTimeWithFormath(time: thePresentTime, format: "yyyy")){
-                            timeString = getTimeWithFormath(time: time!, format: "dd/MM")
+                            timeString = getTimeWithFormath(time: time, format: "dd/MM")
                         }
         }
         
@@ -121,7 +121,7 @@ extension ChatConversationViewModel{
     }
 }
 
-extension ChatConversationViewModel{
+extension ChatInboxViewModel{
     private func round(_ x : Double)->String{
         return String(Int(x + 0.5))
     }

@@ -9,7 +9,7 @@
 import UIKit
 import AsyncDisplayKit
 
-class ConversationViewCell: ASCellNode {
+class InboxViewCell: ASCellNode {
     var avatarImageNode = ASNetworkImageNode()
     
     var nameNode = ASTextNode()
@@ -17,11 +17,11 @@ class ConversationViewCell: ASCellNode {
     var mutedIcon = ASImageNode()
     
     var messageContentNode = ASTextNode()
-    var notifyUnreadNode = ASTextNode()
+    var notifyUnreadNode = ASImageNode()
     
-    private var viewModel : ChatConversationViewModel
+    private var viewModel : ChatInboxViewModel
     
-    init(viewModel : ChatConversationViewModel) {
+    init(viewModel : ChatInboxViewModel) {
         self.viewModel = viewModel
         
         super.init()
@@ -48,17 +48,16 @@ class ConversationViewCell: ASCellNode {
         
         mutedIcon.style.preferredSize = CGSize(width: 12, height: 15)
         
-        notifyUnreadNode.backgroundColor = .systemRed
-        notifyUnreadNode.cornerRadius = 7
-        notifyUnreadNode.clipsToBounds = true
+        notifyUnreadNode.style.preferredSize = CGSize(squareEdge: 12)
     }
     
     public func reloadData(){
-        DispatchQueue.global().async { [weak self] in
-            self?.viewModel.reloadData()
-            
-            self?.updateDataCellNode()
-        }
+        viewModel.reloadData({
+            ASPerformBlockOnMainThread {
+                self.updateDataCellNode()
+            }
+        })
+        
     }
     
     private func updateDataCellNode(){
@@ -72,7 +71,7 @@ class ConversationViewCell: ASCellNode {
         
         mutedIcon.image = viewModel.muteIcon
         
-        notifyUnreadNode.attributedText = viewModel.numberOfUnreadMessage
+        notifyUnreadNode.image = viewModel.notifyUnreadMessage
         
 //        self.setNeedsLayout()
 //        self.layoutIfNeeded()
