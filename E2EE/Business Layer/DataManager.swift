@@ -219,7 +219,7 @@ extension DataManager{
     
 }
 
-// MARK: - Private unsafe method
+// MARK: - Private helper method
 extension DataManager{
     private func u_markAsRead(message m : inout MessageEntity) -> Bool{
         if !m.isRead(){

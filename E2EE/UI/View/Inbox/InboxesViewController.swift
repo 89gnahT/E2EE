@@ -341,6 +341,7 @@ extension InboxesViewController : DataManagerListenerDelegate{
         switch updateType {
         case .new:
             print(1)
+            
         case .changed:
             guard oldValue != nil, let index = viewModels.firstIndex(where: { (a) -> Bool in
                 return a.modelID == cvs.id

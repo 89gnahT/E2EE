@@ -113,7 +113,7 @@ extension ChatInboxViewModel{
                         timeString = getTimeWithFormath(time: time, format: "dd/MM/yyyy")
                         
                         if timeString.hasSuffix(getTimeWithFormath(time: thePresentTime, format: "yyyy")){
-                            timeString = getTimeWithFormath(time: time, format: "dd/MM")
+                            timeString.removeSubrange(Range<String.Index>(NSRange(location: 5, length: 5), in: timeString)!)
                         }
         }
         

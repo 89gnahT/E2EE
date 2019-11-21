@@ -56,10 +56,10 @@ class InboxEntity {
        
         switch type {
         case .chat:
-            return ChatInboxModel(cvsID: id, members: membersModel, nameConversation: nameConversation, lastMsg: lastMessage, muteTime: muteTime, numberOfNewMessage: 0, maskAsRead: maskAsRead)
+            return ChatInboxModel(cvsID: id, members: membersModel, nameConversation: nameConversation, lastMsg: lastMessage, muteTime: muteTime, numberOfNewMessage: numberOfNewMessage, maskAsRead: maskAsRead)
             
         case .groupChat:
-            return GroupInboxModel(cvsID: id, members: membersModel, nameConversation: nameConversation, lastMsg: lastMessage, numberOfNewMessage: 0, muteTime: muteTime, maskAsRead: maskAsRead)
+            return GroupInboxModel(cvsID: id, members: membersModel, nameConversation: nameConversation, lastMsg: lastMessage, numberOfNewMessage: numberOfNewMessage, muteTime: muteTime, maskAsRead: maskAsRead)
         }
     }
 }

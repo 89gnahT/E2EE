@@ -14,7 +14,7 @@ class TabBarViewController: UIViewController, UITabBarControllerDelegate {
     
     var chatListVC : InboxesViewController!
     var friendListVC : ContactViewController!
-    var groupChatListVC : ASViewController<ASTableNode>!
+    var groupChatListVC : ChatScreenViewController!
     var logoView = ASDisplayNode()
     
     override func viewDidLoad() {
@@ -28,9 +28,9 @@ class TabBarViewController: UIViewController, UITabBarControllerDelegate {
             
             self?.chatListVC = InboxesViewController()
             self?.friendListVC = ContactViewController()
-            self?.groupChatListVC = ASViewController<ASTableNode>()
+            self?.groupChatListVC = ChatScreenViewController()
             
-            self?.tabBarCtl.viewControllers = [self?.chatListVC, self?.friendListVC, self?.groupChatListVC].map{
+            self?.tabBarCtl.viewControllers = [self?.groupChatListVC, self?.chatListVC, self?.friendListVC ].map{
                 UINavigationController.init(rootViewController: $0!)
             }
             

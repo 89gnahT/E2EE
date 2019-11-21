@@ -16,6 +16,13 @@
 		482C45F5237D8A2900C4F554 /* ChatInboxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482C45F4237D8A2900C4F554 /* ChatInboxViewModel.swift */; };
 		482C45F7237D93E500C4F554 /* InboxViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482C45F6237D93E500C4F554 /* InboxViewCell.swift */; };
 		483020EB2375A770002AC97B /* CGSize+Square.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483020EA2375A770002AC97B /* CGSize+Square.swift */; };
+		483F567A2386E1BC008EA1F7 /* BubbleConfigurationProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F56792386E1BC008EA1F7 /* BubbleConfigurationProtocol.swift */; };
+		483F567E2386E302008EA1F7 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F567D2386E302008EA1F7 /* UIColor.swift */; };
+		483F56802386E383008EA1F7 /* Bubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F567F2386E383008EA1F7 /* Bubble.swift */; };
+		483F56822386E519008EA1F7 /* DefaultBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F56812386E519008EA1F7 /* DefaultBubble.swift */; };
+		483F56842386E690008EA1F7 /* StandardBubbleConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F56832386E690008EA1F7 /* StandardBubbleConfiguration.swift */; };
+		483F56862386E897008EA1F7 /* ContentNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F56852386E897008EA1F7 /* ContentNode.swift */; };
+		48400F16238575B1008E2A0B /* UIImage+MaskColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48400F15238575B1008E2A0B /* UIImage+MaskColor.swift */; };
 		4883F84523751A0E004C3F83 /* UIFont+Default.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4883F83023751A0E004C3F83 /* UIFont+Default.swift */; };
 		4883F84623751A0E004C3F83 /* ContactTableNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4883F83323751A0E004C3F83 /* ContactTableNode.swift */; };
 		4883F84723751A0E004C3F83 /* ContactViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4883F83423751A0E004C3F83 /* ContactViewModel.swift */; };
@@ -32,6 +39,10 @@
 		48BC3F6B237D53DB00B96361 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48BC3F6A237D53DB00B96361 /* UserModel.swift */; };
 		48BC3F6D237D53E400B96361 /* MessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48BC3F6C237D53E400B96361 /* MessageModel.swift */; };
 		48BC3F6F237D53F200B96361 /* InboxModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48BC3F6E237D53F200B96361 /* InboxModel.swift */; };
+		48CF70FB238414AE003BFCE4 /* MessageViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CF70FA238414AE003BFCE4 /* MessageViewCell.swift */; };
+		48CF70FD238414DA003BFCE4 /* TextMessageViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CF70FC238414DA003BFCE4 /* TextMessageViewCell.swift */; };
+		48CF70FF23841510003BFCE4 /* ConversationViewNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CF70FE23841510003BFCE4 /* ConversationViewNode.swift */; };
+		48CF710123841AF2003BFCE4 /* ChatScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CF710023841AF2003BFCE4 /* ChatScreenViewController.swift */; };
 		814F61BB23595A3700A6AA44 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814F61BA23595A3700A6AA44 /* AppDelegate.swift */; };
 		814F61BD23595A3700A6AA44 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814F61BC23595A3700A6AA44 /* SceneDelegate.swift */; };
 		814F61C223595A3700A6AA44 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 814F61C023595A3700A6AA44 /* Main.storyboard */; };
@@ -129,6 +140,13 @@
 		482C45F4237D8A2900C4F554 /* ChatInboxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInboxViewModel.swift; sourceTree = "<group>"; };
 		482C45F6237D93E500C4F554 /* InboxViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxViewCell.swift; sourceTree = "<group>"; };
 		483020EA2375A770002AC97B /* CGSize+Square.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGSize+Square.swift"; sourceTree = "<group>"; };
+		483F56792386E1BC008EA1F7 /* BubbleConfigurationProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleConfigurationProtocol.swift; sourceTree = "<group>"; };
+		483F567D2386E302008EA1F7 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
+		483F567F2386E383008EA1F7 /* Bubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bubble.swift; sourceTree = "<group>"; };
+		483F56812386E519008EA1F7 /* DefaultBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultBubble.swift; sourceTree = "<group>"; };
+		483F56832386E690008EA1F7 /* StandardBubbleConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardBubbleConfiguration.swift; sourceTree = "<group>"; };
+		483F56852386E897008EA1F7 /* ContentNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentNode.swift; sourceTree = "<group>"; };
+		48400F15238575B1008E2A0B /* UIImage+MaskColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+MaskColor.swift"; sourceTree = "<group>"; };
 		4883F83023751A0E004C3F83 /* UIFont+Default.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Default.swift"; sourceTree = "<group>"; };
 		4883F83323751A0E004C3F83 /* ContactTableNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactTableNode.swift; sourceTree = "<group>"; };
 		4883F83423751A0E004C3F83 /* ContactViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactViewModel.swift; sourceTree = "<group>"; };
@@ -145,6 +163,10 @@
 		48BC3F6A237D53DB00B96361 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		48BC3F6C237D53E400B96361 /* MessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModel.swift; sourceTree = "<group>"; };
 		48BC3F6E237D53F200B96361 /* InboxModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxModel.swift; sourceTree = "<group>"; };
+		48CF70FA238414AE003BFCE4 /* MessageViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewCell.swift; sourceTree = "<group>"; };
+		48CF70FC238414DA003BFCE4 /* TextMessageViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessageViewCell.swift; sourceTree = "<group>"; };
+		48CF70FE23841510003BFCE4 /* ConversationViewNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewNode.swift; sourceTree = "<group>"; };
+		48CF710023841AF2003BFCE4 /* ChatScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScreenViewController.swift; sourceTree = "<group>"; };
 		5EF4F8F96B03EC46DAEF9048 /* Pods-E2EE-E2EEUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EE-E2EEUITests.release.xcconfig"; path = "Target Support Files/Pods-E2EE-E2EEUITests/Pods-E2EE-E2EEUITests.release.xcconfig"; sourceTree = "<group>"; };
 		669DCAAD94F20C41F7BA0FBC /* Pods_E2EE_E2EEUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_E2EE_E2EEUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		814F61B723595A3700A6AA44 /* E2EE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = E2EE.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -300,6 +322,33 @@
 			path = "Business Layer";
 			sourceTree = "<group>";
 		};
+		483F567B2386E2AA008EA1F7 /* Bubble */ = {
+			isa = PBXGroup;
+			children = (
+				483F567C2386E2B2008EA1F7 /* BubbleConfiguration */,
+				483F567F2386E383008EA1F7 /* Bubble.swift */,
+				483F56812386E519008EA1F7 /* DefaultBubble.swift */,
+			);
+			path = Bubble;
+			sourceTree = "<group>";
+		};
+		483F567C2386E2B2008EA1F7 /* BubbleConfiguration */ = {
+			isa = PBXGroup;
+			children = (
+				483F56792386E1BC008EA1F7 /* BubbleConfigurationProtocol.swift */,
+				483F56832386E690008EA1F7 /* StandardBubbleConfiguration.swift */,
+			);
+			path = BubbleConfiguration;
+			sourceTree = "<group>";
+		};
+		483F56872386E8A5008EA1F7 /* ContentNode */ = {
+			isa = PBXGroup;
+			children = (
+				483F56852386E897008EA1F7 /* ContentNode.swift */,
+			);
+			path = ContentNode;
+			sourceTree = "<group>";
+		};
 		4883F82E23751A0E004C3F83 /* UI */ = {
 			isa = PBXGroup;
 			children = (
@@ -316,6 +365,8 @@
 			children = (
 				4883F83023751A0E004C3F83 /* UIFont+Default.swift */,
 				483020EA2375A770002AC97B /* CGSize+Square.swift */,
+				48400F15238575B1008E2A0B /* UIImage+MaskColor.swift */,
+				483F567D2386E302008EA1F7 /* UIColor.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -323,8 +374,9 @@
 		4883F83123751A0E004C3F83 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				48CF70F9238413B3003BFCE4 /* Conversation */,
 				4883F83223751A0E004C3F83 /* Contact */,
-				4883F83723751A0E004C3F83 /* ChatConversation */,
+				4883F83723751A0E004C3F83 /* Inbox */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -340,7 +392,7 @@
 			path = Contact;
 			sourceTree = "<group>";
 		};
-		4883F83723751A0E004C3F83 /* ChatConversation */ = {
+		4883F83723751A0E004C3F83 /* Inbox */ = {
 			isa = PBXGroup;
 			children = (
 				4883F83823751A0E004C3F83 /* EditNavigationBarAndTabBarView.swift */,
@@ -349,7 +401,7 @@
 				482C45F4237D8A2900C4F554 /* ChatInboxViewModel.swift */,
 				4883F83C23751A0E004C3F83 /* InboxesViewController.swift */,
 			);
-			path = ChatConversation;
+			path = Inbox;
 			sourceTree = "<group>";
 		};
 		48BC3F69237D53BF00B96361 /* Model */ = {
@@ -360,6 +412,19 @@
 				482C45F2237D882700C4F554 /* Message */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		48CF70F9238413B3003BFCE4 /* Conversation */ = {
+			isa = PBXGroup;
+			children = (
+				483F567B2386E2AA008EA1F7 /* Bubble */,
+				483F56872386E8A5008EA1F7 /* ContentNode */,
+				48CF70FA238414AE003BFCE4 /* MessageViewCell.swift */,
+				48CF70FC238414DA003BFCE4 /* TextMessageViewCell.swift */,
+				48CF70FE23841510003BFCE4 /* ConversationViewNode.swift */,
+				48CF710023841AF2003BFCE4 /* ChatScreenViewController.swift */,
+			);
+			path = Conversation;
 			sourceTree = "<group>";
 		};
 		814F61AE23595A3700A6AA44 = {
@@ -826,10 +891,12 @@
 				C2763768236BD981007A563D /* KeyStore.swift in Sources */,
 				C2763786236BD981007A563D /* SessionPreKeyBundle.swift in Sources */,
 				C276376A236BD981007A563D /* SenderKeyStore.swift in Sources */,
+				483F56842386E690008EA1F7 /* StandardBubbleConfiguration.swift in Sources */,
 				C2763777236BD981007A563D /* Messages.proto in Sources */,
 				C2763772236BD981007A563D /* Fingerprint.pb.swift in Sources */,
 				482C45ED237D879400C4F554 /* GroupInboxModel.swift in Sources */,
 				48BC3F6B237D53DB00B96361 /* UserModel.swift in Sources */,
+				48CF70FF23841510003BFCE4 /* ConversationViewNode.swift in Sources */,
 				C276377C236BD981007A563D /* RatchetChainKey.swift in Sources */,
 				4883F84E23751A0E004C3F83 /* InboxesViewController.swift in Sources */,
 				C2763776236BD981007A563D /* Messages.pb.swift in Sources */,
@@ -849,6 +916,8 @@
 				DD410255237BA1CA00DD4D72 /* UserEntity.swift in Sources */,
 				C2763771236BD981007A563D /* SignalMessage.swift in Sources */,
 				4883F84823751A0E004C3F83 /* ContactTableViewCell.swift in Sources */,
+				483F56822386E519008EA1F7 /* DefaultBubble.swift in Sources */,
+				483F567E2386E302008EA1F7 /* UIColor.swift in Sources */,
 				C276377F236BD981007A563D /* ReceiverChain.swift in Sources */,
 				C276375F236BD981007A563D /* GroupCipher.swift in Sources */,
 				C276376C236BD981007A563D /* SignedPreKeyStore.swift in Sources */,
@@ -859,11 +928,14 @@
 				C2763769236BD981007A563D /* PreKeyStore.swift in Sources */,
 				C2763782236BD981007A563D /* SenderMessageKey.swift in Sources */,
 				48BC3F6F237D53F200B96361 /* InboxModel.swift in Sources */,
+				48400F16238575B1008E2A0B /* UIImage+MaskColor.swift in Sources */,
 				C25D7289236BE8CB00359C11 /* SessionCipher.swift in Sources */,
+				48CF70FD238414DA003BFCE4 /* TextMessageViewCell.swift in Sources */,
 				C2763764236BD981007A563D /* Fingerprint.swift in Sources */,
 				C2763760236BD981007A563D /* SenderKeyRecord.swift in Sources */,
 				C276376B236BD981007A563D /* SessionStore.swift in Sources */,
 				C276375D236BD981007A563D /* PublicKey.swift in Sources */,
+				483F567A2386E1BC008EA1F7 /* BubbleConfigurationProtocol.swift in Sources */,
 				C2763765236BD981007A563D /* ScannableFingerprint.swift in Sources */,
 				C2763762236BD981007A563D /* SignalError.swift in Sources */,
 				482C45EB237D86DC00C4F554 /* ChatInboxModel.swift in Sources */,
@@ -887,8 +959,11 @@
 				C2763783236BD981007A563D /* PendingPreKey.swift in Sources */,
 				4883F84623751A0E004C3F83 /* ContactTableNode.swift in Sources */,
 				C276377B236BD981007A563D /* HKDF.swift in Sources */,
+				483F56862386E897008EA1F7 /* ContentNode.swift in Sources */,
 				C276375B236BD981007A563D /* KeyPair.swift in Sources */,
 				C2763767236BD981007A563D /* IdentityKeyStore.swift in Sources */,
+				48CF710123841AF2003BFCE4 /* ChatScreenViewController.swift in Sources */,
+				48CF70FB238414AE003BFCE4 /* MessageViewCell.swift in Sources */,
 				814F61BB23595A3700A6AA44 /* AppDelegate.swift in Sources */,
 				C2763784236BD981007A563D /* SessionBuilder.swift in Sources */,
 				48BC3F14237C692F00B96361 /* Database+FakeData.swift in Sources */,
@@ -900,6 +975,7 @@
 				C276377A236BD981007A563D /* ProtocolBufferSerializable.swift in Sources */,
 				C276376F236BD981007A563D /* SenderKeyDistributionMessage.swift in Sources */,
 				C276375C236BD981007A563D /* PrivateKey.swift in Sources */,
+				483F56802386E383008EA1F7 /* Bubble.swift in Sources */,
 				C2763775236BD981007A563D /* LocalStorage.proto in Sources */,
 				48BC3F6D237D53E400B96361 /* MessageModel.swift in Sources */,
 			);

@@ -27,10 +27,11 @@ class InboxViewCell: ASCellNode {
         super.init()
         
         self.setup()
-        
+       
         updateDataCellNode()
     }
     
+  
     private func setup(){
         self.backgroundColor = UIColor(named: "conversation_cell_color")
         self.automaticallyManagesSubnodes = true
@@ -49,6 +50,7 @@ class InboxViewCell: ASCellNode {
         mutedIcon.style.preferredSize = CGSize(width: 12, height: 15)
         
         notifyUnreadNode.style.preferredSize = CGSize(squareEdge: 12)
+        
     }
     
     public func reloadData(){
