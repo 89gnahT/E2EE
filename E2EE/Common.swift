@@ -17,7 +17,7 @@ var thePresentTime : TimeInterval{
     return Date.timeIntervalSinceReferenceDate
 }
 
-func atributedString(_ string : String,
+func attributedString(_ string : String,
                      fontSize : CGFloat,
                      isHighLight : Bool,
                      highLightColor : UIColor,
@@ -26,14 +26,14 @@ func atributedString(_ string : String,
     var attributedText : NSAttributedString
     
     if isHighLight{
-        attributedText = atributedString(string, fontSize: fontSize, isBold: true, foregroundColor: highLightColor)
+        attributedText = attributedString(string, fontSize: fontSize, isBold: true, foregroundColor: highLightColor)
     }else{
-        attributedText = atributedString(string, fontSize: fontSize, isBold: false, foregroundColor: normalColor)
+        attributedText = attributedString(string, fontSize: fontSize, isBold: false, foregroundColor: normalColor)
     }
     return attributedText
 }
 
-func atributedString(_ string : String,
+func attributedString(_ string : String,
                      fontSize : CGFloat,
                      isBold : Bool,
                      foregroundColor : UIColor) -> NSAttributedString{

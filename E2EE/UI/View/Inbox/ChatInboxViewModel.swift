@@ -42,13 +42,13 @@ class ChatInboxViewModel {
             }
             self.avatarURL = URL(string: friendChat!.avatarURL)!
             
-            self.nameConversation = atributedString(self.model.nameConversation, fontSize: 16, isHighLight: !isRead, highLightColor: UIColor(named: "title_in_cell_color")!,
+            self.nameConversation = attributedString(self.model.nameConversation, fontSize: 16, isHighLight: !isRead, highLightColor: UIColor(named: "title_in_cell_color")!,
             normalColor: UIColor(named: "title_in_cell_color")!)
             
-            self.messageContent = atributedString(self.messageString, fontSize: 14, isHighLight: !isRead, highLightColor: UIColor(named: "highlight_sub_title_in_cell_color")!,
+            self.messageContent = attributedString(self.messageString, fontSize: 14, isHighLight: !isRead, highLightColor: UIColor(named: "highlight_sub_title_in_cell_color")!,
             normalColor: UIColor(named: "normal_sub_title_in_cell_color")!)
             
-            self.timeConversation = atributedString(self.timeToString, fontSize: 12, isHighLight: !isRead, highLightColor: UIColor(named: "highlight_sub_title_in_cell_color")!,
+            self.timeConversation = attributedString(self.timeToString, fontSize: 12, isHighLight: !isRead, highLightColor: UIColor(named: "highlight_sub_title_in_cell_color")!,
             normalColor: UIColor(named: "normal_sub_title_in_cell_color")!)
             
             self.muteIcon = self.model.isMuted() ? UIImage(named: "mute_icon") : nil

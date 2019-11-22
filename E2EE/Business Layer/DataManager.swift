@@ -126,6 +126,23 @@ extension DataManager{
             }
         }
     }
+    
+    public func fetchMessageModels(with inboxID : InboxID, _ completion : @escaping (_ models : [MessageModel]) -> Void, callbackQueue : DispatchQueue?){
+        taskQueue.async {
+            Database.shared.fetchMesaages(with: inboxID, { (messages) in
+                
+                var messageModel = [MessageModel]()
+                for i in messages{
+                    messageModel.append(i.convertToModel(with: self.people[i.senderId]!))
+                }
+                
+                let queue = callbackQueue != nil ? callbackQueue : self.callBackQueue
+                queue?.async {
+                    completion(messageModel)
+                }
+            }, callbackQueue: self.taskQueue)
+        }
+    }
 }
 
 // MARK: - Public threadSafde Method

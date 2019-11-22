@@ -11,10 +11,11 @@ import AsyncDisplayKit
 
 class ChatScreenViewController: ASViewController<ASDisplayNode> {
     var collectionNode : ASCollectionNode
+    var viewModels = [TextMessageViewModel]()
     
-    init() {
+    init(with inboxID : InboxID) {
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
+        layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 1
         layout.minimumInteritemSpacing = 1
         
@@ -24,9 +25,16 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         
         collectionNode.delegate = self
         collectionNode.dataSource = self
-        
-        self.view.backgroundColor = .black
-  
+    
+        DataManager.shared.fetchMessageModels(with: inboxID, { (models) in
+            for i in models{
+                if i.type == .text{
+                    self.viewModels.append(TextMessageViewModel(model: i as! TextMessageModel))
+                }
+            }
+            
+            self.collectionNode.reloadData()
+        }, callbackQueue: DispatchQueue.main)
     }
     
     required init?(coder: NSCoder) {
@@ -47,16 +55,15 @@ extension ChatScreenViewController: ASCollectionDataSource{
     }
     
     func collectionNode(_ collectionNode: ASCollectionNode, numberOfItemsInSection section: Int) -> Int {
-        return 3
+        return viewModels.count
     }
  
     
     func collectionNode(_ collectionNode: ASCollectionNode, nodeBlockForItemAt indexPath: IndexPath) -> ASCellNodeBlock {
+        let viewModel = self.viewModels[indexPath.row]
+        
         return {
-            let a = ASTextCellNode()
-            a.text = "ahha"
-            //return a
-            return MessageViewCell()
+            return MessageViewCell(viewModel: viewModel)
         }
     }
     

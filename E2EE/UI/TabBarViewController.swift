@@ -28,9 +28,8 @@ class TabBarViewController: UIViewController, UITabBarControllerDelegate {
             
             self?.chatListVC = InboxesViewController()
             self?.friendListVC = ContactViewController()
-            self?.groupChatListVC = ChatScreenViewController()
-            
-            self?.tabBarCtl.viewControllers = [self?.groupChatListVC, self?.chatListVC, self?.friendListVC ].map{
+           
+            self?.tabBarCtl.viewControllers = [self?.chatListVC, self?.friendListVC ].map{
                 UINavigationController.init(rootViewController: $0!)
             }
             

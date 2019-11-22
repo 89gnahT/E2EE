@@ -19,7 +19,6 @@
 		483F567A2386E1BC008EA1F7 /* BubbleConfigurationProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F56792386E1BC008EA1F7 /* BubbleConfigurationProtocol.swift */; };
 		483F567E2386E302008EA1F7 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F567D2386E302008EA1F7 /* UIColor.swift */; };
 		483F56802386E383008EA1F7 /* Bubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F567F2386E383008EA1F7 /* Bubble.swift */; };
-		483F56822386E519008EA1F7 /* DefaultBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F56812386E519008EA1F7 /* DefaultBubble.swift */; };
 		483F56842386E690008EA1F7 /* StandardBubbleConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F56832386E690008EA1F7 /* StandardBubbleConfiguration.swift */; };
 		483F56862386E897008EA1F7 /* ContentNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F56852386E897008EA1F7 /* ContentNode.swift */; };
 		48400F16238575B1008E2A0B /* UIImage+MaskColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48400F15238575B1008E2A0B /* UIImage+MaskColor.swift */; };
@@ -40,7 +39,6 @@
 		48BC3F6D237D53E400B96361 /* MessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48BC3F6C237D53E400B96361 /* MessageModel.swift */; };
 		48BC3F6F237D53F200B96361 /* InboxModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48BC3F6E237D53F200B96361 /* InboxModel.swift */; };
 		48CF70FB238414AE003BFCE4 /* MessageViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CF70FA238414AE003BFCE4 /* MessageViewCell.swift */; };
-		48CF70FD238414DA003BFCE4 /* TextMessageViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CF70FC238414DA003BFCE4 /* TextMessageViewCell.swift */; };
 		48CF70FF23841510003BFCE4 /* ConversationViewNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CF70FE23841510003BFCE4 /* ConversationViewNode.swift */; };
 		48CF710123841AF2003BFCE4 /* ChatScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CF710023841AF2003BFCE4 /* ChatScreenViewController.swift */; };
 		814F61BB23595A3700A6AA44 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814F61BA23595A3700A6AA44 /* AppDelegate.swift */; };
@@ -107,6 +105,8 @@
 		DD410253237BA1BD00DD4D72 /* MessageEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD410252237BA1BD00DD4D72 /* MessageEntity.swift */; };
 		DD410255237BA1CA00DD4D72 /* UserEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD410254237BA1CA00DD4D72 /* UserEntity.swift */; };
 		DD410257237BA20600DD4D72 /* InboxEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD410256237BA20600DD4D72 /* InboxEntity.swift */; };
+		DDC1052E2387745A00139CB9 /* TextContentNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC1052D2387745A00139CB9 /* TextContentNode.swift */; };
+		DDC105322387C13E00139CB9 /* TextMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC105312387C13E00139CB9 /* TextMessageViewModel.swift */; };
 		F4D44E6B86E36F0F0BBDB786 /* Pods_E2EETests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4F3E4287CAF0019291820F /* Pods_E2EETests.framework */; };
 /* End PBXBuildFile section */
 
@@ -143,7 +143,6 @@
 		483F56792386E1BC008EA1F7 /* BubbleConfigurationProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleConfigurationProtocol.swift; sourceTree = "<group>"; };
 		483F567D2386E302008EA1F7 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		483F567F2386E383008EA1F7 /* Bubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bubble.swift; sourceTree = "<group>"; };
-		483F56812386E519008EA1F7 /* DefaultBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultBubble.swift; sourceTree = "<group>"; };
 		483F56832386E690008EA1F7 /* StandardBubbleConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardBubbleConfiguration.swift; sourceTree = "<group>"; };
 		483F56852386E897008EA1F7 /* ContentNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentNode.swift; sourceTree = "<group>"; };
 		48400F15238575B1008E2A0B /* UIImage+MaskColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+MaskColor.swift"; sourceTree = "<group>"; };
@@ -164,7 +163,6 @@
 		48BC3F6C237D53E400B96361 /* MessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModel.swift; sourceTree = "<group>"; };
 		48BC3F6E237D53F200B96361 /* InboxModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxModel.swift; sourceTree = "<group>"; };
 		48CF70FA238414AE003BFCE4 /* MessageViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewCell.swift; sourceTree = "<group>"; };
-		48CF70FC238414DA003BFCE4 /* TextMessageViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessageViewCell.swift; sourceTree = "<group>"; };
 		48CF70FE23841510003BFCE4 /* ConversationViewNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewNode.swift; sourceTree = "<group>"; };
 		48CF710023841AF2003BFCE4 /* ChatScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScreenViewController.swift; sourceTree = "<group>"; };
 		5EF4F8F96B03EC46DAEF9048 /* Pods-E2EE-E2EEUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EE-E2EEUITests.release.xcconfig"; path = "Target Support Files/Pods-E2EE-E2EEUITests/Pods-E2EE-E2EEUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -240,6 +238,8 @@
 		DD410252237BA1BD00DD4D72 /* MessageEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEntity.swift; sourceTree = "<group>"; };
 		DD410254237BA1CA00DD4D72 /* UserEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEntity.swift; sourceTree = "<group>"; };
 		DD410256237BA20600DD4D72 /* InboxEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxEntity.swift; sourceTree = "<group>"; };
+		DDC1052D2387745A00139CB9 /* TextContentNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextContentNode.swift; sourceTree = "<group>"; };
+		DDC105312387C13E00139CB9 /* TextMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessageViewModel.swift; sourceTree = "<group>"; };
 		FEEAD81F2887B72589C0187B /* Pods-E2EE.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EE.debug.xcconfig"; path = "Target Support Files/Pods-E2EE/Pods-E2EE.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -325,9 +325,7 @@
 		483F567B2386E2AA008EA1F7 /* Bubble */ = {
 			isa = PBXGroup;
 			children = (
-				483F567C2386E2B2008EA1F7 /* BubbleConfiguration */,
 				483F567F2386E383008EA1F7 /* Bubble.swift */,
-				483F56812386E519008EA1F7 /* DefaultBubble.swift */,
 			);
 			path = Bubble;
 			sourceTree = "<group>";
@@ -345,6 +343,7 @@
 			isa = PBXGroup;
 			children = (
 				483F56852386E897008EA1F7 /* ContentNode.swift */,
+				DDC1052D2387745A00139CB9 /* TextContentNode.swift */,
 			);
 			path = ContentNode;
 			sourceTree = "<group>";
@@ -417,10 +416,10 @@
 		48CF70F9238413B3003BFCE4 /* Conversation */ = {
 			isa = PBXGroup;
 			children = (
+				DDC105302387C12400139CB9 /* ViewModel */,
 				483F567B2386E2AA008EA1F7 /* Bubble */,
 				483F56872386E8A5008EA1F7 /* ContentNode */,
-				48CF70FA238414AE003BFCE4 /* MessageViewCell.swift */,
-				48CF70FC238414DA003BFCE4 /* TextMessageViewCell.swift */,
+				DDC1052F2387922600139CB9 /* MessageCell */,
 				48CF70FE23841510003BFCE4 /* ConversationViewNode.swift */,
 				48CF710023841AF2003BFCE4 /* ChatScreenViewController.swift */,
 			);
@@ -644,6 +643,23 @@
 				DD410256237BA20600DD4D72 /* InboxEntity.swift */,
 			);
 			path = Entity;
+			sourceTree = "<group>";
+		};
+		DDC1052F2387922600139CB9 /* MessageCell */ = {
+			isa = PBXGroup;
+			children = (
+				48CF70FA238414AE003BFCE4 /* MessageViewCell.swift */,
+			);
+			path = MessageCell;
+			sourceTree = "<group>";
+		};
+		DDC105302387C12400139CB9 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				483F567C2386E2B2008EA1F7 /* BubbleConfiguration */,
+				DDC105312387C13E00139CB9 /* TextMessageViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -916,7 +932,6 @@
 				DD410255237BA1CA00DD4D72 /* UserEntity.swift in Sources */,
 				C2763771236BD981007A563D /* SignalMessage.swift in Sources */,
 				4883F84823751A0E004C3F83 /* ContactTableViewCell.swift in Sources */,
-				483F56822386E519008EA1F7 /* DefaultBubble.swift in Sources */,
 				483F567E2386E302008EA1F7 /* UIColor.swift in Sources */,
 				C276377F236BD981007A563D /* ReceiverChain.swift in Sources */,
 				C276375F236BD981007A563D /* GroupCipher.swift in Sources */,
@@ -926,11 +941,11 @@
 				482C45EF237D87B400C4F554 /* TextMessageModel.swift in Sources */,
 				C2763787236BD981007A563D /* SessionPreKeyPublic.swift in Sources */,
 				C2763769236BD981007A563D /* PreKeyStore.swift in Sources */,
+				DDC1052E2387745A00139CB9 /* TextContentNode.swift in Sources */,
 				C2763782236BD981007A563D /* SenderMessageKey.swift in Sources */,
 				48BC3F6F237D53F200B96361 /* InboxModel.swift in Sources */,
 				48400F16238575B1008E2A0B /* UIImage+MaskColor.swift in Sources */,
 				C25D7289236BE8CB00359C11 /* SessionCipher.swift in Sources */,
-				48CF70FD238414DA003BFCE4 /* TextMessageViewCell.swift in Sources */,
 				C2763764236BD981007A563D /* Fingerprint.swift in Sources */,
 				C2763760236BD981007A563D /* SenderKeyRecord.swift in Sources */,
 				C276376B236BD981007A563D /* SessionStore.swift in Sources */,
@@ -966,6 +981,7 @@
 				48CF70FB238414AE003BFCE4 /* MessageViewCell.swift in Sources */,
 				814F61BB23595A3700A6AA44 /* AppDelegate.swift in Sources */,
 				C2763784236BD981007A563D /* SessionBuilder.swift in Sources */,
+				DDC105322387C13E00139CB9 /* TextMessageViewModel.swift in Sources */,
 				48BC3F14237C692F00B96361 /* Database+FakeData.swift in Sources */,
 				483020EB2375A770002AC97B /* CGSize+Square.swift in Sources */,
 				C25D7286236BE48D00359C11 /* DeviceConsistencyCommitment.swift in Sources */,

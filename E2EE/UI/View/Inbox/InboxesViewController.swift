@@ -265,6 +265,10 @@ extension InboxesViewController : InboxesDelegate{
             editView.updateButtonInNavigationBarAndTabBar(numberOfItems: listSelectedItemsInEdittingMode.count)
         }else{
             markItemsAsRead(items: [viewModels[indexPath.row]])
+            
+            let id = viewModels[indexPath.row].modelID
+            let chatViewController = ChatScreenViewController(with: id)
+            self.navigationController?.pushViewController(chatViewController, animated: true)
         }
     }
     

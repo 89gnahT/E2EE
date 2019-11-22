@@ -53,6 +53,18 @@ class Database: NSObject {
             }
         }
     }
+    
+    public func fetchMesaages(with inboxID : InboxID, _ completion: @escaping (([MessageEntity]) -> Void), callbackQueue : DispatchQueue?){
+        taskQueue.async {
+            let messages = self.rooms[inboxID]!.values.sorted { (a, b) -> Bool in
+                return a.sent > b.sent
+            }
+            let queue = callbackQueue != nil ? callbackQueue : self.callBackQueue
+            queue?.async {
+                completion(messages)
+            }
+        }
+    }
 }
 
 extension Database{
@@ -92,7 +104,7 @@ extension Database{
     private func fetchRoomsChat(){
         for c in self.conversations.values{
             self.rooms.updateValue(Dictionary<MessageID, MessageEntity>(), forKey: c.id)
-            let numberOfMessage = self.randomInt(10) + 1
+            let numberOfMessage = self.randomInt(200) + 10
             
             for _ in 0..<numberOfMessage{
                 let m = self.createMsgFrom(c)

@@ -29,7 +29,7 @@ public class ContactViewModel {
     public func reloadData(){
         avatarURL = URL(string: model.avatarURL)
         
-        userName = atributedString(model.name, fontSize: 16, isBold: false, foregroundColor: UIColor(named: "title_in_cell_color")!)
+        userName = attributedString(model.name, fontSize: 16, isBold: false, foregroundColor: UIColor(named: "title_in_cell_color")!)
         
         callIcon = UIImage(named: "call_icon")
         
