@@ -25,6 +25,16 @@
 		C25D7284236BDEDD00359C11 /* DeviceConsistencyMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25D7283236BDEDD00359C11 /* DeviceConsistencyMessage.swift */; };
 		C25D7286236BE48D00359C11 /* DeviceConsistencyCommitment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25D7285236BE48D00359C11 /* DeviceConsistencyCommitment.swift */; };
 		C25D7289236BE8CB00359C11 /* SessionCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25D7288236BE8CB00359C11 /* SessionCipher.swift */; };
+		C273C8082384E4EB00CC7522 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C273C8072384E4EB00CC7522 /* UserModel.swift */; };
+		C273C8112384FB3000CC7522 /* SignalAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = C273C8102384FB3000CC7522 /* SignalAddress.swift */; };
+		C273C8132384FD8C00CC7522 /* SignalIdentityKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C273C8122384FD8C00CC7522 /* SignalIdentityKeyStore.swift */; };
+		C273C8152384FDD200CC7522 /* SignalKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C273C8142384FDD200CC7522 /* SignalKeyStore.swift */; };
+		C273C8172384FE3A00CC7522 /* SignalSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C273C8162384FE3A00CC7522 /* SignalSessionStore.swift */; };
+		C273C8192384FE8700CC7522 /* SignalPreKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C273C8182384FE8700CC7522 /* SignalPreKeyStore.swift */; };
+		C273C81B2384FEE700CC7522 /* SignalSenderKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C273C81A2384FEE700CC7522 /* SignalSenderKeyStore.swift */; };
+		C273C81D2385189600CC7522 /* SignalSignedPreKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C273C81C2385189600CC7522 /* SignalSignedPreKeyStore.swift */; };
+		C273C81F238524FC00CC7522 /* SignalSenderKeyName.swift in Sources */ = {isa = PBXBuildFile; fileRef = C273C81E238524FC00CC7522 /* SignalSenderKeyName.swift */; };
+		C273C8212385326E00CC7522 /* SignalGroupKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C273C8202385326E00CC7522 /* SignalGroupKeyStore.swift */; };
 		C276375B236BD981007A563D /* KeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2763722236BD981007A563D /* KeyPair.swift */; };
 		C276375C236BD981007A563D /* PrivateKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2763723236BD981007A563D /* PrivateKey.swift */; };
 		C276375D236BD981007A563D /* PublicKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2763724236BD981007A563D /* PublicKey.swift */; };
@@ -124,6 +134,16 @@
 		C25D7283236BDEDD00359C11 /* DeviceConsistencyMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceConsistencyMessage.swift; sourceTree = "<group>"; };
 		C25D7285236BE48D00359C11 /* DeviceConsistencyCommitment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceConsistencyCommitment.swift; sourceTree = "<group>"; };
 		C25D7288236BE8CB00359C11 /* SessionCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionCipher.swift; sourceTree = "<group>"; };
+		C273C8072384E4EB00CC7522 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
+		C273C8102384FB3000CC7522 /* SignalAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalAddress.swift; sourceTree = "<group>"; };
+		C273C8122384FD8C00CC7522 /* SignalIdentityKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalIdentityKeyStore.swift; sourceTree = "<group>"; };
+		C273C8142384FDD200CC7522 /* SignalKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalKeyStore.swift; sourceTree = "<group>"; };
+		C273C8162384FE3A00CC7522 /* SignalSessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalSessionStore.swift; sourceTree = "<group>"; };
+		C273C8182384FE8700CC7522 /* SignalPreKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalPreKeyStore.swift; sourceTree = "<group>"; };
+		C273C81A2384FEE700CC7522 /* SignalSenderKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalSenderKeyStore.swift; sourceTree = "<group>"; };
+		C273C81C2385189600CC7522 /* SignalSignedPreKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalSignedPreKeyStore.swift; sourceTree = "<group>"; };
+		C273C81E238524FC00CC7522 /* SignalSenderKeyName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalSenderKeyName.swift; sourceTree = "<group>"; };
+		C273C8202385326E00CC7522 /* SignalGroupKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalGroupKeyStore.swift; sourceTree = "<group>"; };
 		C2763722236BD981007A563D /* KeyPair.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyPair.swift; sourceTree = "<group>"; };
 		C2763723236BD981007A563D /* PrivateKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivateKey.swift; sourceTree = "<group>"; };
 		C2763724236BD981007A563D /* PublicKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublicKey.swift; sourceTree = "<group>"; };
@@ -223,7 +243,6 @@
 			children = (
 				C203CE1E2371604000E71171 /* VoiceCall */,
 				C203CE1D2371603700E71171 /* SocketLayer */,
-				C203CE1C2371602500E71171 /* RTMP */,
 				C203CE1B2371601400E71171 /* MessageCommunication */,
 			);
 			path = Network;
@@ -254,6 +273,7 @@
 		814F61B923595A3700A6AA44 /* E2EE */ = {
 			isa = PBXGroup;
 			children = (
+				C273C80F2384F81100CC7522 /* LocalKeyStorage */,
 				53DC8FE2236FBA18007AF733 /* Network */,
 				C2763720236BD981007A563D /* Security */,
 				814F61BA23595A3700A6AA44 /* AppDelegate.swift */,
@@ -291,13 +311,6 @@
 				537280F023730A570074F9EA /* SignalSocket.swift */,
 			);
 			path = MessageCommunication;
-			sourceTree = "<group>";
-		};
-		C203CE1C2371602500E71171 /* RTMP */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = RTMP;
 			sourceTree = "<group>";
 		};
 		C203CE1D2371603700E71171 /* SocketLayer */ = {
@@ -341,6 +354,23 @@
 				C25D7285236BE48D00359C11 /* DeviceConsistencyCommitment.swift */,
 			);
 			path = DeviceConsistency;
+			sourceTree = "<group>";
+		};
+		C273C80F2384F81100CC7522 /* LocalKeyStorage */ = {
+			isa = PBXGroup;
+			children = (
+				C273C8072384E4EB00CC7522 /* UserModel.swift */,
+				C273C8102384FB3000CC7522 /* SignalAddress.swift */,
+				C273C8122384FD8C00CC7522 /* SignalIdentityKeyStore.swift */,
+				C273C8142384FDD200CC7522 /* SignalKeyStore.swift */,
+				C273C8162384FE3A00CC7522 /* SignalSessionStore.swift */,
+				C273C8182384FE8700CC7522 /* SignalPreKeyStore.swift */,
+				C273C81A2384FEE700CC7522 /* SignalSenderKeyStore.swift */,
+				C273C81C2385189600CC7522 /* SignalSignedPreKeyStore.swift */,
+				C273C81E238524FC00CC7522 /* SignalSenderKeyName.swift */,
+				C273C8202385326E00CC7522 /* SignalGroupKeyStore.swift */,
+			);
+			path = LocalKeyStorage;
 			sourceTree = "<group>";
 		};
 		C2763720236BD981007A563D /* Security */ = {
@@ -732,6 +762,7 @@
 				C2763772236BD981007A563D /* Fingerprint.pb.swift in Sources */,
 				C276377C236BD981007A563D /* RatchetChainKey.swift in Sources */,
 				C2763776236BD981007A563D /* Messages.pb.swift in Sources */,
+				C273C81D2385189600CC7522 /* SignalSignedPreKeyStore.swift in Sources */,
 				C276377E236BD981007A563D /* RatchetRootKey.swift in Sources */,
 				C2763766236BD981007A563D /* GroupKeyStore.swift in Sources */,
 				C2763773236BD981007A563D /* Fingerprint.proto in Sources */,
@@ -741,13 +772,16 @@
 				C2763771236BD981007A563D /* SignalMessage.swift in Sources */,
 				C276377F236BD981007A563D /* ReceiverChain.swift in Sources */,
 				C276375F236BD981007A563D /* GroupCipher.swift in Sources */,
+				C273C8112384FB3000CC7522 /* SignalAddress.swift in Sources */,
 				C276376C236BD981007A563D /* SignedPreKeyStore.swift in Sources */,
 				C2763789236BD981007A563D /* SessionSignedPreKey.swift in Sources */,
 				C2763787236BD981007A563D /* SessionPreKeyPublic.swift in Sources */,
 				C2763769236BD981007A563D /* PreKeyStore.swift in Sources */,
 				C2763782236BD981007A563D /* SenderMessageKey.swift in Sources */,
 				C25D7289236BE8CB00359C11 /* SessionCipher.swift in Sources */,
+				C273C81B2384FEE700CC7522 /* SignalSenderKeyStore.swift in Sources */,
 				C2763764236BD981007A563D /* Fingerprint.swift in Sources */,
+				C273C8082384E4EB00CC7522 /* UserModel.swift in Sources */,
 				C2763760236BD981007A563D /* SenderKeyRecord.swift in Sources */,
 				C276376B236BD981007A563D /* SessionStore.swift in Sources */,
 				C203CE202371654500E71171 /* NetworkSocket.swift in Sources */,
@@ -767,17 +801,23 @@
 				C2763779236BD981007A563D /* ProtocolBufferEquivalent.swift in Sources */,
 				C203CE2823717E7600E71171 /* StreamSocket.swift in Sources */,
 				C2763781236BD981007A563D /* SenderChainKey.swift in Sources */,
+				C273C8172384FE3A00CC7522 /* SignalSessionStore.swift in Sources */,
+				C273C81F238524FC00CC7522 /* SignalSenderKeyName.swift in Sources */,
 				C276377D236BD981007A563D /* RatchetMessageKey.swift in Sources */,
 				C276375E236BD981007A563D /* CommonSignalCrypto.swift in Sources */,
 				C2763783236BD981007A563D /* PendingPreKey.swift in Sources */,
 				C276377B236BD981007A563D /* HKDF.swift in Sources */,
+				C273C8192384FE8700CC7522 /* SignalPreKeyStore.swift in Sources */,
 				C276375B236BD981007A563D /* KeyPair.swift in Sources */,
 				C2763767236BD981007A563D /* IdentityKeyStore.swift in Sources */,
 				814F61BB23595A3700A6AA44 /* AppDelegate.swift in Sources */,
 				C2763784236BD981007A563D /* SessionBuilder.swift in Sources */,
 				C25D7286236BE48D00359C11 /* DeviceConsistencyCommitment.swift in Sources */,
 				814F61BD23595A3700A6AA44 /* SceneDelegate.swift in Sources */,
+				C273C8152384FDD200CC7522 /* SignalKeyStore.swift in Sources */,
 				C276378A236BD981007A563D /* SessionSignedPreKeyPublic.swift in Sources */,
+				C273C8212385326E00CC7522 /* SignalGroupKeyStore.swift in Sources */,
+				C273C8132384FD8C00CC7522 /* SignalIdentityKeyStore.swift in Sources */,
 				C276377A236BD981007A563D /* ProtocolBufferSerializable.swift in Sources */,
 				C276376F236BD981007A563D /* SenderKeyDistributionMessage.swift in Sources */,
 				C276375C236BD981007A563D /* PrivateKey.swift in Sources */,
@@ -957,7 +997,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = SKQY859ZK7;
+				DEVELOPMENT_TEAM = 3NLA5R24DG;
 				INFOPLIST_FILE = E2EE/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -979,7 +1019,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = SKQY859ZK7;
+				DEVELOPMENT_TEAM = 3NLA5R24DG;
 				INFOPLIST_FILE = E2EE/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1001,7 +1041,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = SKQY859ZK7;
+				DEVELOPMENT_TEAM = 3NLA5R24DG;
 				INFOPLIST_FILE = E2EETests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1024,7 +1064,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = SKQY859ZK7;
+				DEVELOPMENT_TEAM = 3NLA5R24DG;
 				INFOPLIST_FILE = E2EETests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1045,8 +1085,9 @@
 			baseConfigurationReference = 0C228D38E295528F19A781FC /* Pods-E2EE-E2EEUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = SKQY859ZK7;
+				DEVELOPMENT_TEAM = 3NLA5R24DG;
 				INFOPLIST_FILE = E2EEUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1066,8 +1107,9 @@
 			baseConfigurationReference = 5EF4F8F96B03EC46DAEF9048 /* Pods-E2EE-E2EEUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = SKQY859ZK7;
+				DEVELOPMENT_TEAM = 3NLA5R24DG;
 				INFOPLIST_FILE = E2EEUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

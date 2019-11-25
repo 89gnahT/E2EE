@@ -13,6 +13,7 @@ public protocol SessionStore: class {
     func loadSession(for address: Address) throws -> Data?
     func store(session: Data, for address: Address) throws
     func deleteSession(for address: Address) throws
+    func containSession(for address: Address) -> Bool
 }
 
 extension SessionStore {

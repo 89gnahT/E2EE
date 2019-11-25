@@ -9,6 +9,8 @@
 import Foundation
 
 class StreamSocket: NSObject {
+    public var delegate : NetbaseSocketDelegate?
+    
     var runloop: RunLoop?
     static let maxReadSize = Int(UInt16.max)
     var buffer:UnsafeMutablePointer<UInt8>?
@@ -76,6 +78,38 @@ class StreamSocket: NSObject {
                     total += length
                 }
             })
+        }
+    }
+}
+
+extension StreamSocket: StreamDelegate {
+    func inputHandler() {
+        guard let i = self.input, let b = self.buffer else { return }
+
+        let length = i.read(b, maxLength: StreamSocket.maxReadSize)
+        
+        if length > 0 {
+            var inputData = Data()
+            inputData.append(b, count: StreamSocket.maxReadSize)
+            self.delegate?.receive(inputData)
+        }
+    }
+    func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
+        switch eventCode {
+        case .endEncountered:
+            self.delegate?.stateDidChange(.canceled)
+        case .errorOccurred:
+            self.delegate?.stateDidChange(.failed)
+        case .hasBytesAvailable:
+            if aStream == self.input {
+                self.inputHandler()
+            }
+        case .hasSpaceAvailable:
+            self.delegate?.stateDidChange(.preparing)
+        case .openCompleted:
+            self.delegate?.stateDidChange(.ready)
+        default:
+            return
         }
     }
 }

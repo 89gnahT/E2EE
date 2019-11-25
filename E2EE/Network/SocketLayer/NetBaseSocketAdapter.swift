@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Network
 
 enum ConnectionStatus {
     case uninitialize
@@ -14,9 +15,18 @@ enum ConnectionStatus {
     case disconnected
 }
 
-public protocol NetbaseSocketProtocol {
-    func send(_ data: Data)
-    func receiver(_ data: Data)
+public enum ConnectivityState {
+    case setup
+    case waiting
+    case preparing
+    case ready
+    case failed
+    case canceled
+}
+
+public protocol NetbaseSocketDelegate {
+    func receive(_ data: Data)
+    func stateDidChange(_ state: ConnectivityState)
 }
 
 
@@ -25,6 +35,7 @@ enum NetBaseErrorType: String {
     case internalError = "Internal Error"
     case sendError = "Send Error"
     case receiveError = "Receive Error"
+    case netBaseError = "Netbase Error"
 }
 
 public class NetBaseError: CustomStringConvertible, Error {
