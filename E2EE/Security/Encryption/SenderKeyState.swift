@@ -96,7 +96,7 @@ final class SenderKeyState {
 }
 
 extension SenderKeyState: Equatable {
-    static func ==(a: SenderKeyState, b: SenderKeyState) -> Bool {
-        return a.keyId == b.keyId && a.chainKey == b.chainKey && a.messageKeys == b.messageKeys && a.signaturePrivateKey == b.signaturePrivateKey && a.signaturePublicKey == b.signaturePublicKey
+    static func ==(lhs: SenderKeyState, rhs: SenderKeyState) -> Bool {
+        return lhs.keyId == rhs.keyId && lhs.chainKey == rhs.chainKey && lhs.messageKeys == rhs.messageKeys && lhs.signaturePrivateKey == rhs.signaturePrivateKey && lhs.signaturePublicKey == rhs.signaturePublicKey
     }
 }

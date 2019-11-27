@@ -46,7 +46,7 @@ extension SenderMessageKey: ProtocolBufferEquivalent {
 }
 
 extension SenderMessageKey: Equatable {
-    static func ==(a: SenderMessageKey, b: SenderMessageKey) -> Bool {
-        return a.iteration == b.iteration && a.seed == b.seed && a.cipherKey == b.cipherKey && a.iv == b.iv
+    static func ==(lhs: SenderMessageKey, rhs: SenderMessageKey) -> Bool {
+        return lhs.iteration == rhs.iteration && lhs.seed == rhs.seed && lhs.cipherKey == rhs.cipherKey && lhs.iv == rhs.iv
     }
 }

@@ -48,8 +48,8 @@ extension SenderKeyDistributionMessage: ProtocolBufferEquivalent {
 }
 
 extension SenderKeyDistributionMessage: Equatable {
-    public static func ==(a: SenderKeyDistributionMessage, b: SenderKeyDistributionMessage) -> Bool {
-        return a.id == b.id && a.chainKey == b.chainKey && a.iteration == b.iteration && a.signatureKey == b.signatureKey
+    public static func ==(lhs: SenderKeyDistributionMessage, rhs: SenderKeyDistributionMessage) -> Bool {
+        return lhs.id == rhs.id && lhs.chainKey == rhs.chainKey && lhs.iteration == rhs.iteration && lhs.signatureKey == rhs.signatureKey
     }
 }
 

@@ -31,7 +31,7 @@ extension DeviceConsistencySignature: Comparable {
         return false
     }
     
-    static func ==(a: DeviceConsistencySignature, b: DeviceConsistencySignature) -> Bool {
-        return a.vrfOutput == b.vrfOutput
+    static func ==(lhs: DeviceConsistencySignature, rhs: DeviceConsistencySignature) -> Bool {
+        return lhs.vrfOutput == rhs.vrfOutput
     }
 }

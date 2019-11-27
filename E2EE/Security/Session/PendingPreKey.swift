@@ -41,7 +41,7 @@ extension PendingPreKey: ProtocolBufferEquivalent {
 }
 
 extension PendingPreKey: Equatable {
-    static func ==(a: PendingPreKey, b: PendingPreKey) -> Bool {
-        return a.preKeyId == b.preKeyId && a.signedPreKeyId == b.signedPreKeyId && a.baseKey == b.baseKey
+    static func ==(lhs: PendingPreKey, rhs: PendingPreKey) -> Bool {
+        return lhs.preKeyId == rhs.preKeyId && lhs.signedPreKeyId == rhs.signedPreKeyId && lhs.baseKey == rhs.baseKey
     }
 }

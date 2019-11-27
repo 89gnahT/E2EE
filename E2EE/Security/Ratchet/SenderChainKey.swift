@@ -47,7 +47,7 @@ extension SenderChainKey : ProtocolBufferEquivalent {
 }
 
 extension SenderChainKey : Equatable {
-    static func ==(a: SenderChainKey, b: SenderChainKey) -> Bool {
-        return a.chainKey == b.chainKey && a.iteration == b.iteration
+    static func ==(lhs: SenderChainKey, rhs: SenderChainKey) -> Bool {
+        return lhs.chainKey == rhs.chainKey && lhs.iteration == rhs.iteration
     }
 }

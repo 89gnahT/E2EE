@@ -48,7 +48,7 @@ extension SessionSignedPreKeyPublic: ProtocolBufferEquivalent {
 }
 
 extension SessionSignedPreKeyPublic: Equatable {
-    static func ==(a: SessionSignedPreKeyPublic, b: SessionSignedPreKeyPublic) -> Bool {
-        return a.id == b.id && a.key == b.key && a.signature == b.signature && a.timestamp == b.timestamp
+    static func ==(lhs: SessionSignedPreKeyPublic, rhs: SessionSignedPreKeyPublic) -> Bool {
+        return lhs.id == rhs.id && lhs.key == rhs.key && lhs.signature == rhs.signature && lhs.timestamp == rhs.timestamp
     }
 }

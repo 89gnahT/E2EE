@@ -34,13 +34,13 @@ extension RatchetRootKey: ProtocolBufferSerializable {
 }
 
 extension RatchetRootKey: Comparable {
-    static func <(a: RatchetRootKey, b: RatchetRootKey) -> Bool {
-        guard a.key.count == b.key.count else {
-            return a.key.count < b.key.count
+    static func <(lhs: RatchetRootKey, rhs: RatchetRootKey) -> Bool {
+        guard lhs.key.count == rhs.key.count else {
+            return lhs.key.count < rhs.key.count
         }
-        for i in 0..<a.key.count {
-            if a.key[i] != b.key[i] {
-                return a.key[i] < b.key[i]
+        for i in 0..<lhs.key.count {
+            if lhs.key[i] != rhs.key[i] {
+                return lhs.key[i] < rhs.key[i]
             }
         }
         return false
@@ -48,7 +48,7 @@ extension RatchetRootKey: Comparable {
 }
 
 extension RatchetRootKey: Equatable {
-    static func ==(a: RatchetRootKey, b: RatchetRootKey) -> Bool {
-        return a.key == b.key
+    static func ==(lhs: RatchetRootKey, rhs: RatchetRootKey) -> Bool {
+        return lhs.key == rhs.key
     }
 }

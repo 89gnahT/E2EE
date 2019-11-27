@@ -51,7 +51,7 @@ extension ScannableFingerprint {
 }
 
 extension ScannableFingerprint: Equatable {
-    public static func ==(a: ScannableFingerprint, b: ScannableFingerprint) -> Bool {
-        return a.localFingerPrint == b.localFingerPrint && a.remoteFingerprint == b.remoteFingerprint
+    public static func ==(lhs: ScannableFingerprint, rhs: ScannableFingerprint) -> Bool {
+        return lhs.localFingerPrint == rhs.localFingerPrint && lhs.remoteFingerprint == rhs.remoteFingerprint
     }
 }

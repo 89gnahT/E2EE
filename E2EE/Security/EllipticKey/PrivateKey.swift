@@ -24,7 +24,7 @@ public struct PrivateKey {
             throw SignalError(.invalidProtoBuf, "Invalid private key (byte 0 == \(point[0])")
         }
         let lastByteIndex = Curve25519.keyLength - 1
-        guard point[lastByteIndex] & 0b1000000 == 0 else {
+        guard point[lastByteIndex] & 0b10000000 == 0 else {
             throw SignalError(.invalidProtoBuf, "Invalid private key (byte \(lastByteIndex) == \(point[lastByteIndex])")
         }
         guard point[lastByteIndex] & 0b01000000 != 0 else {
@@ -82,8 +82,8 @@ public struct PrivateKey {
 }
 
 extension PrivateKey: Equatable {
-    public static func ==(a: PrivateKey, b: PrivateKey) -> Bool {
-        return a.key == b.key
+    public static func ==(lhs: PrivateKey, rhs: PrivateKey) -> Bool {
+        return lhs.key == rhs.key
     }
 }
 

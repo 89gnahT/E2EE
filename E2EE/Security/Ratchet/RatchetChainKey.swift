@@ -62,7 +62,7 @@ extension RatchetChainKey: ProtocolBufferEquivalent {
 }
 
 extension RatchetChainKey: Equatable {
-    static func ==(a: RatchetChainKey, b: RatchetChainKey) -> Bool {
-        return a.key == b.key && a.index == b.index
+    static func ==(lhs: RatchetChainKey, rhs: RatchetChainKey) -> Bool {
+        return lhs.key == rhs.key && lhs.index == rhs.index
     }
 }

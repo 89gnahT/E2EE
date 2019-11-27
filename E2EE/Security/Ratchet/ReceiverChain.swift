@@ -66,9 +66,9 @@ final class ReceiverChain: ProtocolBufferEquivalent {
         }
     }
     init(from protoObject: Signal_Session.Chain) throws {
-        guard protoObject.hasChainKey && protoObject.hasSenderRatchetKey && protoObject.hasSenderRatchetKeyPrivate else {
-            throw SignalError(.invalidProtoBuf, "Invalid ProtoBuf Object for RecieverChain Object")
-        }
+//        guard protoObject.hasChainKey && protoObject.hasSenderRatchetKey && protoObject.hasSenderRatchetKeyPrivate else {
+//            throw SignalError(.invalidProtoBuf, "Invalid ProtoBuf Object for RecieverChain Object")
+//        }
         self.ratchetKey = try PublicKey(from: protoObject.senderRatchetKey)
         self.chainKey = try RatchetChainKey(from: protoObject.chainKey)
         self.messageKeys = try protoObject.messageKeys.map({try RatchetMessageKeys(from: $0)})
@@ -76,7 +76,7 @@ final class ReceiverChain: ProtocolBufferEquivalent {
 }
 
 extension ReceiverChain: Equatable {
-    public static func ==(a: ReceiverChain, b: ReceiverChain) -> Bool {
-        return a.messageKeys == b.messageKeys && a.chainKey == b.chainKey && a.ratchetKey == b.ratchetKey
+    public static func ==(lhs: ReceiverChain, rhs: ReceiverChain) -> Bool {
+        return lhs.messageKeys == rhs.messageKeys && lhs.chainKey == rhs.chainKey && lhs.ratchetKey == rhs.ratchetKey
     }
 }

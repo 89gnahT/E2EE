@@ -182,14 +182,14 @@ final class SessionState: ProtocolBufferEquivalent {
 }
 
 extension SessionState: Equatable {
-    static func ==(a: SessionState, b: SessionState) -> Bool {
-        guard a.previousCounter == b.previousCounter else {
+    static func ==(lhs: SessionState, rhs: SessionState) -> Bool {
+        guard lhs.previousCounter == rhs.previousCounter else {
             return false
         }
-        guard a.localIdentity == b.localIdentity, a.remoteIdentity == b.remoteIdentity, a.rootKey == b.rootKey, a.senderChain == b.senderChain else {
+        guard lhs.localIdentity == rhs.localIdentity, lhs.remoteIdentity == rhs.remoteIdentity, lhs.rootKey == rhs.rootKey, lhs.senderChain == rhs.senderChain else {
             return false
         }
-        guard a.receiverChains == b.receiverChains, a.pendingPreKey == b.pendingPreKey, a.aliceBaseKey == b.aliceBaseKey else {
+        guard lhs.receiverChains == rhs.receiverChains, lhs.pendingPreKey == rhs.pendingPreKey, lhs.aliceBaseKey == rhs.aliceBaseKey else {
             return false
         }
         return true

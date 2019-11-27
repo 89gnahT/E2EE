@@ -71,7 +71,7 @@ extension RatchetMessageKeys: ProtocolBufferEquivalent {
 }
 
 extension RatchetMessageKeys: Equatable {
-    static func ==(a: RatchetMessageKeys, b: RatchetMessageKeys) -> Bool {
-        return a.cipherKey == b.cipherKey && a.macKey == b.macKey && a.iv == b.iv && a.counter == b.counter
+    static func ==(lhs: RatchetMessageKeys, rhs: RatchetMessageKeys) -> Bool {
+        return lhs.cipherKey == rhs.cipherKey && lhs.macKey == rhs.macKey && lhs.iv == rhs.iv && lhs.counter == rhs.counter
     }
 }

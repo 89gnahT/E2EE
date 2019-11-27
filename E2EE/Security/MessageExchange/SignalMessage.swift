@@ -101,7 +101,7 @@ extension SignalMessage: ProtocolBufferSerializable {
 }
 
 extension SignalMessage: Equatable {
-    public static func ==(a: SignalMessage, b: SignalMessage) -> Bool {
-        return a.counter == b.counter && a.previousCounter == b.previousCounter && a.cipherText == b.cipherText && a.mac == b.mac && a.senderRatchetKey == b.senderRatchetKey
+    public static func ==(lhs: SignalMessage, rhs: SignalMessage) -> Bool {
+        return lhs.counter == rhs.counter && lhs.previousCounter == rhs.previousCounter && lhs.cipherText == rhs.cipherText && lhs.mac == rhs.mac && lhs.senderRatchetKey == rhs.senderRatchetKey
     }
 }

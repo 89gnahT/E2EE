@@ -64,7 +64,7 @@ extension SenderKeyRecord: ProtocolBufferEquivalent {
 
 extension SenderKeyRecord: Equatable {
     
-    static func ==(a: SenderKeyRecord, b: SenderKeyRecord) -> Bool {
-        return a.states == b.states
+    static func ==(lhs: SenderKeyRecord, rhs: SenderKeyRecord) -> Bool {
+        return lhs.states == rhs.states
     }
 }

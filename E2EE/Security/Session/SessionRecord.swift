@@ -29,9 +29,12 @@ final class SessionRecord: ProtocolBufferEquivalent {
         if state.aliceBaseKey == baseKey {
             return true
         }
-        return previousStates.contains(where: {(sessionState: SessionState) in
-            sessionState.aliceBaseKey == baseKey
-        })
+        return previousStates.contains {
+            $0.aliceBaseKey == baseKey
+        }
+//        return previousStates.contains(where: {(sessionState: SessionState) in
+//            sessionState.aliceBaseKey == baseKey
+//        })
     }
     
     func archiveCurrentState() {
@@ -79,7 +82,7 @@ final class SessionRecord: ProtocolBufferEquivalent {
 
 
 extension SessionRecord: Equatable {
-    public static func ==(a: SessionRecord, b: SessionRecord) -> Bool {
-        return a.state == b.state && a.isFresh == b.isFresh && a.previousStates == b.previousStates
+    public static func ==(lhs: SessionRecord, rhs: SessionRecord) -> Bool {
+        return lhs.state == rhs.state && lhs.isFresh == rhs.isFresh && lhs.previousStates == rhs.previousStates
     }
 }

@@ -54,17 +54,17 @@ public struct PublicKey {
 }
 
 extension PublicKey: Comparable {
-    public static func <(a: PublicKey, b: PublicKey) -> Bool {
-        for i in 0..<a.key.count {
-            if a.key[i] != b.key[i] {
-                return a.key[i] < b.key[i]
+    public static func <(lhs: PublicKey, rhs: PublicKey) -> Bool {
+        for i in 0..<lhs.key.count {
+            if lhs.key[i] != rhs.key[i] {
+                return lhs.key[i] < rhs.key[i]
             }
         }
         return false
     }
     
-    public static func ==(a: PublicKey, b: PublicKey) -> Bool {
-        return a.key == b.key
+    public static func ==(lhs: PublicKey, rhs: PublicKey) -> Bool {
+        return lhs.key == rhs.key
     }
 }
 

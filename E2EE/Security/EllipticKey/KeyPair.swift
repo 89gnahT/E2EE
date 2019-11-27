@@ -61,8 +61,8 @@ extension KeyPair: ProtocolBufferEquivalent {
         guard protoObject.hasPublicKey, protoObject.hasPrivateKey else {
             throw SignalError(.invalidProtoBuf, "Missing data in protobuf object")
         }
-        self.publicKey = try PublicKey(from: protoObject.publicKey)
         self.privateKey = try PrivateKey(from: protoObject.privateKey)
+        self.publicKey = try PublicKey(from: protoObject.publicKey)
     }
     
     var protoObject: Signal_KeyPair {
@@ -74,8 +74,8 @@ extension KeyPair: ProtocolBufferEquivalent {
 }
 
 extension KeyPair: Equatable {
-    public static func ==(a: KeyPair, b: KeyPair) -> Bool {
-        return a.privateKey == b.privateKey && a.publicKey == b.publicKey
+    public static func ==(lhs: KeyPair, rhs: KeyPair) -> Bool {
+        return lhs.privateKey == rhs.privateKey && lhs.publicKey == rhs.publicKey
     }
 }
 

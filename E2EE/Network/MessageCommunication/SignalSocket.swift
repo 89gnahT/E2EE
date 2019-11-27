@@ -32,19 +32,7 @@ class SignalProtocol {
     
     func signUpAccount(_ user: UserModel) throws {
         socket?.delegate = self
-        let crypto = CommonSignalCrypto()
-        do {
-//            let identity = try crypto.generateIdentityKeyPair()
-//            let bobStore = SignalGroupKeyStore(withKeyPair: identity)
-//            let publicKey: Data = try bobStore.identityKeyStore.getPublicIdentityKey()
-//            let preKeys: [Data] = try bobStore.createPreKeys(count: 10)
-//            let signedKeys = try bobStore.updateSignedPrekey()
-//            self.socket?.send(publicKey)
-//            self.socket?.send(signedKeys)
-//            self.socket?.send(preKeys.first!)
-        } catch {
-            throw SignalError(.unknown, "Generate key error")
-        }
+
     }
     
     func startCommunicationWith() {
