@@ -68,14 +68,14 @@ class MessageViewModel: NSObject {
             isShowAvatar = true
         }else{
             position = .first
-            insets.top = CGFloat(1)
+            insets.top = CGFloat(0.5)
             insets.bottom = insets.top
         }
     }
     
     public func setUIWithPreviousItem(_ item : MessageViewModel){
         if isGroupWith(item){
-            insets.top = CGFloat(1)
+            insets.top = CGFloat(0.5)
             
             if position == .none{
                 position = .last
