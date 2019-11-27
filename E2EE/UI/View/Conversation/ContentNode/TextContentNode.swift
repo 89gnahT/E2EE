@@ -25,6 +25,15 @@ class TextContentNode: ContentNode {
         }
     }
     
+    open var bubbleImage : UIImage?{
+        didSet{
+            bubble.image = self.bubbleImage
+            setNeedsLayout()
+        }
+    }
+    
+    open var bubble = Bubble()
+    
     override init() {
         super.init()
       
@@ -37,9 +46,8 @@ class TextContentNode: ContentNode {
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        let x = ASInsetLayoutSpec(insets: insets, child: textNode)
-        
-        return x
+        let content = ASInsetLayoutSpec(insets: insets, child: textNode)
+        return ASBackgroundLayoutSpec(child: content, background: bubble)
     }
     
 }

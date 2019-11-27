@@ -9,7 +9,7 @@
 import UIKit
 import AsyncDisplayKit
 
-class TextMessageCell: MessageViewCell {
+class TextMessageCell: MessageCell {
 
     public var textViewModel : TextMessageViewModel{
         get{
@@ -17,7 +17,7 @@ class TextMessageCell: MessageViewCell {
         }
     }
     
-    public var textContentNode : TextContentNode{
+    @objc public var textContentNode : TextContentNode{
         get{
             return contentNode as! TextContentNode
         }
@@ -30,12 +30,18 @@ class TextMessageCell: MessageViewCell {
         contentNode = TextContentNode()
         
         reloadData()
+        
+        textContentNode.addTarget(self, action: #selector(textMessageCellClicked), forControlEvents: .touchUpInside)
     }
     
     override func reloadData() {
         textContentNode.attributedText = textViewModel.textContent
+        textContentNode.bubbleImage = textViewModel.bubbleImage
         
         super.reloadData()
     }
    
+    @objc func textMessageCellClicked(){
+        hideDetails = !hideDetails
+    }
 }

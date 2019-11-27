@@ -11,7 +11,7 @@ import AsyncDisplayKit
 
 class ChatScreenViewController: ASViewController<ASDisplayNode> {
     var collectionNode : ASCollectionNode
-    var viewModels = [TextMessageViewModel]()
+    var viewModels = [MessageViewModel]()
     
     init(with inboxID : InboxID) {
         let layout = UICollectionViewFlowLayout()
@@ -27,12 +27,14 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         collectionNode.dataSource = self
         collectionNode.inverted = true
         collectionNode.contentInset = UIEdgeInsets.zero
-    
+        
         
         DataManager.shared.fetchMessageModels(with: inboxID, { (models) in
             for i in models{
                 if i.type == .text{
                     self.viewModels.append(TextMessageViewModel(model: i as! TextMessageModel))
+                }else if i.type == .image{
+                    self.viewModels.append(ImageMessageViewModel(model: i as! ImageMessageModel))
                 }
             }
             
@@ -75,7 +77,11 @@ extension ChatScreenViewController: ASCollectionDataSource{
         }
         
         return {
-            return TextMessageCell(viewModel: viewModel)
+            if viewModel.model.type == .text{
+                return TextMessageCell(viewModel: viewModel as! TextMessageViewModel)
+            }else{
+                return SingleImageMessageCell(viewModel: viewModel as! ImageMessageViewModel)
+            }
         }
     }
     

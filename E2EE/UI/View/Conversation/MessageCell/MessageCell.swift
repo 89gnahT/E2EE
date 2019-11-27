@@ -9,7 +9,17 @@
 import UIKit
 import AsyncDisplayKit
 
-class MessageViewCell: ASCellNode {
+protocol MessageCellDelegate {
+    func messageCell(_ cell : MessageCell, avatarClicked avatarNode : ASImageNode)
+    
+    func messageCell(_ cell : MessageCell, subFunctionClicked subFunctionNode : ASImageNode)
+    
+    func messageCell(_ cell : MessageCell, longPressContent contentNode : ContentNode)
+}
+
+class MessageCell: ASCellNode {
+    
+    var delegate : MessageCellDelegate?
     
     var isIncommingMessage : Bool = true
     
@@ -23,8 +33,6 @@ class MessageViewCell: ASCellNode {
     
     var contentNode = ContentNode()
     
-    var bubble = Bubble()
-    
     var hideDetails : Bool = true{
         didSet{
             setNeedsLayout()
@@ -35,7 +43,7 @@ class MessageViewCell: ASCellNode {
     
     init(viewModel : MessageViewModel) {
         self.viewModel = viewModel
-     
+        
         super.init()
         
         setup()
@@ -52,9 +60,7 @@ class MessageViewCell: ASCellNode {
         avatarImageNode.url = viewModel.avatarURL
         
         isIncommingMessage = viewModel.isIncommingMessage
-        
-        bubble.image = viewModel.bubbleImage
-        
+    
         timeNode.attributedText = viewModel.time
         
         statusNode.attributedText = viewModel.status
@@ -73,11 +79,10 @@ class MessageViewCell: ASCellNode {
     
     func layoutSpecThatFitsOutgoingMessage(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         var subContentStackChildren : [ASLayoutElement]
-        let contentNodeWithBubble = ASBackgroundLayoutSpec(child: self.contentNode, background: bubble)
         if hideDetails{
-            subContentStackChildren = [contentNodeWithBubble]
+            subContentStackChildren = [self.contentNode]
         }else{
-            subContentStackChildren = [self.timeNode, contentNodeWithBubble, self.statusNode]
+            subContentStackChildren = [self.timeNode, self.contentNode, self.statusNode]
         }
         let subContentStack = ASStackLayoutSpec(direction: .vertical,
                                                 spacing: 5,
@@ -98,11 +103,10 @@ class MessageViewCell: ASCellNode {
     
     func layoutSpecThatFitsIncommingMessage(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         var subContentStackChildren : [ASLayoutElement]
-        let contentNodeWithBubble = ASBackgroundLayoutSpec(child: self.contentNode, background: bubble)
         if hideDetails{
-            subContentStackChildren = [contentNodeWithBubble]
+            subContentStackChildren = [self.contentNode]
         }else{
-            subContentStackChildren = [self.timeNode, contentNodeWithBubble, self.statusNode]
+            subContentStackChildren = [self.timeNode, self.contentNode, self.statusNode]
         }
         
         let subContentStack = ASStackLayoutSpec(direction: .vertical,
@@ -121,9 +125,4 @@ class MessageViewCell: ASCellNode {
         return ASInsetLayoutSpec(insets: insets, child: contentStack)
     }
     
-    
-    
-    @objc func contentNodeClicked(node : ASDisplayNode){
-        hideDetails = !hideDetails
-    }
 }
