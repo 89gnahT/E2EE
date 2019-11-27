@@ -17,6 +17,14 @@ var thePresentTime : TimeInterval{
     return Date.timeIntervalSinceReferenceDate
 }
 
+func getTimeWithFormath(time : TimeInterval, format : String) -> String{
+    let date = Date(timeIntervalSinceReferenceDate: time)
+    let formatter = DateFormatter()
+    formatter.dateFormat = format
+    
+    return formatter.string(from: date as Date)
+}
+
 func attributedString(_ string : String,
                      fontSize : CGFloat,
                      isHighLight : Bool,

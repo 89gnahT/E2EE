@@ -8,35 +8,26 @@
 
 import UIKit
 
+public enum MessageCellPosition {
+    case first
+    case middle
+    case last
+    case none
+}
+
 public protocol BubbleConfigurationProtocol {
     
-    func getIncomingColor() -> UIColor
+    func getColor(isIncoming incoming : Bool) -> UIColor
     
-    func getOutgoingColor() -> UIColor
+    func getBubbleImage(isIncoming incoming : Bool, position pos : MessageCellPosition) -> UIImage?
     
-    func getFirstIncomingBubble() -> UIImage?
-    
-    func getFirstOutgoingBubble() -> UIImage?
-    
-    func getMidIncomingBubble() -> UIImage?
-    
-    func getMidOutgoingBubble() -> UIImage?
-    
-    func getLastIncomingBubble() -> UIImage?
-    
-    func getLastOutgoingBubble() -> UIImage?
-    
-    func getDefaultInComingBubble() -> UIImage?
- 
-    func getDefaultOutgoingBubble() -> UIImage?
 }
 
 extension BubbleConfigurationProtocol{
-    func resizableImage(_ i : UIImage?) -> UIImage?{
-        guard let bubbleImage = i?.maskWithColor(color: getIncomingColor()) else {
+    func resizableImage(_ i : UIImage?, color : UIColor) -> UIImage?{
+        guard let bubbleImage = i?.maskWithColor(color: color) else {
             return nil
         }
-        
         
         let center = CGPoint(x: bubbleImage.size.width / 2.0, y: bubbleImage.size.height / 2.0);
         let capInsets = UIEdgeInsets(top: center.y - 1, left: center.x - 1, bottom: center.y - 1, right: center.x - 1);

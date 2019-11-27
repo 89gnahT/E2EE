@@ -36,6 +36,7 @@ protocol DataManagerListenerDelegate : NSObjectProtocol{
     func userChanged(_ user : UserModel, updateType : UpdateType, oldValue : UserModel?)
 }
 
+
 class DataManager: NSObject {
     static let shared = DataManager()
     

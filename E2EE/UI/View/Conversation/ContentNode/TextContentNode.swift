@@ -25,8 +25,6 @@ class TextContentNode: ContentNode {
         }
     }
     
-    var bubble = Bubble()
-    
     override init() {
         super.init()
       
@@ -38,13 +36,10 @@ class TextContentNode: ContentNode {
         textNode.style.maxWidth = ASDimension(unit: .points, value: 300)
     }
     
-    
-    
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         let x = ASInsetLayoutSpec(insets: insets, child: textNode)
         
-        return ASBackgroundLayoutSpec(child: x, background: bubble)
+        return x
     }
-    
     
 }

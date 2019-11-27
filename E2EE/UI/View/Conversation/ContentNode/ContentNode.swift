@@ -10,7 +10,6 @@ import UIKit
 import AsyncDisplayKit
 
 open class ContentNode: ASControlNode {
-    open var isIncomingMessage = true
     
     override init() {
         super.init()

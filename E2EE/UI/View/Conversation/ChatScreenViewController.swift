@@ -25,7 +25,10 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         
         collectionNode.delegate = self
         collectionNode.dataSource = self
+        collectionNode.inverted = true
+        collectionNode.contentInset = UIEdgeInsets.zero
     
+        
         DataManager.shared.fetchMessageModels(with: inboxID, { (models) in
             for i in models{
                 if i.type == .text{
@@ -57,15 +60,24 @@ extension ChatScreenViewController: ASCollectionDataSource{
     func collectionNode(_ collectionNode: ASCollectionNode, numberOfItemsInSection section: Int) -> Int {
         return viewModels.count
     }
- 
+    
     
     func collectionNode(_ collectionNode: ASCollectionNode, nodeBlockForItemAt indexPath: IndexPath) -> ASCellNodeBlock {
+        
         let viewModel = self.viewModels[indexPath.row]
+        if indexPath.row == 0{
+            viewModel.setUIWithAfterItem(nil)
+        }else{
+            let after = self.viewModels[indexPath.row - 1]
+            viewModel.setUIWithAfterItem(after)
+            
+            after.setUIWithPreviousItem(viewModel)
+        }
         
         return {
-            return MessageViewCell(viewModel: viewModel)
+            return TextMessageCell(viewModel: viewModel)
         }
     }
     
-
+    
 }

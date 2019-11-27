@@ -13,7 +13,7 @@ class MessageViewCell: ASCellNode {
     
     var isIncommingMessage : Bool = true
     
-    var viewModel : TextMessageViewModel
+    var viewModel : MessageViewModel
     
     var avatarImageNode = ASNetworkImageNode()
     
@@ -21,7 +21,9 @@ class MessageViewCell: ASCellNode {
     
     var statusNode = ASTextNode()
     
-    var contentNode = TextContentNode()
+    var contentNode = ContentNode()
+    
+    var bubble = Bubble()
     
     var hideDetails : Bool = true{
         didSet{
@@ -29,15 +31,15 @@ class MessageViewCell: ASCellNode {
         }
     }
     
-    init(viewModel : TextMessageViewModel) {
+    var insets : UIEdgeInsets = UIEdgeInsets.zero
+    
+    init(viewModel : MessageViewModel) {
         self.viewModel = viewModel
-        
+     
         super.init()
         
         setup()
-        reloadData()
     }
-    
     
     private func setup(){
         self.automaticallyManagesSubnodes = true
@@ -47,20 +49,19 @@ class MessageViewCell: ASCellNode {
     }
     
     public func reloadData(){
-        viewModel.reloabdData {
-            ASPerformBlockOnMainThread {
-                self.updateDataCellNode()
-            }
-        }
-    }
-    
-    private func updateDataCellNode(){
         avatarImageNode.url = viewModel.avatarURL
         
-        contentNode.attributedText = viewModel.textContent
-        contentNode.bubble.image = viewModel.bubbleImage
-        
         isIncommingMessage = viewModel.isIncommingMessage
+        
+        bubble.image = viewModel.bubbleImage
+        
+        timeNode.attributedText = viewModel.time
+        
+        statusNode.attributedText = viewModel.status
+        
+        insets = viewModel.insets
+        
+        avatarImageNode.isHidden = !viewModel.isShowAvatar
         
         self.setNeedsLayout()
         self.layoutIfNeeded()
@@ -72,12 +73,12 @@ class MessageViewCell: ASCellNode {
     
     func layoutSpecThatFitsOutgoingMessage(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         var subContentStackChildren : [ASLayoutElement]
+        let contentNodeWithBubble = ASBackgroundLayoutSpec(child: self.contentNode, background: bubble)
         if hideDetails{
-            subContentStackChildren = [self.contentNode]
+            subContentStackChildren = [contentNodeWithBubble]
         }else{
-            subContentStackChildren = [self.timeNode, self.contentNode, self.statusNode]
+            subContentStackChildren = [self.timeNode, contentNodeWithBubble, self.statusNode]
         }
-        
         let subContentStack = ASStackLayoutSpec(direction: .vertical,
                                                 spacing: 5,
                                                 justifyContent: .end, alignItems: .stretch,
@@ -87,19 +88,21 @@ class MessageViewCell: ASCellNode {
                                              spacing: 10,
                                              justifyContent: .end,
                                              alignItems: .center,
-                                             children: [subContentStack, self.avatarImageNode])
+                                             children: [subContentStack])
+        
         contentStack.style.maxSize = constrainedSize.max
         contentStack.style.minSize = constrainedSize.min
         
-        return ASInsetLayoutSpec(insets: UIEdgeInsets.zero, child: contentStack)
+        return ASInsetLayoutSpec(insets: insets, child: contentStack)
     }
     
     func layoutSpecThatFitsIncommingMessage(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         var subContentStackChildren : [ASLayoutElement]
+        let contentNodeWithBubble = ASBackgroundLayoutSpec(child: self.contentNode, background: bubble)
         if hideDetails{
-            subContentStackChildren = [self.contentNode]
+            subContentStackChildren = [contentNodeWithBubble]
         }else{
-            subContentStackChildren = [self.timeNode, self.contentNode, self.statusNode]
+            subContentStackChildren = [self.timeNode, contentNodeWithBubble, self.statusNode]
         }
         
         let subContentStack = ASStackLayoutSpec(direction: .vertical,
@@ -115,7 +118,7 @@ class MessageViewCell: ASCellNode {
         contentStack.style.maxSize = constrainedSize.max
         contentStack.style.minSize = constrainedSize.min
         
-        return ASInsetLayoutSpec(insets: UIEdgeInsets.zero, child: contentStack)
+        return ASInsetLayoutSpec(insets: insets, child: contentStack)
     }
     
     

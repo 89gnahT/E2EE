@@ -105,6 +105,8 @@
 		DD410253237BA1BD00DD4D72 /* MessageEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD410252237BA1BD00DD4D72 /* MessageEntity.swift */; };
 		DD410255237BA1CA00DD4D72 /* UserEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD410254237BA1CA00DD4D72 /* UserEntity.swift */; };
 		DD410257237BA20600DD4D72 /* InboxEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD410256237BA20600DD4D72 /* InboxEntity.swift */; };
+		DD49B530238E2F00007163ED /* MessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD49B52F238E2F00007163ED /* MessageViewModel.swift */; };
+		DD49B532238E6703007163ED /* TextMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD49B531238E6703007163ED /* TextMessageCell.swift */; };
 		DDC1052E2387745A00139CB9 /* TextContentNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC1052D2387745A00139CB9 /* TextContentNode.swift */; };
 		DDC105322387C13E00139CB9 /* TextMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC105312387C13E00139CB9 /* TextMessageViewModel.swift */; };
 		F4D44E6B86E36F0F0BBDB786 /* Pods_E2EETests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4F3E4287CAF0019291820F /* Pods_E2EETests.framework */; };
@@ -238,6 +240,8 @@
 		DD410252237BA1BD00DD4D72 /* MessageEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEntity.swift; sourceTree = "<group>"; };
 		DD410254237BA1CA00DD4D72 /* UserEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEntity.swift; sourceTree = "<group>"; };
 		DD410256237BA20600DD4D72 /* InboxEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxEntity.swift; sourceTree = "<group>"; };
+		DD49B52F238E2F00007163ED /* MessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewModel.swift; sourceTree = "<group>"; };
+		DD49B531238E6703007163ED /* TextMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessageCell.swift; sourceTree = "<group>"; };
 		DDC1052D2387745A00139CB9 /* TextContentNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextContentNode.swift; sourceTree = "<group>"; };
 		DDC105312387C13E00139CB9 /* TextMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessageViewModel.swift; sourceTree = "<group>"; };
 		FEEAD81F2887B72589C0187B /* Pods-E2EE.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EE.debug.xcconfig"; path = "Target Support Files/Pods-E2EE/Pods-E2EE.debug.xcconfig"; sourceTree = "<group>"; };
@@ -325,6 +329,7 @@
 		483F567B2386E2AA008EA1F7 /* Bubble */ = {
 			isa = PBXGroup;
 			children = (
+				483F567C2386E2B2008EA1F7 /* BubbleConfiguration */,
 				483F567F2386E383008EA1F7 /* Bubble.swift */,
 			);
 			path = Bubble;
@@ -649,6 +654,7 @@
 			isa = PBXGroup;
 			children = (
 				48CF70FA238414AE003BFCE4 /* MessageViewCell.swift */,
+				DD49B531238E6703007163ED /* TextMessageCell.swift */,
 			);
 			path = MessageCell;
 			sourceTree = "<group>";
@@ -656,7 +662,7 @@
 		DDC105302387C12400139CB9 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				483F567C2386E2B2008EA1F7 /* BubbleConfiguration */,
+				DD49B52F238E2F00007163ED /* MessageViewModel.swift */,
 				DDC105312387C13E00139CB9 /* TextMessageViewModel.swift */,
 			);
 			path = ViewModel;
@@ -942,6 +948,7 @@
 				C2763787236BD981007A563D /* SessionPreKeyPublic.swift in Sources */,
 				C2763769236BD981007A563D /* PreKeyStore.swift in Sources */,
 				DDC1052E2387745A00139CB9 /* TextContentNode.swift in Sources */,
+				DD49B530238E2F00007163ED /* MessageViewModel.swift in Sources */,
 				C2763782236BD981007A563D /* SenderMessageKey.swift in Sources */,
 				48BC3F6F237D53F200B96361 /* InboxModel.swift in Sources */,
 				48400F16238575B1008E2A0B /* UIImage+MaskColor.swift in Sources */,
@@ -993,6 +1000,7 @@
 				C276375C236BD981007A563D /* PrivateKey.swift in Sources */,
 				483F56802386E383008EA1F7 /* Bubble.swift in Sources */,
 				C2763775236BD981007A563D /* LocalStorage.proto in Sources */,
+				DD49B532238E6703007163ED /* TextMessageCell.swift in Sources */,
 				48BC3F6D237D53E400B96361 /* MessageModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
