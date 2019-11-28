@@ -14,6 +14,7 @@ open class ContentNode: ASControlNode {
     override init() {
         super.init()
         self.automaticallyManagesSubnodes = true
+        
     }
     
 }

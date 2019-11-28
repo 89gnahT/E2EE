@@ -80,7 +80,7 @@ extension ChatScreenViewController: ASCollectionDataSource{
             if viewModel.model.type == .text{
                 return TextMessageCell(viewModel: viewModel as! TextMessageViewModel)
             }else{
-                return SingleImageMessageCell(viewModel: viewModel as! ImageMessageViewModel)
+                return ImagesMessageCell(viewModel: viewModel as! ImageMessageViewModel)
             }
         }
     }
