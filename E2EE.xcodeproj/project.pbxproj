@@ -20,10 +20,7 @@
 		483F567E2386E302008EA1F7 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F567D2386E302008EA1F7 /* UIColor.swift */; };
 		483F56802386E383008EA1F7 /* Bubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F567F2386E383008EA1F7 /* Bubble.swift */; };
 		483F56842386E690008EA1F7 /* StandardBubbleConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F56832386E690008EA1F7 /* StandardBubbleConfiguration.swift */; };
-		483F56862386E897008EA1F7 /* ContentNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F56852386E897008EA1F7 /* ContentNode.swift */; };
 		48400F16238575B1008E2A0B /* UIImage+MaskColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48400F15238575B1008E2A0B /* UIImage+MaskColor.swift */; };
-		4857B49A238ECE880073F898 /* SingleImageMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4857B499238ECE880073F898 /* SingleImageMessageCell.swift */; };
-		4857B49C238ED1440073F898 /* SingleImageContentNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4857B49B238ED1440073F898 /* SingleImageContentNode.swift */; };
 		4883F84523751A0E004C3F83 /* UIFont+Default.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4883F83023751A0E004C3F83 /* UIFont+Default.swift */; };
 		4883F84623751A0E004C3F83 /* ContactTableNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4883F83323751A0E004C3F83 /* ContactTableNode.swift */; };
 		4883F84723751A0E004C3F83 /* ContactViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4883F83423751A0E004C3F83 /* ContactViewModel.swift */; };
@@ -110,9 +107,7 @@
 		DD49B530238E2F00007163ED /* MessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD49B52F238E2F00007163ED /* MessageViewModel.swift */; };
 		DD49B532238E6703007163ED /* TextMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD49B531238E6703007163ED /* TextMessageCell.swift */; };
 		DDA11FA1238F5A9600425733 /* ImageMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FA0238F5A9600425733 /* ImageMessageViewModel.swift */; };
-		DDA11FA5238FA97300425733 /* ImagesContentNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FA4238FA97300425733 /* ImagesContentNode.swift */; };
 		DDA11FA7238FC37400425733 /* ImagesMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FA6238FC37400425733 /* ImagesMessageCell.swift */; };
-		DDC1052E2387745A00139CB9 /* TextContentNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC1052D2387745A00139CB9 /* TextContentNode.swift */; };
 		DDC105322387C13E00139CB9 /* TextMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC105312387C13E00139CB9 /* TextMessageViewModel.swift */; };
 		F4D44E6B86E36F0F0BBDB786 /* Pods_E2EETests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4F3E4287CAF0019291820F /* Pods_E2EETests.framework */; };
 /* End PBXBuildFile section */
@@ -151,10 +146,7 @@
 		483F567D2386E302008EA1F7 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		483F567F2386E383008EA1F7 /* Bubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bubble.swift; sourceTree = "<group>"; };
 		483F56832386E690008EA1F7 /* StandardBubbleConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardBubbleConfiguration.swift; sourceTree = "<group>"; };
-		483F56852386E897008EA1F7 /* ContentNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentNode.swift; sourceTree = "<group>"; };
 		48400F15238575B1008E2A0B /* UIImage+MaskColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+MaskColor.swift"; sourceTree = "<group>"; };
-		4857B499238ECE880073F898 /* SingleImageMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleImageMessageCell.swift; sourceTree = "<group>"; };
-		4857B49B238ED1440073F898 /* SingleImageContentNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleImageContentNode.swift; sourceTree = "<group>"; };
 		4883F83023751A0E004C3F83 /* UIFont+Default.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Default.swift"; sourceTree = "<group>"; };
 		4883F83323751A0E004C3F83 /* ContactTableNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactTableNode.swift; sourceTree = "<group>"; };
 		4883F83423751A0E004C3F83 /* ContactViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactViewModel.swift; sourceTree = "<group>"; };
@@ -250,9 +242,7 @@
 		DD49B52F238E2F00007163ED /* MessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewModel.swift; sourceTree = "<group>"; };
 		DD49B531238E6703007163ED /* TextMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessageCell.swift; sourceTree = "<group>"; };
 		DDA11FA0238F5A9600425733 /* ImageMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMessageViewModel.swift; sourceTree = "<group>"; };
-		DDA11FA4238FA97300425733 /* ImagesContentNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesContentNode.swift; sourceTree = "<group>"; };
 		DDA11FA6238FC37400425733 /* ImagesMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesMessageCell.swift; sourceTree = "<group>"; };
-		DDC1052D2387745A00139CB9 /* TextContentNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextContentNode.swift; sourceTree = "<group>"; };
 		DDC105312387C13E00139CB9 /* TextMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessageViewModel.swift; sourceTree = "<group>"; };
 		FEEAD81F2887B72589C0187B /* Pods-E2EE.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EE.debug.xcconfig"; path = "Target Support Files/Pods-E2EE/Pods-E2EE.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -354,17 +344,6 @@
 			path = BubbleConfiguration;
 			sourceTree = "<group>";
 		};
-		483F56872386E8A5008EA1F7 /* ContentNode */ = {
-			isa = PBXGroup;
-			children = (
-				483F56852386E897008EA1F7 /* ContentNode.swift */,
-				DDC1052D2387745A00139CB9 /* TextContentNode.swift */,
-				4857B49B238ED1440073F898 /* SingleImageContentNode.swift */,
-				DDA11FA4238FA97300425733 /* ImagesContentNode.swift */,
-			);
-			path = ContentNode;
-			sourceTree = "<group>";
-		};
 		4883F82E23751A0E004C3F83 /* UI */ = {
 			isa = PBXGroup;
 			children = (
@@ -435,7 +414,6 @@
 			children = (
 				DDC105302387C12400139CB9 /* ViewModel */,
 				483F567B2386E2AA008EA1F7 /* Bubble */,
-				483F56872386E8A5008EA1F7 /* ContentNode */,
 				DDC1052F2387922600139CB9 /* MessageCell */,
 				48CF70FE23841510003BFCE4 /* ConversationViewNode.swift */,
 				48CF710023841AF2003BFCE4 /* ChatScreenViewController.swift */,
@@ -667,7 +645,6 @@
 			children = (
 				48CF70FA238414AE003BFCE4 /* MessageCell.swift */,
 				DD49B531238E6703007163ED /* TextMessageCell.swift */,
-				4857B499238ECE880073F898 /* SingleImageMessageCell.swift */,
 				DDA11FA6238FC37400425733 /* ImagesMessageCell.swift */,
 			);
 			path = MessageCell;
@@ -928,7 +905,6 @@
 				C2763768236BD981007A563D /* KeyStore.swift in Sources */,
 				C2763786236BD981007A563D /* SessionPreKeyBundle.swift in Sources */,
 				C276376A236BD981007A563D /* SenderKeyStore.swift in Sources */,
-				DDA11FA5238FA97300425733 /* ImagesContentNode.swift in Sources */,
 				483F56842386E690008EA1F7 /* StandardBubbleConfiguration.swift in Sources */,
 				C2763777236BD981007A563D /* Messages.proto in Sources */,
 				C2763772236BD981007A563D /* Fingerprint.pb.swift in Sources */,
@@ -965,7 +941,6 @@
 				482C45EF237D87B400C4F554 /* TextMessageModel.swift in Sources */,
 				C2763787236BD981007A563D /* SessionPreKeyPublic.swift in Sources */,
 				C2763769236BD981007A563D /* PreKeyStore.swift in Sources */,
-				DDC1052E2387745A00139CB9 /* TextContentNode.swift in Sources */,
 				DD49B530238E2F00007163ED /* MessageViewModel.swift in Sources */,
 				C2763782236BD981007A563D /* SenderMessageKey.swift in Sources */,
 				48BC3F6F237D53F200B96361 /* InboxModel.swift in Sources */,
@@ -987,7 +962,6 @@
 				C25D7284236BDEDD00359C11 /* DeviceConsistencyMessage.swift in Sources */,
 				C2763788236BD981007A563D /* SessionRecord.swift in Sources */,
 				4883F8532375720E004C3F83 /* Common.swift in Sources */,
-				4857B49C238ED1440073F898 /* SingleImageContentNode.swift in Sources */,
 				C2763778236BD981007A563D /* ProtocolBufferConvertible.swift in Sources */,
 				C276376D236BD981007A563D /* CipherTextMessage.swift in Sources */,
 				C2763763236BD981007A563D /* DisplayableFingerprint.swift in Sources */,
@@ -998,10 +972,8 @@
 				C276375E236BD981007A563D /* CommonSignalCrypto.swift in Sources */,
 				4883F84523751A0E004C3F83 /* UIFont+Default.swift in Sources */,
 				C2763783236BD981007A563D /* PendingPreKey.swift in Sources */,
-				4857B49A238ECE880073F898 /* SingleImageMessageCell.swift in Sources */,
 				4883F84623751A0E004C3F83 /* ContactTableNode.swift in Sources */,
 				C276377B236BD981007A563D /* HKDF.swift in Sources */,
-				483F56862386E897008EA1F7 /* ContentNode.swift in Sources */,
 				C276375B236BD981007A563D /* KeyPair.swift in Sources */,
 				C2763767236BD981007A563D /* IdentityKeyStore.swift in Sources */,
 				48CF710123841AF2003BFCE4 /* ChatScreenViewController.swift in Sources */,

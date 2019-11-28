@@ -17,28 +17,36 @@ class TextMessageCell: MessageCell {
         }
     }
     
-    @objc public var textContentNode : TextContentNode{
-        get{
-            return contentNode as! TextContentNode
+    open var textMessageNode = ASTextNode()
+
+    open var messageInsets = UIEdgeInsets(top: 9, left: 12, bottom: 9, right: 12) {
+        didSet {
+            setNeedsLayout()
         }
     }
     
+    open var bubble = Bubble()
+    
     init(viewModel: TextMessageViewModel) {
-        
+
         super.init(viewModel: viewModel)
         
-        contentNode = TextContentNode()
+        textMessageNode.maximumNumberOfLines = 50
+        textMessageNode.style.maxWidth = ASDimension(unit: .points, value: UIScreen.main.bounds.size.width * 0.6)
         
-        reloadData()
-        
-        textContentNode.addTarget(self, action: #selector(textMessageCellClicked), forControlEvents: .touchUpInside)
+        updateUI()
     }
     
-    override func reloadData() {
-        textContentNode.attributedText = textViewModel.textContent
-        textContentNode.bubbleImage = textViewModel.bubbleImage
+    override func updateUI() {
+        super.updateUI()
         
-        super.reloadData()
+        textMessageNode.attributedText = textViewModel.textContent
+        bubble.image = textViewModel.bubbleImage
+    }
+    
+    override func layoutSpecForMessageContent(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
+        return ASBackgroundLayoutSpec(child: ASInsetLayoutSpec(insets: messageInsets, child: textMessageNode),
+                                      background: bubble)
     }
    
     @objc func textMessageCellClicked(){

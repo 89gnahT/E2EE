@@ -116,11 +116,20 @@ extension Database{
 }
 
 extension Database{
+    private func randomImageURL(_ number : Int) -> [String]{
+        var contents = [String]()
+        for _ in 0..<number{
+            contents.append(self.imageURLMessage[self.randomInt(self.imageURLMessage.count)])
+        }
+        return contents
+    }
+    
     private func createMsgFrom(_ cvs : InboxEntity) -> MessageEntity{
+        
         let senderID = self.random() % 2 == 0 ? cvs.membersID.first! : cvs.membersID.last!
         let msgID = senderID + String(thePresentTime)
-        let (contents, type) = self.random() % 2 == 0 ?
-            ([self.imageURLMessage[self.randomInt(self.imageURLMessage.count)]], MessageType.image) :
+        let (contents, type) = self.random() % 4 == 0 ?
+            (self.randomImageURL(self.randomInt(10) + 1), MessageType.image) :
             ([self.textMsg[self.randomInt(self.textMsg.count)]], MessageType.text)
         let (sent, delivered, seen) = self.randomMsgTime()
         

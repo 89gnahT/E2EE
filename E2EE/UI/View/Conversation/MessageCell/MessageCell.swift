@@ -14,14 +14,24 @@ protocol MessageCellDelegate {
     
     func messageCell(_ cell : MessageCell, subFunctionClicked subFunctionNode : ASImageNode)
     
-    func messageCell(_ cell : MessageCell, longPressContent contentNode : ContentNode)
+    //func messageCell(_ cell : MessageCell, longPressContent contentNode : ContentNode)
 }
 
 class MessageCell: ASCellNode {
     
+    var justifyContent : ASStackLayoutJustifyContent = .start
+    
     var delegate : MessageCellDelegate?
     
-    var isIncommingMessage : Bool = true
+    var isIncommingMessage : Bool = true{
+        didSet{
+            if self.isIncommingMessage{
+                justifyContent = .start
+            }else{
+                justifyContent = .end
+            }
+        }
+    }
     
     var viewModel : MessageViewModel
     
@@ -30,8 +40,6 @@ class MessageCell: ASCellNode {
     var timeNode = ASTextNode()
     
     var statusNode = ASTextNode()
-    
-    var contentNode = ContentNode()
     
     var hideDetails : Bool = true{
         didSet{
@@ -56,7 +64,7 @@ class MessageCell: ASCellNode {
         avatarImageNode.imageModificationBlock = ASImageNodeRoundBorderModificationBlock(0, nil)
     }
     
-    public func reloadData(){
+    public func updateUI(){
         avatarImageNode.url = viewModel.avatarURL
         
         isIncommingMessage = viewModel.isIncommingMessage
@@ -68,61 +76,46 @@ class MessageCell: ASCellNode {
         insets = viewModel.insets
         
         avatarImageNode.isHidden = !viewModel.isShowAvatar
-        
-        self.setNeedsLayout()
-        self.layoutIfNeeded()
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        return isIncommingMessage ? layoutSpecThatFitsIncommingMessage(constrainedSize) : layoutSpecThatFitsOutgoingMessage(constrainedSize)
-    }
-    
-    func layoutSpecThatFitsOutgoingMessage(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
+        self.updateCellAttributeWhenLayout()
+        let content = self.layoutSpecForMessageContent(constrainedSize)
+        
         var subContentStackChildren : [ASLayoutElement]
         if hideDetails{
-            subContentStackChildren = [self.contentNode]
+            subContentStackChildren = [content]
         }else{
-            subContentStackChildren = [self.timeNode, self.contentNode, self.statusNode]
+            subContentStackChildren = [self.timeNode, content, self.statusNode]
         }
         let subContentStack = ASStackLayoutSpec(direction: .vertical,
                                                 spacing: 5,
-                                                justifyContent: .end, alignItems: .stretch,
+                                                justifyContent: justifyContent, alignItems: .stretch,
                                                 children: subContentStackChildren)
         
         let contentStack = ASStackLayoutSpec(direction: .horizontal,
                                              spacing: 10,
-                                             justifyContent: .end,
+                                             justifyContent: justifyContent,
                                              alignItems: .center,
                                              children: [subContentStack])
         
+        if isIncommingMessage{
+            contentStack.children?.insert(self.avatarImageNode, at: 0)
+        }
+        
         contentStack.style.maxSize = constrainedSize.max
         contentStack.style.minSize = constrainedSize.min
         
         return ASInsetLayoutSpec(insets: insets, child: contentStack)
     }
     
-    func layoutSpecThatFitsIncommingMessage(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        var subContentStackChildren : [ASLayoutElement]
-        if hideDetails{
-            subContentStackChildren = [self.contentNode]
-        }else{
-            subContentStackChildren = [self.timeNode, self.contentNode, self.statusNode]
-        }
+    func updateCellAttributeWhenLayout(){
         
-        let subContentStack = ASStackLayoutSpec(direction: .vertical,
-                                                spacing: 5,
-                                                justifyContent: .start, alignItems: .stretch,
-                                                children: subContentStackChildren)
-        
-        let contentStack = ASStackLayoutSpec(direction: .horizontal,
-                                             spacing: 10,
-                                             justifyContent: .start,
-                                             alignItems: .center,
-                                             children: [self.avatarImageNode, subContentStack])
-        contentStack.style.maxSize = constrainedSize.max
-        contentStack.style.minSize = constrainedSize.min
-        
-        return ASInsetLayoutSpec(insets: insets, child: contentStack)
+    }
+    
+    func layoutSpecForMessageContent(_ constrainedSize : ASSizeRange) -> ASLayoutSpec{
+        assert(false, "layoutSpecForMessageContent should be override in subClass")
+        return ASLayoutSpec()
     }
     
 }
