@@ -17,10 +17,12 @@ class PairComunicationTest: XCTestCase {
     var alicePreKeyBundle: SessionPreKeyBundle?
     var aliceKeyStore: SignalKeyStore?
     var aliceAddress: SignalAddress?
+    var aliceSession: SessionCipher<SignalKeyStore>?
     
     var bobPreKeyBundle: SessionPreKeyBundle?
     var bobKeyStore: SignalKeyStore?
     var bobAddress: SignalAddress?
+    var bobSession: SessionCipher<SignalKeyStore>?
     
     var message: CipherTextMessage?
 
@@ -97,13 +99,16 @@ class PairComunicationTest: XCTestCase {
             XCTFail("Error with sign up process")
             return
         }
-        let session = SessionCipher(store: aliceKeyStore, remoteAddress: bobAddress)
+        //let session = SessionCipher(store: aliceKeyStore, remoteAddress: bobAddress)
+        self.aliceSession = SessionCipher(store: aliceKeyStore, remoteAddress: bobAddress)
         do {
-            try session.process(preKeyBundle: bobPreKeyBundle)
+            //try session.process(preKeyBundle: bobPreKeyBundle)
+            try self.aliceSession?.process(preKeyBundle: bobPreKeyBundle)
             let initializeMessage = "Hello Bob, it's Alice".data(using: .utf8)
             if let message = initializeMessage {
                 do {
-                    self.message = try session.encrypt(message)
+                    //self.message = try session.encrypt(message)
+                    self.message = try self.aliceSession?.encrypt(message)
                     //let encryptedMessage = String(decoding: self.message!.data, as: UTF8.self)
                     //print(encryptedMessage)
                 } catch let error as SignalError {
@@ -120,7 +125,7 @@ class PairComunicationTest: XCTestCase {
         
     }
     
-    func testBobInitializeByRecieveAliceMessage() {
+    func testBobSetupByRecieveAliceMessage() {
         testBobSignUp()
         testAliceSignUp()
         testAliceInitializeChatSession()
@@ -129,15 +134,16 @@ class PairComunicationTest: XCTestCase {
             XCTFail("Sign up failed or didn't make friend")
             return
         }
-        let session = SessionCipher(store: bobStore, remoteAddress: aliceAddress)
+        self.bobSession = SessionCipher(store: bobStore, remoteAddress: aliceAddress)
         guard let cipherMessage = self.message else {
             XCTFail("Not receive message")
             return
         }
         
         do {
-            let decryptedMessage = try session.decrypt(cipherMessage)
-            let message = String(decoding: decryptedMessage, as: UTF8.self)
+            //let decryptedMessage = try session.decrypt(cipherMessage)
+            let decryptedMessage = try self.bobSession?.decrypt(cipherMessage)
+            let message = String(decoding: decryptedMessage!, as: UTF8.self)
             print(message)
         } catch let error as SignalError {
             print(error.longDescription)
@@ -152,9 +158,9 @@ class PairComunicationTest: XCTestCase {
             XCTFail("Sign up failed or didn't making friend")
             return
         }
-        let session = SessionCipher(store: bobStore, remoteAddress: aliceAddress)
         do {
-            self.message = try session.encrypt(message)
+            self.message = try self.bobSession?.encrypt(message)
+            //self.message = try session.encrypt(message)
         } catch let error as SignalError {
             print(error.description)
         } catch {
@@ -170,10 +176,10 @@ class PairComunicationTest: XCTestCase {
             XCTFail("Sign up failed or didn't making friend")
             return
         }
-        let session = SessionCipher(store: bobStore, remoteAddress: aliceAddress)
         do {
-            let data = try session.decrypt(self.message!)
-            let message = String(decoding: data, as: UTF8.self)
+            let data = try self.bobSession?.decrypt(self.message!)
+            //let data = try session.decrypt(self.message!)
+            let message = String(decoding: data!, as: UTF8.self)
             print("Bob received: \(message)")
         } catch let error as SignalError {
             print(error.description)
@@ -188,9 +194,9 @@ class PairComunicationTest: XCTestCase {
             XCTFail("Sign up failed or did'nt making friend")
             return
         }
-        let session = SessionCipher(store: aliceStore, remoteAddress: bobAddress)
         do {
-            self.message = try session.encrypt(message)
+            //self.message = try session.encrypt(message)
+            self.message = try self.aliceSession?.encrypt(message)
         } catch let error as SignalError {
             print(error.description)
         } catch {
@@ -204,10 +210,10 @@ class PairComunicationTest: XCTestCase {
             XCTFail("Sign up failed or didn't making friend")
             return
         }
-        let session = SessionCipher(store: aliceStore, remoteAddress: bobAddress)
         do {
-            let data = try session.decrypt(self.message!)
-            let message = String(decoding: data, as: UTF8.self)
+            let data = try self.aliceSession?.decrypt(self.message!)
+            //let data = try session.decrypt(self.message!)
+            let message = String(decoding: data!, as: UTF8.self)
             print("Alice receive: \(message)")
         } catch let error as SignalError {
             print(error.description)
@@ -220,19 +226,24 @@ class PairComunicationTest: XCTestCase {
         testBobSignUp()
         testAliceSignUp()
         testAliceInitializeChatSession()
-        testBobInitializeByRecieveAliceMessage()
+        testBobSetupByRecieveAliceMessage()
         
         let bobMessage : [String] = ["Hello you", "Are you ready?", "Hello world", "Can you love me?", "Old But Gold"]
         let aliceMessage : [String] = ["Oh hi Bob", "Yeah", "Welcome home", "My heart are broken", "Long time no see"]
-        for i in 0..<5 {
-            var data = bobMessage[i].data(using: .utf8)
-            sendBobMessage(message: data!)
-            receiveBobMessage()
-            data = aliceMessage[i].data(using: .utf8)
-            sendAliceMessage(message: data!)
-            receiveAliceMessage()
-        }
+//        for i in 0..<5 {
+//            var data = bobMessage[i].data(using: .utf8)
+//            sendBobMessage(message: data!)
+//            receiveBobMessage()
+//            data = aliceMessage[i].data(using: .utf8)
+//            sendAliceMessage(message: data!)
+//            receiveAliceMessage()
+//        }
         
+        var data = bobMessage[0].data(using: .utf8)
+        sendBobMessage(message: data!)
+        data = bobMessage[1].data(using: .utf8)
+        sendBobMessage(message: data!)
+        receiveBobMessage()
     }
 
     func testPerformanceExample() {
