@@ -21,7 +21,7 @@ extension Database{
     }
     
     func randomMsgTime()->(TimeInterval, TimeInterval, TimeInterval){
-        let sent = thePresentTime - Double(Int.random(in: 0...3600*24*30))
+        let sent = timeNow - Double(Int.random(in: 0...3600*24*30))
         let deliveried : TimeInterval = sent + Double(Int.random(in: 1...1000))
         var seen : TimeInterval = deliveried + Double(Int.random(in: 1...1000))
         
@@ -33,7 +33,7 @@ extension Database{
     }
     
     func randomMuteTime() -> TimeInterval{
-        return thePresentTime + Double(Int.random(in: -10000...10000))
+        return timeNow + Double(Int.random(in: -10000...10000))
     }
     
     func randomID(length: Int)->String{
@@ -58,7 +58,7 @@ extension Database{
     }
     
     func randomMsgID(with userID : UserID) -> String{
-        return userID + String(thePresentTime)
+        return userID + String(timeNow)
     }
     
     func randomGender() -> Gender{

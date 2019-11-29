@@ -58,7 +58,7 @@ public class InboxModel: NSObject {
     }
     
     func isMuted() -> Bool{
-        return muteTime > thePresentTime
+        return muteTime > timeNow
     }
     
     func isUnread() -> Bool{

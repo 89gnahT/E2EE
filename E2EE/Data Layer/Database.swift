@@ -127,7 +127,7 @@ extension Database{
     private func createMsgFrom(_ cvs : InboxEntity) -> MessageEntity{
         
         let senderID = self.random() % 2 == 0 ? cvs.membersID.first! : cvs.membersID.last!
-        let msgID = senderID + String(thePresentTime)
+        let msgID = senderID + String(timeNow)
         let (contents, type) = self.random() % 4 == 0 ?
             (self.randomImageURL(self.randomInt(10) + 1), MessageType.image) :
             ([self.textMsg[self.randomInt(self.textMsg.count)]], MessageType.text)

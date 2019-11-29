@@ -11,7 +11,7 @@ import AsyncDisplayKit
 
 class InboxesViewController: ASViewController<ASDisplayNode>{
     
-    let tableNode = ConversationsTableNode()
+    let tableNode = InboxsTableNode()
     
     var viewModels : [ChatInboxViewModel] = []
     
@@ -184,16 +184,16 @@ extension InboxesViewController{
         let message = "Không thông báo tin nhắn mới của hội thoại này"
         
         let mute1h = UIAlertAction(title: "Trong 1 tiếng", style: .default, handler: { action in
-            self.muteItem(at: indexPath, until: thePresentTime + HOURS)
+            self.muteItem(at: indexPath, until: timeNow + HOURS)
         })
         let mute4h = UIAlertAction(title: "Trong 4 tiếng", style: .default, handler: { action in
-            self.muteItem(at: indexPath, until: thePresentTime + 4 * HOURS)
+            self.muteItem(at: indexPath, until: timeNow + 4 * HOURS)
         })
         let mute8h = UIAlertAction(title: "Trong 8 tiếng", style: .default, handler: { action in
-            self.muteItem(at: indexPath, until: thePresentTime + 8 * HOURS)
+            self.muteItem(at: indexPath, until: timeNow + 8 * HOURS)
         })
         let muteUnlimited = UIAlertAction(title: "Cho đến khi được mở lại", style: .default, handler: { action in
-            self.muteItem(at: indexPath, until: 2 * thePresentTime)
+            self.muteItem(at: indexPath, until: 2 * timeNow)
         })
         
         let cancel = UIAlertAction(title: "Huỷ", style: .cancel, handler: { action in })
@@ -217,7 +217,7 @@ extension InboxesViewController{
 // MARK: - TableNode Delegate
 extension InboxesViewController : InboxesDelegate{
     
-    func tableNode(_ table: ConversationsTableNode, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+    func tableNode(_ table: InboxsTableNode, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         
         // Option
         let more = UITableViewRowAction(style: .normal, title: "More", handler: { (viewAction, indexPath) in
@@ -258,7 +258,7 @@ extension InboxesViewController : InboxesDelegate{
         return [delete, hide, more]
     }
     
-    func tableNode(_ table: ConversationsTableNode, didSelectRowAt indexPath: IndexPath) {
+    func tableNode(_ table: InboxsTableNode, didSelectRowAt indexPath: IndexPath) {
         if isEdittingMode{
             listSelectedItemsInEdittingMode.append(viewModels[indexPath.row])
             
@@ -268,11 +268,12 @@ extension InboxesViewController : InboxesDelegate{
             
             let id = viewModels[indexPath.row].modelID
             let chatViewController = ChatScreenViewController(with: id)
+            chatViewController.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(chatViewController, animated: true)
         }
     }
     
-    func tableNode(_ table: ConversationsTableNode, didDeselectRowAt indexPath: IndexPath) {
+    func tableNode(_ table: InboxsTableNode, didDeselectRowAt indexPath: IndexPath) {
         if isEdittingMode{
             let item = viewModels[indexPath.row]
             let indexOfItem = listSelectedItemsInEdittingMode.firstIndex { (m) -> Bool in
@@ -292,7 +293,7 @@ extension InboxesViewController : InboxesDelegate{
         }
     }
     
-    func tableNodeBeginEdittingMode(_ table: ConversationsTableNode) {
+    func tableNodeBeginEdittingMode(_ table: InboxsTableNode) {
         if isEdittingMode == false{
             isEdittingMode = true
             
@@ -303,8 +304,8 @@ extension InboxesViewController : InboxesDelegate{
 }
 
 // MARK: - TableNode DataSource
-extension InboxesViewController : ConversationsDataSource{
-    func tableNode(_ table: ConversationsTableNode) -> Array<ChatInboxViewModel> {
+extension InboxesViewController : InboxsDataSource{
+    func tableNode(_ table: InboxsTableNode) -> Array<ChatInboxViewModel> {
         return viewModels 
     }
 }

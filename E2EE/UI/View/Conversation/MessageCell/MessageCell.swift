@@ -14,11 +14,12 @@ protocol MessageCellDelegate {
     
     func messageCell(_ cell : MessageCell, subFunctionClicked subFunctionNode : ASImageNode)
     
-    //func messageCell(_ cell : MessageCell, longPressContent contentNode : ContentNode)
+    func messageCell(_ cell : MessageCell, contentClicked contentNode : ASDisplayNode)
+    
+    func messageCell(_ cell : MessageCell, longPressContent contentNode : ASDisplayNode)
 }
 
 class MessageCell: ASCellNode {
-    
     var justifyContent : ASStackLayoutJustifyContent = .start
     
     var delegate : MessageCellDelegate?
@@ -32,9 +33,7 @@ class MessageCell: ASCellNode {
             }
         }
     }
-    
-    var viewModel : MessageViewModel
-    
+  
     var avatarImageNode = ASNetworkImageNode()
     
     var timeNode = ASTextNode()
@@ -49,9 +48,7 @@ class MessageCell: ASCellNode {
     
     var insets : UIEdgeInsets = UIEdgeInsets.zero
     
-    init(viewModel : MessageViewModel) {
-        self.viewModel = viewModel
-        
+    override init() {
         super.init()
         
         setup()
@@ -62,9 +59,25 @@ class MessageCell: ASCellNode {
         
         avatarImageNode.style.preferredSize = CGSize(squareEdge: 28)
         avatarImageNode.imageModificationBlock = ASImageNodeRoundBorderModificationBlock(0, nil)
+        avatarImageNode.addTarget(self, action: #selector(avatarClicked(_:)), forControlEvents: .touchUpInside)
+    }
+    
+    func getViewModel() -> MessageViewModel{
+        assert(false, "getViewModel should be override in subClass")
+        return MessageViewModel(model: MessageModel())
+    }
+    
+    func updateCellAttributeWhenLayout(){
+        
+    }
+    
+    func layoutSpecForMessageContent(_ constrainedSize : ASSizeRange) -> ASLayoutSpec{
+        assert(false, "layoutSpecForMessageContent should be override in subClass")
+        return ASLayoutSpec()
     }
     
     public func updateUI(){
+        let viewModel = getViewModel()
         avatarImageNode.url = viewModel.avatarURL
         
         isIncommingMessage = viewModel.isIncommingMessage
@@ -109,13 +122,15 @@ class MessageCell: ASCellNode {
         return ASInsetLayoutSpec(insets: insets, child: contentStack)
     }
     
-    func updateCellAttributeWhenLayout(){
+    @objc func avatarClicked(_ avatarNode : ASImageNode){
         
     }
     
-    func layoutSpecForMessageContent(_ constrainedSize : ASSizeRange) -> ASLayoutSpec{
-        assert(false, "layoutSpecForMessageContent should be override in subClass")
-        return ASLayoutSpec()
+    @objc func subFunctionClicked(_ subFunctionNode : ASImageNode){
+        
     }
     
+    @objc func contentClicked(_ contentNode : ASDisplayNode){
+        
+    }
 }

@@ -49,7 +49,7 @@ class InboxEntity {
     }
     
     func isMuted() -> Bool{
-        return muteTime > thePresentTime
+        return muteTime > timeNow
     }
     
     func convertToModel(with membersModel : Dictionary<UserID, UserModel>, lastMessage : MessageModel) -> InboxModel{

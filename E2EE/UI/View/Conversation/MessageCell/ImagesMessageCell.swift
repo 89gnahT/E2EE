@@ -10,11 +10,7 @@ import UIKit
 import AsyncDisplayKit
 
 class ImagesMessageCell: MessageCell {
-    public var imageViewModel : ImageMessageViewModel{
-        get{
-            return viewModel as! ImageMessageViewModel
-        }
-    }
+    public var imageViewModel : ImageMessageViewModel
     
     private var maxWidthDimension : ASDimension
     private var maxWidthNodeDemension : ASDimension!
@@ -25,11 +21,16 @@ class ImagesMessageCell: MessageCell {
     
     
     init(viewModel: ImageMessageViewModel) {
+        imageViewModel = viewModel
         maxWidthDimension = ASDimension(unit: .points, value: UIScreen.main.bounds.size.width * 0.65)
         
-        super.init(viewModel: viewModel)
+        super.init()
         
         updateUI()
+    }
+    
+    override func getViewModel() -> MessageViewModel {
+        return imageViewModel
     }
     
     override func updateUI() {
@@ -40,11 +41,12 @@ class ImagesMessageCell: MessageCell {
     
     private func getImageNodeFromURLs(_ imageURLs : [URL]){
         // Calculate size
-        if imageURLs.count < 4{
+        switch imageURLs.count {
+        case 1..<4:
             numberNodePerRow = imageURLs.count
-        }else if imageURLs.count == 4{
+        case 4:
             numberNodePerRow = 2
-        }else{
+        default:
             numberNodePerRow = 3
         }
         
@@ -87,15 +89,11 @@ class ImagesMessageCell: MessageCell {
             }
             
             let contentInRow = ASStackLayoutSpec(direction: .horizontal, spacing: spacingBetweenImageNode, justifyContent: justifyContent, alignItems: .stretch, children: imagesContentArrayInRow)
-            contentInRow.style.maxWidth = maxWidthDimension
-            contentInRow.style.maxHeight = maxWidthDimension
             
             imagesContentArray.append(contentInRow)
         }
         
         let content = ASStackLayoutSpec(direction: .vertical, spacing: spacingBetweenImageNode, justifyContent: justifyContent, alignItems: .stretch, children: imagesContentArray)
-        content.style.maxWidth = maxWidthDimension
-        content.style.maxHeight = maxWidthDimension
         
         return ASInsetLayoutSpec(insets: UIEdgeInsets.zero, child: content)
     }

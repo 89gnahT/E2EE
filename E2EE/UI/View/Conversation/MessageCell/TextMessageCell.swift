@@ -11,11 +11,7 @@ import AsyncDisplayKit
 
 class TextMessageCell: MessageCell {
 
-    public var textViewModel : TextMessageViewModel{
-        get{
-            return viewModel as! TextMessageViewModel
-        }
-    }
+    public var textViewModel : TextMessageViewModel
     
     open var textMessageNode = ASTextNode()
 
@@ -28,13 +24,19 @@ class TextMessageCell: MessageCell {
     open var bubble = Bubble()
     
     init(viewModel: TextMessageViewModel) {
-
-        super.init(viewModel: viewModel)
+        textViewModel = viewModel
+        super.init()
         
         textMessageNode.maximumNumberOfLines = 50
         textMessageNode.style.maxWidth = ASDimension(unit: .points, value: UIScreen.main.bounds.size.width * 0.6)
         
+        bubble.addTarget(self, action: #selector(contentClicked(_:)), forControlEvents: .touchUpInside)
+        
         updateUI()
+    }
+    
+    override func getViewModel() -> MessageViewModel {
+        return textViewModel
     }
     
     override func updateUI() {
@@ -49,7 +51,9 @@ class TextMessageCell: MessageCell {
                                       background: bubble)
     }
    
-    @objc func textMessageCellClicked(){
+    override func contentClicked(_ contentNode: ASDisplayNode) {
+        super.contentClicked(contentNode)
+        
         hideDetails = !hideDetails
     }
 }

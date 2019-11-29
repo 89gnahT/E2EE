@@ -63,6 +63,14 @@ class DataManager: NSObject {
     }
 }
 
+extension DataManager{
+    public func sendTextMessage(inboxID iID: InboxID, withContent text: String, _ completion : ((TextMessageModel) -> Void)?){
+        let t = MessageEntity(id: iID, conversationID: iID, senderId: iID, type: .text, contents: [text], timeSent: timeNow, timeDeliveried: 0, timeSeen: 0)
+        let model = t.convertToModel(with: you)
+        completion?(model as! TextMessageModel)
+    }
+}
+
 // MARK: - Fetching Data
 extension DataManager{
     public func batchFetchingAllData(_ completion : @escaping () -> Void, callbackQueue : DispatchQueue?){

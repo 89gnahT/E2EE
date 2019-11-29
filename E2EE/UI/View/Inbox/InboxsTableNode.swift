@@ -10,26 +10,26 @@ import UIKit
 import AsyncDisplayKit
 
 @objc protocol InboxesDelegate: NSObjectProtocol{
-    @objc optional func tableNode(_ table: ConversationsTableNode, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
+    @objc optional func tableNode(_ table: InboxsTableNode, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
     
-    @objc optional func tableNode(_ table: ConversationsTableNode, didSelectRowAt indexPath: IndexPath)
+    @objc optional func tableNode(_ table: InboxsTableNode, didSelectRowAt indexPath: IndexPath)
     
-    @objc optional func tableNode(_ table: ConversationsTableNode, didDeselectRowAt indexPath: IndexPath)
+    @objc optional func tableNode(_ table: InboxsTableNode, didDeselectRowAt indexPath: IndexPath)
     
-    @objc optional func tableNodeBeginEdittingMode(_ table: ConversationsTableNode)
+    @objc optional func tableNodeBeginEdittingMode(_ table: InboxsTableNode)
 }
 
 
-protocol ConversationsDataSource: NSObjectProtocol {
+protocol InboxsDataSource: NSObjectProtocol {
     
-    func tableNode(_ table: ConversationsTableNode) -> Array<ChatInboxViewModel>
+    func tableNode(_ table: InboxsTableNode) -> Array<ChatInboxViewModel>
 }
 
 
-class ConversationsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
+class InboxsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
     
     weak public var delegate : InboxesDelegate?
-    weak public var dataSource : ConversationsDataSource?
+    weak public var dataSource : InboxsDataSource?
     
     private let tableNode = ASTableNode()
     private var viewModels = Array<ChatInboxViewModel>()
@@ -115,7 +115,7 @@ class ConversationsTableNode: ASDisplayNode, UIGestureRecognizerDelegate {
 }
 
 // MARK: Delegate
-extension ConversationsTableNode: ASTableDelegate{
+extension InboxsTableNode: ASTableDelegate{
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {
         delegate?.tableNode?(self, didSelectRowAt: indexPath)
     }
@@ -145,7 +145,7 @@ extension ConversationsTableNode: ASTableDelegate{
 }
 
     // MARK: DataSource
-extension ConversationsTableNode: ASTableDataSource{
+extension InboxsTableNode: ASTableDataSource{
     func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
         return {
             print("create cell node")
@@ -164,7 +164,7 @@ extension ConversationsTableNode: ASTableDataSource{
 }
 
 // MARK: Handle long press
-extension ConversationsTableNode{
+extension InboxsTableNode{
     @objc func handleLongPress(longPressGesture: UILongPressGestureRecognizer) {
         if isInEdittingMode {
             return

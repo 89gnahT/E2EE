@@ -88,7 +88,7 @@ extension ChatInboxViewModel{
         
         var timeString : String
         
-        let deltaTime = thePresentTime - time
+        let deltaTime = timeNow - time
         
         if deltaTime < MINUTE{
             timeString = round(deltaTime) + " giây"
@@ -112,7 +112,7 @@ extension ChatInboxViewModel{
                         
                         timeString = getTimeWithFormath(time: time, format: "dd/MM/yyyy")
                         
-                        if timeString.hasSuffix(getTimeWithFormath(time: thePresentTime, format: "yyyy")){
+                        if timeString.hasSuffix(getTimeWithFormath(time: timeNow, format: "yyyy")){
                             timeString.removeSubrange(Range<String.Index>(NSRange(location: 5, length: 5), in: timeString)!)
                         }
         }

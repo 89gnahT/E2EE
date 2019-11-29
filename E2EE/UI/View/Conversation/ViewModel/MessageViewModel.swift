@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol MessageViewModelDelegate {
+    
+}
+
 class MessageViewModel: NSObject {
     private(set) var model : MessageModel
     
@@ -52,6 +56,8 @@ class MessageViewModel: NSObject {
         avatarURL = URL(string: model.sender.avatarURL)
         
         time = attributedString(getTimeWithFormath(time: model.time.sent, format: "dd/MM/yyyy"), fontSize: 13, isBold: false, foregroundColor: .darkGray)
+        
+        status = attributedString("Delivered", fontSize: 13, isBold: false, foregroundColor: .darkGray)
         
         bubbleImage = bubleConfiguration.getBubbleImage(isIncoming: isIncommingMessage, position: position)
         
