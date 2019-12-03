@@ -31,7 +31,8 @@ class GroupComunicationTest: XCTestCase {
     let crypto: CommonSignalCrypto = CommonSignalCrypto()
     
     var groupSender: SignalSenderKeyName?
-    var message: CipherTextMessage?
+    var cipherMessage: CipherTextMessage?
+    var distributionMessage: Data?
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -48,9 +49,9 @@ class GroupComunicationTest: XCTestCase {
             self.aliceKeyStore = SignalKeyStore(withKeyPair: identityKey)
             self.aliceGroupKeyStore = SignalGroupKeyStore(withKeyPair: identityKey)
         } catch let error as SignalError {
-            print(error.description)
+            XCTFail(error.description)
         } catch {
-            print("Other error")
+            XCTFail("Other Error")
         }
         
         do {
@@ -59,9 +60,9 @@ class GroupComunicationTest: XCTestCase {
             let signedPreKey = try self.aliceKeyStore?.updateSignedPrekey()
             self.alicePreKeyBundle = try SessionPreKeyBundle(preKey: preKeys!.first!, signedPreKey: signedPreKey!, identityKey: publicKey!)
         } catch let error as SignalError {
-            print(error.description)
+            XCTFail(error.description)
         } catch {
-            print("Other error")
+            XCTFail("Other error")
         }
     }
 
@@ -72,9 +73,9 @@ class GroupComunicationTest: XCTestCase {
             self.bobKeyStore = SignalKeyStore(withKeyPair: identityKey)
             self.bobGroupKeyStore = SignalGroupKeyStore(withKeyPair: identityKey)
         } catch let error as SignalError {
-            print(error.description)
+            XCTFail(error.description)
         } catch {
-            print("Other error")
+            XCTFail("Other error")
         }
         
         do {
@@ -83,9 +84,9 @@ class GroupComunicationTest: XCTestCase {
             let signedPreKey = try self.bobKeyStore?.updateSignedPrekey()
             self.bobPreKeyBundle = try SessionPreKeyBundle(preKey: preKeys!.first!, signedPreKey: signedPreKey!, identityKey: publicKey!)
         } catch let error as SignalError {
-            print(error.description)
+            XCTFail(error.description)
         } catch {
-            print("Other error")
+            XCTFail("Other error")
         }
     }
 
@@ -96,9 +97,9 @@ class GroupComunicationTest: XCTestCase {
             self.carlKeyStore = SignalKeyStore(withKeyPair: identityKey)
             self.carlGroupKeyStore = SignalGroupKeyStore(withKeyPair: identityKey)
         } catch let error as SignalError {
-            print(error.description)
+            XCTFail(error.description)
         } catch {
-            print("Other error")
+            XCTFail("Other error")
         }
         do {
             let publicKey = try self.carlKeyStore?.identityKeyStore.getPublicIdentityKey()
@@ -106,16 +107,27 @@ class GroupComunicationTest: XCTestCase {
             let signedPreKey = try self.carlKeyStore?.updateSignedPrekey()
             self.carlPreKeyBundle = try SessionPreKeyBundle(preKey: preKeys!.first!, signedPreKey: signedPreKey!, identityKey: publicKey!)
         } catch let error as SignalError {
-            print(error.description)
+            XCTFail(error.description)
         } catch {
-            print("Other error")
+            XCTFail("Other error")
         }
     }
     
     func aliceCreateGroupChat() {
         self.groupSender = SignalSenderKeyName(groupid: "Group truyen cuoi", sender: self.aliceAddress!)
         self.aliceGroupCipher = GroupCipher(address: groupSender!, store: aliceGroupKeyStore!)
-        
+    }
+    
+    func aliceProcessDistributionMessage() {
+        do {
+            let distributionMessage = try SenderKeyDistributionMessage(from: self.distributionMessage!)
+            try aliceGroupCipher?.process(distributionMessage: distributionMessage)
+        } catch let error as SignalError {
+            XCTFail(error.description)
+        } catch let error {
+            print("Fail to process distribution message")
+            XCTFail(error.localizedDescription)
+        }
     }
     
     func bobCreateGroupCipherAndSendMessage() {
@@ -133,11 +145,12 @@ class GroupComunicationTest: XCTestCase {
         }
         
         do {
-            self.message = try bobGroupCipher?.encrypt(messageData!)
+            self.distributionMessage = distributionMessage
+            self.cipherMessage = try bobGroupCipher?.encrypt(messageData!)
         } catch let error as SignalError {
-            print(error.description)
+            XCTFail(error.description)
         } catch {
-            print("Other error")
+            XCTFail("Other error")
         }
     }
     
@@ -145,8 +158,97 @@ class GroupComunicationTest: XCTestCase {
         self.carlGroupCipher = GroupCipher(address: groupSender!, store: carlGroupKeyStore!)
     }
     
+    func carlProcessDistributionMessage() {
+        do {
+            let distributionMessage = try SenderKeyDistributionMessage(from: self.distributionMessage!)
+            try carlGroupCipher?.process(distributionMessage: distributionMessage)
+        } catch let error as SignalError {
+            XCTFail(error.description)
+        } catch let error {
+            print("Fail to process distribution message")
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
     func aliceSendMessage(message: Data) {
-        
+        do {
+            self.cipherMessage = try aliceGroupCipher?.encrypt(message)
+        } catch let error as SignalError {
+            XCTFail(error.description)
+        } catch let error {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func aliceReceiveMessage() {
+        do {
+            guard let data = self.cipherMessage?.data else {
+                XCTFail("Not receive message or message damaged")
+                return
+            }
+            let cipherMess = try SenderKeyMessage(from: data)
+            let messageData = try aliceGroupCipher?.decrypt(ciphertext: cipherMess)
+            let plaintext = String(decoding: messageData!, as: UTF8.self)
+            print("Alice received: \(plaintext)")
+        } catch let error as SignalError {
+            XCTFail(error.description)
+        } catch let error {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func bobSendMessage(message: Data) {
+        do {
+            self.cipherMessage = try bobGroupCipher?.encrypt(message)
+        } catch let error as SignalError {
+            XCTFail(error.description)
+        } catch let error {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func bobReceiveMessage() {
+        do {
+            guard let data = self.cipherMessage?.data else {
+                XCTFail("Not receive message or message damaged")
+                return
+            }
+            let cipherMess = try SenderKeyMessage(from: data)
+            let messageData = try bobGroupCipher?.decrypt(ciphertext: cipherMess)
+            let plaintext = String(decoding: messageData!, as: UTF8.self)
+            print("Bob received: \(plaintext)")
+        } catch let error as SignalError {
+            XCTFail(error.description)
+        } catch let error {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func carlSendMessage(message: Data) {
+        do {
+            self.cipherMessage = try carlGroupCipher?.encrypt(message)
+        } catch let error as SignalError {
+            XCTFail(error.description)
+        } catch let error {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func carlReceiveMessage() {
+        do {
+            guard let data = self.cipherMessage?.data else {
+                XCTFail("Not receive message or message damaged")
+                return
+            }
+            let cipherMess = try SenderKeyMessage(from: data)
+            let messageData = try carlGroupCipher?.decrypt(ciphertext: cipherMess)
+            let plaintext = String(decoding: messageData!, as: UTF8.self)
+            print("Carl received: \(plaintext)")
+        } catch let error as SignalError {
+            XCTFail(error.description)
+        } catch let error {
+            XCTFail(error.localizedDescription)
+        }
     }
     
     func testComunication() {
@@ -156,8 +258,32 @@ class GroupComunicationTest: XCTestCase {
         aliceCreateGroupChat()
         bobCreateGroupCipherAndSendMessage()
         carlCreateGroupCipher()
+        aliceProcessDistributionMessage()
+        carlProcessDistributionMessage()
         
+        aliceReceiveMessage()
+        carlReceiveMessage()
         
+        let aliceMessages = ["Hello everyone, can you talk vietnamese?", "Tau hai is real", "This is tau hai time"]
+        let bobMessages = ["Oke", "Yeah tau hai cuc manh", "Hai Hoai Linh iz da bezt"]
+        let carlMessages = ["Im from Dong Lao", "Mua quat di ae", "No no, Minh Beo tau hai manh hon"]
+        
+        for i in 0..<3 {
+            var data = aliceMessages[i].data(using: .utf8)
+            aliceSendMessage(message: data!)
+            bobReceiveMessage()
+            carlReceiveMessage()
+            
+            data = bobMessages[i].data(using: .utf8)
+            bobSendMessage(message: data!)
+            aliceReceiveMessage()
+            carlReceiveMessage()
+            
+            data = carlMessages[i].data(using: .utf8)
+            carlSendMessage(message: data!)
+            aliceReceiveMessage()
+            bobReceiveMessage()
+        }
     }
 
     func testPerformanceExample() {

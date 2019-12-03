@@ -9,12 +9,6 @@
 import Foundation
 import Network
 
-enum ConnectionStatus {
-    case uninitialize
-    case connected
-    case disconnected
-}
-
 public enum ConnectivityState {
     case setup
     case waiting
@@ -24,11 +18,10 @@ public enum ConnectivityState {
     case canceled
 }
 
-public protocol NetbaseSocketDelegate {
-    func receive(_ data: Data)
-    func stateDidChange(_ state: ConnectivityState)
+public enum Service {
+    case voicecall
+    case chat
 }
-
 
 enum NetBaseErrorType: String {
     case invalidSetting = "Invalid connection setting"
@@ -46,4 +39,16 @@ public class NetBaseError: CustomStringConvertible, Error {
         self.errorType = type
         self.description = description
     }
+}
+
+public protocol NetbaseSocketDelegate {
+    func receive(_ data: Data)
+    func stateDidChange(_ state: ConnectivityState)
+}
+
+public protocol GenericSocket: NSObjectProtocol {
+    var delegate: NetbaseSocketDelegate? { get set }
+    func loadSetting(host:String, port:String) throws
+    func setService() throws
+    func send(_ data: Data)
 }

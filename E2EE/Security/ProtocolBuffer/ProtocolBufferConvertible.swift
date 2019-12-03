@@ -30,14 +30,7 @@ extension ProtocolBufferConvertiable {
         do {
             protoObject = try ProtocolBufferClass(serializedData: protoData)
         } catch {
-            throw SignalError(.invalidProtoBuf, "Desiarialization error: \(error)")
-        }
-        do {
-            try self.init(from: protoObject)
-        } catch let error as SignalError {
-            print(error.description)
-        } catch {
-            print("Other error")
+            throw SignalError(.invalidProtoBuf, "Deserialization error: \(error)")
         }
         try self.init(from: protoObject)
     }

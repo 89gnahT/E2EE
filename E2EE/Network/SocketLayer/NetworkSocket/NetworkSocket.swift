@@ -10,20 +10,21 @@ import Foundation
 import Network
 
 @available(iOS 12.0, *)
-class NetWorkSocket: NSObject {
-    public var delegate: NetbaseSocketDelegate?
-    
-    static var connectionStatus: ConnectionStatus = .uninitialize
+class NetWorkSocket: NSObject, GenericSocket {
+    var delegate: NetbaseSocketDelegate?
     var connection: NWConnection?
     var host: NWEndpoint.Host?
     var port: NWEndpoint.Port?
     var type: NWEndpoint.Type?
     static let maxReadSize = Int(UInt16.max)
     var buffer:UnsafeMutablePointer<UInt8>?
+    let socketQueue = DispatchQueue(label: "Socket.inputQueue")
     
-    init(withHost host: String, and port:String) throws {
-        super.init()
+    override init() {
         
+    }
+    
+    func loadSetting(host: String, port: String) throws {
         let endpointHost = NWEndpoint.Host.init(host)
         
         let portInt = UInt16(port, radix: 10)
@@ -31,15 +32,22 @@ class NetWorkSocket: NSObject {
         if let port = portInt {
             let endpointPort = NWEndpoint.Port.init(rawValue: port)
             if let endpointPort = endpointPort {
-                let nwConnection = NWConnection(host: endpointHost, port: endpointPort, using: .tcp)
-                nwConnection.stateUpdateHandler = self.stateDidChange(to:)
-                nwConnection.start(queue: DispatchQueue.global())
+                self.connection = NWConnection(host: endpointHost, port: endpointPort, using: .tcp)
+                if let connection = self.connection {
+                    connection.stateUpdateHandler = self.stateDidChange(to:)
+                    connection.start(queue: self.socketQueue)
+                } else {
+                    throw NetBaseError(type: .invalidSetting, description: "Failed to initialize connection")
+                }
             } else {
                 throw NetBaseError(type: .invalidSetting, description: "Port of Endpoint is wrong")
             }
         } else {
             throw NetBaseError(type: .invalidSetting, description: "Port of endpoint is wrong")
         }
+    }
+    
+    func setService() throws {
         
     }
     
@@ -65,10 +73,22 @@ class NetWorkSocket: NSObject {
         }
     }
     
-    
-    
     open func send(_ data: Data){
-        self.connection?.send(content: data, contentContext: .defaultStream, isComplete: true, completion: .contentProcessed({(nwerror: NWError?) -> Void in
+//        self.outputQueue.async { [weak self] in
+//            guard let connection = self?.connection else {
+//                return
+//            }
+//            data.withUnsafeBytes({(buffer: UnsafeRawBufferPointer) -> Void in
+//                let typedBuffer = buffer.bindMemory(to: UInt8.self)
+//                let pointer = typedBuffer.baseAddress!
+//                var isComplete = false
+//                while !isComplete {
+//                    connection.send(content: <#T##DataProtocol?#>, contentContext: <#T##NWConnection.ContentContext#>, isComplete: <#T##Bool#>, completion: <#T##NWConnection.SendCompletion#>)
+//                }
+//            })
+//        }
+        guard let connection = self.connection else { return }
+        connection.send(content: data, contentContext: .defaultStream, isComplete: true, completion: .contentProcessed({(nwerror: NWError?) -> Void in
             guard nwerror != nil else {
                 return
             }

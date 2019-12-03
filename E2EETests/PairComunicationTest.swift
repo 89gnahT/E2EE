@@ -28,7 +28,7 @@ class PairComunicationTest: XCTestCase {
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        self.socket = try! NetWorkSocket(withHost: "127.0.0.1", and: "8000")
+        //self.socket = try! NetWorkSocket(withHost: "127.0.0.1", and: "8000")
     }
 
     override func tearDown() {
@@ -230,14 +230,14 @@ class PairComunicationTest: XCTestCase {
         
         let bobMessage : [String] = ["Hello you", "Are you ready?", "Hello world", "Can you love me?", "Old But Gold"]
         let aliceMessage : [String] = ["Oh hi Bob", "Yeah", "Welcome home", "My heart are broken", "Long time no see"]
-//        for i in 0..<5 {
-//            var data = bobMessage[i].data(using: .utf8)
-//            sendBobMessage(message: data!)
-//            receiveBobMessage()
-//            data = aliceMessage[i].data(using: .utf8)
-//            sendAliceMessage(message: data!)
-//            receiveAliceMessage()
-//        }
+        for i in 0..<5 {
+            var data = bobMessage[i].data(using: .utf8)
+            sendBobMessage(message: data!)
+            receiveBobMessage()
+            data = aliceMessage[i].data(using: .utf8)
+            sendAliceMessage(message: data!)
+            receiveAliceMessage()
+        }
         
         var data = bobMessage[0].data(using: .utf8)
         sendBobMessage(message: data!)

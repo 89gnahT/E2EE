@@ -85,6 +85,7 @@
 		C2763789236BD981007A563D /* SessionSignedPreKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2763758236BD981007A563D /* SessionSignedPreKey.swift */; };
 		C276378A236BD981007A563D /* SessionSignedPreKeyPublic.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2763759236BD981007A563D /* SessionSignedPreKeyPublic.swift */; };
 		C276378B236BD981007A563D /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C276375A236BD981007A563D /* SessionState.swift */; };
+		C278C5552394B3A10095757A /* NetworkTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C278C5542394B3A10095757A /* NetworkTest.swift */; };
 		F4D44E6B86E36F0F0BBDB786 /* Pods_E2EETests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4F3E4287CAF0019291820F /* Pods_E2EETests.framework */; };
 /* End PBXBuildFile section */
 
@@ -195,6 +196,7 @@
 		C2763758236BD981007A563D /* SessionSignedPreKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionSignedPreKey.swift; sourceTree = "<group>"; };
 		C2763759236BD981007A563D /* SessionSignedPreKeyPublic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionSignedPreKeyPublic.swift; sourceTree = "<group>"; };
 		C276375A236BD981007A563D /* SessionState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
+		C278C5542394B3A10095757A /* NetworkTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTest.swift; sourceTree = "<group>"; };
 		CB87BCF5BB3B7F7B68654098 /* Pods-E2EE.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EE.release.xcconfig"; path = "Target Support Files/Pods-E2EE/Pods-E2EE.release.xcconfig"; sourceTree = "<group>"; };
 		FEEAD81F2887B72589C0187B /* Pods-E2EE.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EE.debug.xcconfig"; path = "Target Support Files/Pods-E2EE/Pods-E2EE.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -295,6 +297,7 @@
 				814F61D123595A3B00A6AA44 /* PairComunicationTest.swift */,
 				814F61D323595A3B00A6AA44 /* Info.plist */,
 				C26D3991238D34FC0087C867 /* GroupComunicationTest.swift */,
+				C278C5542394B3A10095757A /* NetworkTest.swift */,
 			);
 			path = E2EETests;
 			sourceTree = "<group>";
@@ -833,6 +836,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C26D3992238D34FC0087C867 /* GroupComunicationTest.swift in Sources */,
+				C278C5552394B3A10095757A /* NetworkTest.swift in Sources */,
 				814F61D223595A3B00A6AA44 /* PairComunicationTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

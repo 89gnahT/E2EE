@@ -8,37 +8,47 @@
 
 import Foundation
 
-class StreamSocket: NSObject {
-    public var delegate : NetbaseSocketDelegate?
-    
+class StreamSocket: NSObject, GenericSocket {
+    var delegate: NetbaseSocketDelegate?
     var runloop: RunLoop?
     static let maxReadSize = Int(UInt16.max)
     var buffer:UnsafeMutablePointer<UInt8>?
     var inputData = Data()
-    var inputQueue = DispatchQueue(label: "liveStream.inputQueue")
-    var outputQueue = DispatchQueue(label: "liveStream.outputQueue")
-    var input: InputStream?
-    var output: OutputStream?
+    var inputQueue = DispatchQueue(label: "socket.inputQueue")
+    var outputQueue = DispatchQueue(label: "socket.outputQueue")
+    var input: InputStream!
+    var output: OutputStream!
     
-    open func setSocketSetting() throws {
+    override init() {
+        
+    }
+    
+    func loadSetting(host: String, port: String) throws {
+        var readStream : Unmanaged<CFReadStream>?
+        var writeStream : Unmanaged<CFWriteStream>?
         buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: StreamSocket.maxReadSize)
         buffer?.initialize(repeating: 0, count: StreamSocket.maxReadSize)
+        let portInt = UInt32(port, radix: 10)
+        CFStreamCreatePairWithSocketToHost(kCFAllocatorDefault, host as CFString, portInt!, &readStream, &writeStream)
+        
         if let delegate = self as? StreamDelegate {
             self.input?.delegate = delegate
             self.output?.delegate = delegate
         } else {
             throw NetBaseError(type: .invalidSetting, description: "Stream not implementation the Stream delegate")
         }
+        input = readStream!.takeRetainedValue()
+        output = writeStream!.takeRetainedValue()
         self.runloop = .current
-//        self.input?.setProperty(StreamNetworkServiceTypeValue.voIP, forKey: Stream.PropertyKey.networkServiceType)
-//        self.input?.setProperty(StreamSocketSecurityLevel.negotiatedSSL, forKey: .socketSecurityLevelKey)
-//        self.input?.schedule(in: self.runloop!, forMode: .common)
-//
-//        self.output?.schedule(in: self.runloop!, forMode: .common)
-//        self.output?.setProperty(StreamNetworkServiceTypeValue.voIP, forKey: Stream.PropertyKey.networkServiceType)
+        input?.schedule(in: .current, forMode: .common)
+        output?.schedule(in: .current, forMode: .common)
         self.input?.open()
         self.output?.open()
-        self.runloop?.run()
+        //self.runloop?.run()
+    }
+    
+    func setService() throws {
+        
     }
     
     open func removeSocketSetting() throws {
@@ -62,23 +72,38 @@ class StreamSocket: NSObject {
     }
     
     public func send(_ data: Data) {
-        outputQueue.async { [weak self] in
-            guard let o = self?.output else {
-                return
-            }
-            data.withUnsafeBytes({(buffer: UnsafeRawBufferPointer) -> Void in
-                let typedBuffer = buffer.bindMemory(to: UInt8.self)
-                let pointer = typedBuffer.baseAddress!
-                var total: Int = 0
-                while total < data.count {
-                    let length = o.write(pointer.advanced(by: total), maxLength: data.count)
-                    if length <= 0 {
-                        break
-                    }
-                    total += length
-                }
-            })
+        guard let o = self.output else {
+            return
         }
+        data.withUnsafeBytes({(buffer: UnsafeRawBufferPointer) -> Void in
+            let typedBuffer = buffer.bindMemory(to: UInt8.self)
+            let pointer = typedBuffer.baseAddress!
+            var total: Int = 0
+            while total < data.count {
+                let length = o.write(pointer.advanced(by: total), maxLength: data.count)
+                if length <= 0 {
+                    break
+                }
+                total += length
+            }
+        })
+//        outputQueue.async { [weak self] in
+//            guard let o = self.output else {
+//                return
+//            }
+//            data.withUnsafeBytes({(buffer: UnsafeRawBufferPointer) -> Void in
+//                let typedBuffer = buffer.bindMemory(to: UInt8.self)
+//                let pointer = typedBuffer.baseAddress!
+//                var total: Int = 0
+//                while total < data.count {
+//                    let length = o.write(pointer.advanced(by: total), maxLength: data.count)
+//                    if length <= 0 {
+//                        break
+//                    }
+//                    total += length
+//                }
+//            })
+//        }
     }
 }
 

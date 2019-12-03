@@ -8,72 +8,72 @@
 
 import Foundation
 
-@available(iOS 12.0, *)
-class SignalProtocol {
-    var userStorage: SignalGroupKeyStore
-    var socket: NetWorkSocket? {
-        do {
-            let s = try NetWorkSocket(withHost: "127.0.0.1", and: "8000")
-            return s
-        } catch {
-            print("Error")
-        }
-        return nil
-    }
-    
-    init(_ user: UserModel) {
-        userStorage = SignalGroupKeyStore()
-        do {
-            try signUpAccount(user)
-        } catch {
-            print("Error when Sign up account")
-        }
-    }
-    
-    func signUpAccount(_ user: UserModel) throws {
-        socket?.delegate = self
-
-    }
-    
-    func startCommunicationWith() {
-        
-    }
-    
-    func receiveInvitedOf() {
-        
-    }
-    
-    func sendMessage(message: Data) {
-        
-    }
-    
-    func receiveMessage(message: Data) {
-        
-    }
-}
-
-@available(iOS 12.0, *)
-extension SignalProtocol: NetbaseSocketDelegate {
-    
-    func receive(_ data: Data) {
-        print("Received message")
-    }
-    
-    func stateDidChange(_ state: ConnectivityState) {
-        switch state {
-        case .canceled:
-            print("Connect cancelled")
-        case .failed:
-            print("Connect failed")
-        case .preparing:
-            print("Connect is preparing")
-        case .ready:
-            print("Connect is ready")
-        case .setup:
-            print("Connect is setting up")
-        case .waiting:
-            print("Connectio in waiting")
-        }
-    }
-
-}
+//@available(iOS 12.0, *)
+//class SignalProtocol {
+//    var userStorage: SignalGroupKeyStore
+//    var socket: NetWorkSocket? {
+//        do {
+//            let s = try NetWorkSocket(withHost: "127.0.0.1", and: "8000")
+//            return s
+//        } catch {
+//            print("Error")
+//        }
+//        return nil
+//    }
+//    
+//    init(_ user: UserModel) {
+//        userStorage = SignalGroupKeyStore()
+//        do {
+//            try signUpAccount(user)
+//        } catch {
+//            print("Error when Sign up account")
+//        }
+//    }
+//    
+//    func signUpAccount(_ user: UserModel) throws {
+//        socket?.delegate = self
+//
+//    }
+//    
+//    func startCommunicationWith() {
+//        
+//    }
+//    
+//    func receiveInvitedOf() {
+//        
+//    }
+//    
+//    func sendMessage(message: Data) {
+//        
+//    }
+//    
+//    func receiveMessage(message: Data) {
+//        
+//    }
+//}
+//
+//@available(iOS 12.0, *)
+//extension SignalProtocol: NetbaseSocketDelegate {
+//    
+//    func receive(_ data: Data) {
+//        print("Received message")
+//    }
+//    
+//    func stateDidChange(_ state: ConnectivityState) {
+//        switch state {
+//        case .canceled:
+//            print("Connect cancelled")
+//        case .failed:
+//            print("Connect failed")
+//        case .preparing:
+//            print("Connect is preparing")
+//        case .ready:
+//            print("Connect is ready")
+//        case .setup:
+//            print("Connect is setting up")
+//        case .waiting:
+//            print("Connectio in waiting")
+//        }
+//    }
+//
+//}

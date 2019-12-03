@@ -23,6 +23,7 @@ public struct PrivateKey {
         guard point[0] & 0b00000111 == 0 else {
             throw SignalError(.invalidProtoBuf, "Invalid private key (byte 0 == \(point[0])")
         }
+
         let lastByteIndex = Curve25519.keyLength - 1
         guard point[lastByteIndex] & 0b10000000 == 0 else {
             throw SignalError(.invalidProtoBuf, "Invalid private key (byte \(lastByteIndex) == \(point[lastByteIndex])")
