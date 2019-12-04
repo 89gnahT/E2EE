@@ -35,7 +35,7 @@ class ConversationTableNode: ASDisplayNode {
         tableNode.inverted = true
         tableNode.dataSource = self
         tableNode.delegate = self
-        tableNode.leadingScreensForBatching = 3
+        //tableNode.leadingScreensForBatching = 3
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
@@ -51,6 +51,14 @@ extension ConversationTableNode{
     
     func insertRows(at: [IndexPath]){
         tableNode.insertRows(at: at, with: .automatic)
+    }
+    
+    func deleteRows(at: [IndexPath]){
+        tableNode.deleteRows(at: at, with: .automatic)
+    }
+    
+    func nodeForRowAt(_ indexPath: IndexPath) -> ASCellNode? {
+        return tableNode.nodeForRow(at: indexPath)
     }
 }
 

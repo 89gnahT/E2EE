@@ -268,7 +268,7 @@ extension InboxesViewController : InboxesDelegate{
             
             let id = viewModels[indexPath.row].modelID
             let chatViewController = ChatScreenViewController(with: id)
-            chatViewController.hidesBottomBarWhenPushed = true
+            //chatViewController.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(chatViewController, animated: true)
         }
     }

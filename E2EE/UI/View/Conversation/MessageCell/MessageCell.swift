@@ -14,15 +14,15 @@ protocol MessageCellDelegate {
     
     func messageCell(_ cell : MessageCell, subFunctionClicked subFunctionNode : ASImageNode)
     
-    func messageCell(_ cell : MessageCell, contentClicked contentNode : ASDisplayNode)
-    
-    func messageCell(_ cell : MessageCell, longPressContent contentNode : ASDisplayNode)
+    func removeMessageCell(_ cell : MessageCell)
 }
 
 class MessageCell: ASCellNode {
     var justifyContent : ASStackLayoutJustifyContent = .start
     
     var delegate : MessageCellDelegate?
+    
+    var rootViewController : ChatScreenViewController?
     
     var isIncommingMessage : Bool = true{
         didSet{
@@ -54,7 +54,7 @@ class MessageCell: ASCellNode {
         setup()
     }
     
-    private func setup(){
+    func setup(){
         self.automaticallyManagesSubnodes = true
         
         avatarImageNode.style.preferredSize = CGSize(squareEdge: 28)
@@ -132,5 +132,39 @@ class MessageCell: ASCellNode {
     
     @objc func contentClicked(_ contentNode : ASDisplayNode){
         
+    }
+}
+
+extension MessageCell: UIGestureRecognizerDelegate{
+    @objc func handleLongPress(longPressGesture: UILongPressGestureRecognizer) {
+        ASPerformBlockOnMainThread {
+            
+            let subFunctionView = ASDisplayNode()
+            subFunctionView.frame = (self.rootViewController?.tabBarController?.tabBar.frame)!
+            subFunctionView.backgroundColor = .white
+            subFunctionView.automaticallyManagesSubnodes = true
+            
+            let removeBtn = ASButtonNode()
+            removeBtn.setAttributedTitle(attributedString("Remove", fontSize: 15, isBold: false, foregroundColor: .darkGray), for: .normal)
+            removeBtn.addTarget(self, action: #selector(self.deleteMessageCell), forControlEvents: .touchUpInside)
+            
+            subFunctionView.layoutSpecBlock = { (node : ASDisplayNode, constrainedSize : ASSizeRange) -> ASLayoutSpec in
+                let contentStack = ASStackLayoutSpec.horizontal()
+                contentStack.children = [removeBtn]
+                contentStack.justifyContent = .end
+                
+                return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8), child: contentStack)
+            }
+            subFunctionView.setNeedsLayout()
+            
+            self.rootViewController?.view.addSubnode(subFunctionView)
+            
+        }        
+    }
+}
+
+extension MessageCell{
+    @objc private func deleteMessageCell(){
+        delegate?.removeMessageCell(self)
     }
 }

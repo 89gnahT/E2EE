@@ -24,9 +24,6 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         self.inboxID = inboxID
         
         super.init(node: tableNode)
-        
-        tableNode.delegate = self
-        tableNode.dataSource = self
     }
     
     required init?(coder: NSCoder) {
@@ -35,17 +32,17 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableNode.delegate = self
+        tableNode.dataSource = self
+      
+        DataManager.shared.addObserver(for: .messageChanged, target: self, callBackQueue: DispatchQueue.main)
         
         DataManager.shared.fetchMessageModels(with: inboxID, { (models) in
             for i in models{
-                if i.type == .text{
-                    self.viewModels.append(TextMessageViewModel(model: i as! TextMessageModel))
-                }else if i.type == .image{
-                    self.viewModels.append(ImageMessageViewModel(model: i as! ImageMessageModel))
-                }
+                let viewModel = MessageViewModelFactory.viewModel(i)
+
+                self.insertMessage(viewModel: viewModel, at: 0)
             }
-            
-            self.tableNode.reloadData()
         }, callbackQueue: DispatchQueue.main)
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardAppear(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -55,8 +52,10 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.chatBox = ChatBoxView(target: self, chatboxFrame: tabBarController!.tabBar.frame, sendAction: #selector(tapSendButton(_:)))
+        tabBarController?.tabBar.isHidden = true
         
+        self.chatBox = ChatBoxView(target: self, chatboxFrame: tabBarController!.tabBar.frame)
+        chatBox.delegate = self
         self.view.addSubnode(chatBox.chatBox)
     }
 }
@@ -64,43 +63,36 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
 extension ChatScreenViewController: ConversationTableNodeDelegate{
     
     func tableNode(_ tableNode: ConversationTableNode, willBeginBatchFetchWith context: ASBatchContext) {
-        DataManager.shared.fetchMessageModels(with: self.inboxID, { (models) in
-            context.completeBatchFetching(true)
-            
-            var insertIndexs = [IndexPath]()
-            
-            var index = self.viewModels.count
-            for i in models{
-                if i.type == .text{
-                    self.viewModels.append(TextMessageViewModel(model: i as! TextMessageModel))
-                }else if i.type == .image{
-                    self.viewModels.append(ImageMessageViewModel(model: i as! ImageMessageModel))
-                }
-                insertIndexs.append(IndexPath(row: index, section: 0))
-                index += 1
-            }
-            
-            self.tableNode.insertRows(at: insertIndexs)
-            
-        }, callbackQueue: DispatchQueue.main)
+//        DataManager.shared.fetchMessageModels(with: self.inboxID, { (models) in
+//            context.completeBatchFetching(true)
+//
+//            let pos = self.viewModels.count
+//            for i in models{
+//                var viewModel : MessageViewModel!
+//
+//                if i.type == .text{
+//                    viewModel = TextMessageViewModel(model: i as! TextMessageModel)
+//                }else if i.type == .image{
+//                    viewModel = ImageMessageViewModel(model: i as! ImageMessageModel)
+//                }
+//
+//                self.insertMessage(viewModel: viewModel, at: pos)
+//            }
+//
+//        }, callbackQueue: DispatchQueue.main)
     }
 }
 
 extension ChatScreenViewController: ConversationTableNodeDataSource{
     func tableNode(_ tableNode: ConversationTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
-        let viewModel = self.viewModels[indexPath.row]
-        if indexPath.row == 0{
-            viewModel.setUIWithAfterItem(nil)
-        }else{
-            let after = self.viewModels[indexPath.row - 1]
-            viewModel.setUIWithAfterItem(after)
-            
-            after.setUIWithPreviousItem(viewModel)
-        }
-        
+        let viewModel = viewModels[indexPath.row]
+        let rootViewController = self
+        let messageCellDelegate: MessageCellDelegate = self
         return {
             if viewModel.model.type == .text{
-                return TextMessageCell(viewModel: viewModel as! TextMessageViewModel)
+                let cell = TextMessageCell(viewModel: viewModel as! TextMessageViewModel, rootViewController: rootViewController)
+                cell.delegate = messageCellDelegate
+                return cell
             }else{
                 return ImagesMessageCell(viewModel: viewModel as! ImageMessageViewModel)
             }
@@ -112,14 +104,14 @@ extension ChatScreenViewController: ConversationTableNodeDataSource{
     }
 }
 
-extension ChatScreenViewController{
-    @objc func tapSendButton(_ sender: ASButtonNode) {
+extension ChatScreenViewController: ChatBoxDelegate{
+    func sendButtonPressed(_ text: String) {
         view.endEditing(true)
-        DataManager.shared.sendTextMessage(inboxID: inboxID, withContent: "Xin chao HEHE") { (model) in
+        DataManager.shared.sendTextMessage(inboxID: inboxID, withContent: text) { (model) in
             ASPerformBlockOnMainThread {
-                let viewModel = TextMessageViewModel(model: model)
-                self.viewModels.insert(viewModel, at: 0)
-                self.tableNode.insertRows(at: [IndexPath(row: 0, section: 0)])
+//                let viewModel = TextMessageViewModel(model: model)
+//                
+//                self.insertMessage(viewModel: viewModel, at: 0)
             }
             
         }
@@ -132,4 +124,100 @@ extension ChatScreenViewController{
     @objc func keyboardDisappear(notification: NSNotification) {
         self.chatBox.keyboardWillChange(notification: notification)
     }
+}
+
+
+extension ChatScreenViewController{
+    
+    private func insertMessage(viewModel : MessageViewModel, at pos: Int){
+        
+        if pos < 0 && pos > viewModels.count{
+            return
+        }
+        
+        let previous = viewModels.count > pos ? viewModels[pos] : nil
+        if previous != nil{
+            previous?.setupPositionWith(previous: viewModels.count > pos + 1 ? viewModels[pos + 1] : nil, andAfter: viewModel)
+            
+            let preNode: MessageCell = tableNode.nodeForRowAt(IndexPath(row: pos, section: 0)) as! MessageCell
+            preNode.updateUI()
+        }
+        
+        let after =  pos > 0 ? viewModels[pos - 1] : nil
+        
+        if after != nil{
+            after?.setupPositionWith(previous: viewModel, andAfter: pos >= 2 ? viewModels[pos - 2] : nil)
+            
+            let afterNode: MessageCell = tableNode.nodeForRowAt(IndexPath(row: pos - 1, section: 0)) as! MessageCell
+            afterNode.updateUI()
+        }
+        
+        viewModel.setupPositionWith(previous: previous, andAfter: after)
+        
+        self.viewModels.insert(viewModel, at: pos)
+        self.tableNode.insertRows(at: [IndexPath(row: pos, section: 0)])
+    }
+    
+}
+
+extension ChatScreenViewController: DataManagerListenerDelegate{
+    func messageChanged(_ msg: MessageModel, updateType: UpdateType, oldValue: MessageModel?) {
+        let viewModel = MessageViewModelFactory.viewModel(msg)
+        
+        switch updateType {
+        case .new:
+            insertMessage(viewModel: viewModel, at: 0)        
+            
+        case .changed:
+            break
+        case .delete:
+            var index = 0
+            
+            for i in 0..<viewModels.count{
+                if viewModels[i].model.id == viewModel.model.id{
+                    index = i
+                    break
+                }
+            }
+            
+            viewModels.remove(at: index)
+            tableNode.deleteRows(at: [IndexPath(row: index, section: 0)])
+        }
+    }
+    
+    func conversationChanged(_ cvs: InboxModel, updateType: UpdateType, oldValue: InboxModel?) {
+        
+    }
+    
+    func userChanged(_ user: UserModel, updateType: UpdateType, oldValue: UserModel?) {
+        
+    }
+}
+
+extension ChatScreenViewController: MessageCellDelegate{
+    func messageCell(_ cell: MessageCell, avatarClicked avatarNode: ASImageNode) {
+        
+    }
+    
+    func messageCell(_ cell: MessageCell, subFunctionClicked subFunctionNode: ASImageNode) {
+        
+    }
+    
+    func removeMessageCell(_ cell: MessageCell) {
+        ASPerformBlockOnMainThread {
+            let messageID = cell.getViewModel().model.id
+            var index = 0
+            for i in 0..<self.viewModels.count{
+                if self.viewModels[i].model.id == messageID{
+                    index = i
+                    break
+                }
+            }
+            
+            self.viewModels.remove(at: index)
+            self.tableNode.deleteRows(at: [IndexPath(row: index, section: 0)])
+        }
+    }
+    
+    
 }

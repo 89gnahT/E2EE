@@ -12,7 +12,7 @@ import AsyncDisplayKit
 
 class TextMessageViewModel: MessageViewModel {
     
-    private var textColor : UIColor
+    private var textColor : UIColor!
     
     public var textContent : NSAttributedString = NSAttributedString()
     
@@ -21,17 +21,16 @@ class TextMessageViewModel: MessageViewModel {
     }
     
     init(model : TextMessageModel) {
-        textColor = .white
-        
         super.init(model: model)
-            
+                
         reloabdData(nil)
     }
     
     override func reloabdData(_ completion : (() -> Void)?) {
         super.reloabdData(completion)
         
-        textContent = attributedString(textModel.content, fontSize: 14, isBold: false, foregroundColor: textColor)
+        textColor = isIncommingMessage ? .black : .white
+        textContent = attributedString(textModel.content, fontSize: 17, isBold: false, foregroundColor: textColor)
         
     }
     

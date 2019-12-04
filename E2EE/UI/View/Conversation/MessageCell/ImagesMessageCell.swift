@@ -12,7 +12,7 @@ import AsyncDisplayKit
 class ImagesMessageCell: MessageCell {
     public var imageViewModel : ImageMessageViewModel
     
-    private var maxWidthDimension : ASDimension
+    private var maxWidthDimension : ASDimension!
     private var maxWidthNodeDemension : ASDimension!
     
     private var numberOfRow : Int!
@@ -22,10 +22,18 @@ class ImagesMessageCell: MessageCell {
     
     init(viewModel: ImageMessageViewModel) {
         imageViewModel = viewModel
-        maxWidthDimension = ASDimension(unit: .points, value: UIScreen.main.bounds.size.width * 0.65)
-        
         super.init()
+    }
+    
+    override func setup() {
+        super.setup()
         
+        maxWidthDimension = ASDimension(unit: .points, value: UIScreen.main.bounds.size.width * 0.65)
+        maxWidthNodeDemension = maxWidthDimension
+        numberOfRow = 0
+        numberNodePerRow = 3
+        
+        getImageNodeFromURLs(imageViewModel.imageURLs)
         updateUI()
     }
     
@@ -36,7 +44,6 @@ class ImagesMessageCell: MessageCell {
     override func updateUI() {
         super.updateUI()
         
-        getImageNodeFromURLs(imageViewModel.imageURLs)
     }
     
     private func getImageNodeFromURLs(_ imageURLs : [URL]){

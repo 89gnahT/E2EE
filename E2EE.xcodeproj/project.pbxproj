@@ -110,6 +110,7 @@
 		DDA11FAC2390D55A00425733 /* ChatInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FAB2390D55A00425733 /* ChatInput.swift */; };
 		DDA11FAE2391023900425733 /* ConversationTableNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FAD2391023900425733 /* ConversationTableNode.swift */; };
 		DDA11FB02391112100425733 /* ChatBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FAF2391112100425733 /* ChatBoxView.swift */; };
+		DDA11FB22397980200425733 /* MessageViewModelFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FB12397980200425733 /* MessageViewModelFactory.swift */; };
 		DDC105322387C13E00139CB9 /* TextMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC105312387C13E00139CB9 /* TextMessageViewModel.swift */; };
 		F4D44E6B86E36F0F0BBDB786 /* Pods_E2EETests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4F3E4287CAF0019291820F /* Pods_E2EETests.framework */; };
 /* End PBXBuildFile section */
@@ -247,6 +248,7 @@
 		DDA11FAB2390D55A00425733 /* ChatInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInput.swift; sourceTree = "<group>"; };
 		DDA11FAD2391023900425733 /* ConversationTableNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTableNode.swift; sourceTree = "<group>"; };
 		DDA11FAF2391112100425733 /* ChatBoxView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatBoxView.swift; sourceTree = "<group>"; };
+		DDA11FB12397980200425733 /* MessageViewModelFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewModelFactory.swift; sourceTree = "<group>"; };
 		DDC105312387C13E00139CB9 /* TextMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessageViewModel.swift; sourceTree = "<group>"; };
 		FEEAD81F2887B72589C0187B /* Pods-E2EE.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EE.debug.xcconfig"; path = "Target Support Files/Pods-E2EE/Pods-E2EE.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -670,6 +672,7 @@
 				DD49B52F238E2F00007163ED /* MessageViewModel.swift */,
 				DDC105312387C13E00139CB9 /* TextMessageViewModel.swift */,
 				DDA11FA0238F5A9600425733 /* ImageMessageViewModel.swift */,
+				DDA11FB12397980200425733 /* MessageViewModelFactory.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -962,6 +965,7 @@
 				C25D7289236BE8CB00359C11 /* SessionCipher.swift in Sources */,
 				C2763764236BD981007A563D /* Fingerprint.swift in Sources */,
 				C2763760236BD981007A563D /* SenderKeyRecord.swift in Sources */,
+				DDA11FB22397980200425733 /* MessageViewModelFactory.swift in Sources */,
 				C276376B236BD981007A563D /* SessionStore.swift in Sources */,
 				C276375D236BD981007A563D /* PublicKey.swift in Sources */,
 				483F567A2386E1BC008EA1F7 /* BubbleConfigurationProtocol.swift in Sources */,

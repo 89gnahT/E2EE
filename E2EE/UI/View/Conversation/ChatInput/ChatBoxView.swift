@@ -10,6 +10,10 @@ import Foundation
 import UIKit
 import AsyncDisplayKit
 
+protocol ChatBoxDelegate {
+    func sendButtonPressed(_ text: String)
+}
+
 class ChatBoxView: NSObject {
     let chatBox = ASDisplayNode()
     let emojiButton = ASButtonNode()
@@ -21,7 +25,9 @@ class ChatBoxView: NSObject {
     let imageButton = ASButtonNode()
     let sendButton = ASButtonNode()
     
-    init(target: Any?, chatboxFrame: CGRect, sendAction: Selector) {
+    var delegate: ChatBoxDelegate?
+    
+    init(target: Any?, chatboxFrame: CGRect) {
         super.init()
         let edgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         self.rightGroupButton.automaticallyManagesSubnodes = true
@@ -37,7 +43,7 @@ class ChatBoxView: NSObject {
         
         sendButton.setBackgroundImage(UIImage(imageLiteralResourceName: "sendBtn"), for: .normal)
         sendButton.style.preferredSize = CGSize(width: 40, height: 40)
-        sendButton.addTarget(target, action: sendAction, forControlEvents: .touchUpInside)
+        sendButton.addTarget(self, action: #selector(tapSendButton(_:)), forControlEvents: .touchUpInside)
         
         self.chatBox.frame = chatboxFrame
         self.chatBox.backgroundColor = .white//UIColor(red: 0, green: 0, blue: 0, alpha: 1)
@@ -94,6 +100,15 @@ class ChatBoxView: NSObject {
         rightGroupButton.setNeedsLayout()
     }
     
+    
+    @objc func tapSendButton(_ sender: ASButtonNode) {
+        
+        guard let text = inputChat.attributedText?.string else {
+            return
+        }
+        delegate?.sendButtonPressed(text)
+        inputChat.attributedText = nil
+    }
 }
 
 extension ChatBoxView: ASEditableTextNodeDelegate {

@@ -64,10 +64,35 @@ class DataManager: NSObject {
 }
 
 extension DataManager{
+    private func receivedMessage(_ message: MessageEntity){
+        guard let sender = people[message.senderId] else {
+            return
+        }
+        let model = message.convertToModel(withSender: sender);
+        
+        callbackForDataChanged(object: model, forEvent: .messageChanged, updateType: .new, oldVaule: nil)
+    }
+    
     public func sendTextMessage(inboxID iID: InboxID, withContent text: String, _ completion : ((TextMessageModel) -> Void)?){
-        let t = MessageEntity(id: iID, conversationID: iID, senderId: iID, type: .text, contents: [text], timeSent: timeNow, timeDeliveried: 0, timeSeen: 0)
-        let model = t.convertToModel(with: you)
-        completion?(model as! TextMessageModel)
+        taskQueue.async {
+            let t = MessageEntity(id: iID + String(timeNow), conversationID: iID, senderId: self.you.id, type: .text, contents: [text], timeSent: timeNow, timeDeliveried: 0, timeSeen: 0)
+            
+            self.receivedMessage(t)
+            
+            // Fakedata
+            self.taskQueue.asyncAfter(deadline: .now() + 3) {
+                var userID = ""
+                for i in self.inboxes[iID]!.members.values{
+                    if i.id != self.you.id{
+                        userID = i.id
+                        break
+                    }
+                }
+                
+                let t = MessageEntity(id: iID + String(timeNow), conversationID: iID, senderId: userID, type: .text, contents: [text], timeSent: timeNow, timeDeliveried: 0, timeSeen: 0)
+                self.receivedMessage(t)
+            }
+        }
     }
 }
 
@@ -87,7 +112,7 @@ extension DataManager{
                     let tuple = i.value
                     
                     let sender = self.people[tuple.1.senderId]!
-                    let lastMessageModel = tuple.1.convertToModel(with: sender)
+                    let lastMessageModel = tuple.1.convertToModel(withSender: sender)
                     
                     var members = [UserID : UserModel]()
                     for i in tuple.0.membersID{
@@ -142,7 +167,7 @@ extension DataManager{
                 
                 var messageModel = [MessageModel]()
                 for i in messages{
-                    messageModel.append(i.convertToModel(with: self.people[i.senderId]!))
+                    messageModel.append(i.convertToModel(withSender: self.people[i.senderId]!))
                 }
                 
                 let queue = callbackQueue != nil ? callbackQueue : self.callBackQueue
@@ -156,6 +181,12 @@ extension DataManager{
 
 // MARK: - Public threadSafde Method
 extension DataManager{
+    
+    public func deleteMessage(withInboxID iID : InboxID, messageID: MessageID, completion :  ((_ error : DataError) -> Void)?){
+        taskQueue.async {
+        }
+    }
+    
     public func deleteConversationWithID(_ id : InboxID, completion :  ((_ error : DataError) -> Void)?){
         taskQueue.async {
             guard let inbox = self.inboxes[id] else{

@@ -63,50 +63,34 @@ class MessageViewModel: NSObject {
         
     }
     
-    
-    public func setUIWithAfterItem(_ item : MessageViewModel?){
-        if item == nil || !isGroupWith(item!){
-            insets.top = CGFloat(5)
-            insets.bottom = insets.top
-            
-            position = .none
-            
-            isShowAvatar = true
+    public func setupPositionWith(previous preItem: MessageViewModel?, andAfter afterItem: MessageViewModel?){
+        var tempPos : MessageCellPosition = .none
+        isShowAvatar = true
+        if preItem != nil && isGroupWith(preItem!){
+            insets.top = CGFloat(2)
+            tempPos = .last
         }else{
-            position = .first
-            insets.top = CGFloat(0.5)
-            insets.bottom = insets.top
+            insets.top = CGFloat(16)
+            tempPos = .none
         }
-    }
-    
-    public func setUIWithPreviousItem(_ item : MessageViewModel){
-        if isGroupWith(item){
-            insets.top = CGFloat(0.5)
-            
-            if position == .none{
-                position = .last
-                
-                isShowAvatar = true
-            }else if position == .first{
-                position = .middle
-                
-                isShowAvatar = false
-            }
-        }else{
-            insets.top = CGFloat(5)
+        
+        if afterItem != nil && isGroupWith(afterItem!){
+            tempPos = tempPos == .none ? .first : .middle
+            isShowAvatar = false
         }
+        
+        position = tempPos
     }
     
     private func isGroupWith(_ other: MessageViewModel) -> Bool{
         if model.sender.id != other.model.sender.id{
             return false
         }
-        if fabs(model.time.sent - other.model.time.sent) <= MINUTE * 2{
+        if fabs(model.time.sent - other.model.time.sent) <= DAY{
             return true
         }
         
         return true
-        
     }
 }
 

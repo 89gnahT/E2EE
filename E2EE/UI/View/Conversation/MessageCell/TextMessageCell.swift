@@ -23,9 +23,16 @@ class TextMessageCell: MessageCell {
     
     open var bubble = Bubble()
     
-    init(viewModel: TextMessageViewModel) {
+    init(viewModel: TextMessageViewModel, rootViewController: ChatScreenViewController?) {
         textViewModel = viewModel
+   
         super.init()
+        
+        self.rootViewController = rootViewController
+    }
+    
+    override func setup() {
+        super.setup()
         
         textMessageNode.maximumNumberOfLines = 50
         textMessageNode.style.maxWidth = ASDimension(unit: .points, value: UIScreen.main.bounds.size.width * 0.6)
@@ -33,6 +40,16 @@ class TextMessageCell: MessageCell {
         bubble.addTarget(self, action: #selector(contentClicked(_:)), forControlEvents: .touchUpInside)
         
         updateUI()
+    }
+    
+    override func didLoad() {
+        super.didLoad()
+        
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
+        longPressGesture.minimumPressDuration = 0.5
+        longPressGesture.delegate = self
+        
+        bubble.view.addGestureRecognizer(longPressGesture)
     }
     
     override func getViewModel() -> MessageViewModel {

@@ -31,7 +31,7 @@ struct MessageTime {
 
 class MessageEntity {
     var id : MessageID
-    var conversationID : InboxID
+    var inboxID : InboxID
     var senderId : UserID
     var msgType : MessageType
     var contents : [String]
@@ -50,7 +50,7 @@ class MessageEntity {
          timeSeen : TimeInterval = 0.0)
     {
         self.id = id
-        self.conversationID = conversationID
+        self.inboxID = conversationID
         self.senderId = senderId
         self.msgType = type
         self.contents = contents
@@ -67,14 +67,14 @@ class MessageEntity {
         return seen != MessageTime.TimeInvalidate
     }
     
-    func convertToModel(with sender : UserModel) -> MessageModel{
+    func convertToModel(withSender sender : UserModel) -> MessageModel{
         let time = MessageTime(sent: sent, deliveried: deliveried, seen: seen)
         switch msgType {
         case .image:
-           return ImageMessageModel(id: id, conversationID: conversationID, sender: sender, contents: contents, time: time)
+           return ImageMessageModel(id: id, conversationID: inboxID, sender: sender, contents: contents, time: time)
             
         case .text:
-            return TextMessageModel(id: id, conversationID: conversationID, sender: sender, content: contents[0], time: time)
+            return TextMessageModel(id: id, conversationID: inboxID, sender: sender, content: contents[0], time: time)
         }
     
     }

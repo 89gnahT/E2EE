@@ -17,7 +17,9 @@ public class StandardBubbleConfiguration : BubbleConfigurationProtocol{
     }
     
     public func getColor(isIncoming incoming: Bool) -> UIColor {
-        return incoming ? UIColor.darkGray : UIColor.systemBlue;
+        let c = CGFloat(240) / 255
+        return incoming ? UIColor(red: c, green: c, blue: c, alpha: 1) : UIColor.systemBlue;
+        //return  UIColor.systemBlue;
     }
     
     public func getBubbleImage(isIncoming incoming: Bool, position pos: MessageCellPosition) -> UIImage? {
