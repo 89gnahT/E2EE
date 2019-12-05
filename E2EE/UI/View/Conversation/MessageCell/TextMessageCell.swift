@@ -46,7 +46,7 @@ class TextMessageCell: MessageCell {
         super.didLoad()
         
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
-        longPressGesture.minimumPressDuration = 0.5
+        longPressGesture.minimumPressDuration = 0.7
         longPressGesture.delegate = self
         
         bubble.view.addGestureRecognizer(longPressGesture)

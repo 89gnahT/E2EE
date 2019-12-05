@@ -37,6 +37,7 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
       
         DataManager.shared.addObserver(for: .messageChanged, target: self, callBackQueue: DispatchQueue.main)
         
+        
         DataManager.shared.fetchMessageModels(with: inboxID, { (models) in
             for i in models{
                 let viewModel = MessageViewModelFactory.viewModel(i)
@@ -113,7 +114,6 @@ extension ChatScreenViewController: ChatBoxDelegate{
 //                
 //                self.insertMessage(viewModel: viewModel, at: 0)
             }
-            
         }
     }
     
@@ -218,6 +218,5 @@ extension ChatScreenViewController: MessageCellDelegate{
             self.tableNode.deleteRows(at: [IndexPath(row: index, section: 0)])
         }
     }
-    
     
 }

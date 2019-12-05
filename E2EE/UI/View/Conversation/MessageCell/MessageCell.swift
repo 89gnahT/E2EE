@@ -48,6 +48,12 @@ class MessageCell: ASCellNode {
     
     var insets : UIEdgeInsets = UIEdgeInsets.zero
     
+    lazy var editView : MessageCellEditView = {
+        let frame = self.rootViewController?.tabBarController?.tabBar.frame
+        
+        return MessageCellEditView(target: self, frame: frame!, removeBtnAction: #selector(removeMessageCell))
+    }()
+    
     override init() {
         super.init()
         
@@ -137,34 +143,22 @@ class MessageCell: ASCellNode {
 
 extension MessageCell: UIGestureRecognizerDelegate{
     @objc func handleLongPress(longPressGesture: UILongPressGestureRecognizer) {
-        ASPerformBlockOnMainThread {
-            
-            let subFunctionView = ASDisplayNode()
-            subFunctionView.frame = (self.rootViewController?.tabBarController?.tabBar.frame)!
-            subFunctionView.backgroundColor = .white
-            subFunctionView.automaticallyManagesSubnodes = true
-            
-            let removeBtn = ASButtonNode()
-            removeBtn.setAttributedTitle(attributedString("Remove", fontSize: 15, isBold: false, foregroundColor: .darkGray), for: .normal)
-            removeBtn.addTarget(self, action: #selector(self.deleteMessageCell), forControlEvents: .touchUpInside)
-            
-            subFunctionView.layoutSpecBlock = { (node : ASDisplayNode, constrainedSize : ASSizeRange) -> ASLayoutSpec in
-                let contentStack = ASStackLayoutSpec.horizontal()
-                contentStack.children = [removeBtn]
-                contentStack.justifyContent = .end
+        if longPressGesture.state == .began{
+            ASPerformBlockOnMainThread {
                 
-                return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8), child: contentStack)
+                self.rootViewController?.view.addSubnode(self.editView)
+                
             }
-            subFunctionView.setNeedsLayout()
-            
-            self.rootViewController?.view.addSubnode(subFunctionView)
-            
-        }        
+        }
     }
 }
 
 extension MessageCell{
-    @objc private func deleteMessageCell(){
+    @objc private func removeMessageCell(){
         delegate?.removeMessageCell(self)
+        
+        ASPerformBlockOnMainThread {
+            self.editView.removeFromSupernode()
+        }
     }
 }

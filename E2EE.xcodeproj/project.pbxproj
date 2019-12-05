@@ -21,6 +21,7 @@
 		483F56802386E383008EA1F7 /* Bubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F567F2386E383008EA1F7 /* Bubble.swift */; };
 		483F56842386E690008EA1F7 /* StandardBubbleConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F56832386E690008EA1F7 /* StandardBubbleConfiguration.swift */; };
 		48400F16238575B1008E2A0B /* UIImage+MaskColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48400F15238575B1008E2A0B /* UIImage+MaskColor.swift */; };
+		485746102398133300A497BB /* MessageCellEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4857460F2398133300A497BB /* MessageCellEditView.swift */; };
 		4883F84523751A0E004C3F83 /* UIFont+Default.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4883F83023751A0E004C3F83 /* UIFont+Default.swift */; };
 		4883F84623751A0E004C3F83 /* ContactTableNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4883F83323751A0E004C3F83 /* ContactTableNode.swift */; };
 		4883F84723751A0E004C3F83 /* ContactViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4883F83423751A0E004C3F83 /* ContactViewModel.swift */; };
@@ -150,6 +151,7 @@
 		483F567F2386E383008EA1F7 /* Bubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bubble.swift; sourceTree = "<group>"; };
 		483F56832386E690008EA1F7 /* StandardBubbleConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardBubbleConfiguration.swift; sourceTree = "<group>"; };
 		48400F15238575B1008E2A0B /* UIImage+MaskColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+MaskColor.swift"; sourceTree = "<group>"; };
+		4857460F2398133300A497BB /* MessageCellEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCellEditView.swift; sourceTree = "<group>"; };
 		4883F83023751A0E004C3F83 /* UIFont+Default.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Default.swift"; sourceTree = "<group>"; };
 		4883F83323751A0E004C3F83 /* ContactTableNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactTableNode.swift; sourceTree = "<group>"; };
 		4883F83423751A0E004C3F83 /* ContactViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactViewModel.swift; sourceTree = "<group>"; };
@@ -659,6 +661,7 @@
 		DDC1052F2387922600139CB9 /* MessageCell */ = {
 			isa = PBXGroup;
 			children = (
+				4857460F2398133300A497BB /* MessageCellEditView.swift */,
 				48CF70FA238414AE003BFCE4 /* MessageCell.swift */,
 				DD49B531238E6703007163ED /* TextMessageCell.swift */,
 				DDA11FA6238FC37400425733 /* ImagesMessageCell.swift */,
@@ -1003,6 +1006,7 @@
 				DDC105322387C13E00139CB9 /* TextMessageViewModel.swift in Sources */,
 				48BC3F14237C692F00B96361 /* Database+FakeData.swift in Sources */,
 				483020EB2375A770002AC97B /* CGSize+Square.swift in Sources */,
+				485746102398133300A497BB /* MessageCellEditView.swift in Sources */,
 				C25D7286236BE48D00359C11 /* DeviceConsistencyCommitment.swift in Sources */,
 				814F61BD23595A3700A6AA44 /* SceneDelegate.swift in Sources */,
 				C276378A236BD981007A563D /* SessionSignedPreKeyPublic.swift in Sources */,
