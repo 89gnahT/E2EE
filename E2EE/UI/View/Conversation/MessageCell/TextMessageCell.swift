@@ -11,39 +11,19 @@ import AsyncDisplayKit
 
 class TextMessageCell: MessageCell {
 
-    public var contentNode: ContentNode!
+    private var textContentNode: TextContentNode
     
     public var textViewModel : TextMessageViewModel
-    
-    open var textMessageNode = ASTextNode()
-
-    open var messageInsets = UIEdgeInsets(top: 9, left: 12, bottom: 9, right: 12) {
-        didSet {
-            setNeedsLayout()
-        }
-    }
-    
-    open var bubble = Bubble()
-    
+  
     init(viewModel: TextMessageViewModel, rootViewController: ChatScreenViewController?) {
         textViewModel = viewModel
-   
-        super.init()
+        textContentNode = TextContentNode(viewModel: textViewModel)
         
-        self.rootViewController = rootViewController
+        super.init()
     }
-    
-//    override func getContentNode() -> ContentNode {
-//        return ContentNode()
-//    }
     
     override func setup() {
         super.setup()
-        
-        textMessageNode.maximumNumberOfLines = 50
-        textMessageNode.style.maxWidth = ASDimension(unit: .points, value: UIScreen.main.bounds.size.width * 0.6)
-        
-        bubble.addTarget(self, action: #selector(contentClicked(_:)), forControlEvents: .touchUpInside)
         
         updateUI()
     }
@@ -54,8 +34,9 @@ class TextMessageCell: MessageCell {
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPressGesture.minimumPressDuration = 0.7
         longPressGesture.delegate = self
+        textContentNode.view.addGestureRecognizer(longPressGesture)
         
-        bubble.view.addGestureRecognizer(longPressGesture)
+        textContentNode.addTarget(self, action: #selector(contentClicked(_:)), forControlEvents: .touchUpInside)
     }
     
     override func getViewModel() -> MessageViewModel {
@@ -64,14 +45,12 @@ class TextMessageCell: MessageCell {
     
     override func updateUI() {
         super.updateUI()
-        
-        textMessageNode.attributedText = textViewModel.textContent
-        bubble.image = textViewModel.bubbleImage
+    
+        textContentNode.updateUI()
     }
     
     override func layoutSpecForMessageContent(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        return ASBackgroundLayoutSpec(child: ASInsetLayoutSpec(insets: messageInsets, child: textMessageNode),
-                                      background: bubble)
+        return ASInsetLayoutSpec(insets: UIEdgeInsets.zero, child: textContentNode)
     }
    
     override func contentClicked(_ contentNode: ASDisplayNode) {

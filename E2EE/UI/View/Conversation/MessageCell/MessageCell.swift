@@ -50,11 +50,6 @@ class MessageCell: ASCellNode {
     
     var insets : UIEdgeInsets = UIEdgeInsets.zero
     
-//    public func getContentNode() -> ContentNode{
-//        assert(false, "getContentNode should be override in subClass")
-//        return ContentNode()
-//    }
-    
     override init() {
         super.init()
         
@@ -101,7 +96,7 @@ class MessageCell: ASCellNode {
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         self.updateCellAttributeWhenLayout()
         let content = self.layoutSpecForMessageContent(constrainedSize)
-        
+    
         var subContentStackChildren : [ASLayoutElement]
         if hideDetails{
             subContentStackChildren = [content]
@@ -128,6 +123,14 @@ class MessageCell: ASCellNode {
         
         return ASInsetLayoutSpec(insets: insets, child: contentStack)
     }
+}
+
+extension MessageCell: UIGestureRecognizerDelegate{
+    @objc func handleLongPress(longPressGesture: UILongPressGestureRecognizer) {
+        ASPerformBlockOnMainThread {
+            self.delegate?.messageCell(self, longPressGesture: longPressGesture)
+        }        
+    }
     
     @objc func avatarClicked(_ avatarNode : ASImageNode){
         
@@ -139,14 +142,6 @@ class MessageCell: ASCellNode {
     
     @objc func contentClicked(_ contentNode : ASDisplayNode){
         
-    }
-}
-
-extension MessageCell: UIGestureRecognizerDelegate{
-    @objc func handleLongPress(longPressGesture: UILongPressGestureRecognizer) {
-        ASPerformBlockOnMainThread {
-            self.delegate?.messageCell(self, longPressGesture: longPressGesture)
-        }        
     }
 }
 

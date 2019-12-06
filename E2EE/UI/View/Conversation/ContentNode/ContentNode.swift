@@ -9,16 +9,17 @@
 import UIKit
 import AsyncDisplayKit
 
-class ContentNode: ASDisplayNode, UIGestureRecognizerDelegate {
+class ContentNode: ASControlNode, UIGestureRecognizerDelegate {
     var justifyContent : ASStackLayoutJustifyContent = .start
     var tapAction: Selector!
     var longPressAction: Selector!
     
-    init(tapAction: Selector, longPressAction: Selector) {
+    init(tapAction: Selector? = nil) {
         super.init()
         
         self.tapAction = tapAction
-        self.longPressAction = longPressAction
+        
+        self.automaticallyManagesSubnodes = true
         setup()
     }
     

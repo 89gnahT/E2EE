@@ -28,6 +28,18 @@ class ConversationTableNode: ASDisplayNode {
     
     var currentBatchContext : ASBatchContext = ASBatchContext()
     
+    var contentInset: UIEdgeInsets = UIEdgeInsets.zero{
+        didSet{
+            tableNode.contentInset = contentInset
+        }
+    }
+    
+    var contentSize: CGFloat{
+        get{
+            return tableNode.contentsRect.height
+        }
+    }
+    
     override init() {
         super.init()
         
@@ -35,6 +47,8 @@ class ConversationTableNode: ASDisplayNode {
         tableNode.inverted = true
         tableNode.dataSource = self
         tableNode.delegate = self
+        
+        
         //tableNode.leadingScreensForBatching = 3
     }
     
@@ -47,6 +61,10 @@ extension ConversationTableNode{
     func reloadData(){
         tableNode.reloadData()
         
+    }
+    
+    func scrollToRow(at indexPath: IndexPath){
+        tableNode.scrollToRow(at: indexPath, at: UITableView.ScrollPosition.top, animated: false)
     }
     
     func insertRows(at: [IndexPath]){

@@ -40,7 +40,7 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         super.viewDidLoad()
         tableNode.delegate = self
         tableNode.dataSource = self
-      
+        
         DataManager.shared.addObserver(for: .messageChanged, target: self, callBackQueue: DispatchQueue.main)
         
         DataManager.shared.fetchMessageModels(with: self.inboxID, { (models) in
@@ -52,6 +52,7 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
             
             ASPerformBlockOnMainThread {
                 self.insertIntoLastWithMessages(viewModels: viewModels)
+                print(self.tableNode.contentSize)
             }
             
         }, callbackQueue: nil)
@@ -73,8 +74,14 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         self.view.addSubnode(chatBox.chatBox)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        tabBarController?.tabBar.isHidden = false
+    }
+    
     @objc func tapEventInView(_ gesture: UITapGestureRecognizer){
-        self.editMessageView.removeFromSupernode()       
+        self.editMessageView.removeFromSupernode()
+        self.view.endEditing(true)
     }
     
     @objc func removeMessageBtnPressed(_ button: ASButtonNode){
@@ -142,21 +149,29 @@ extension ChatScreenViewController: ConversationTableNodeDataSource{
 
 extension ChatScreenViewController: ChatBoxDelegate{
     func sendButtonPressed(_ text: String) {
-        view.endEditing(true)
         DataManager.shared.sendTextMessage(inboxID: inboxID, withContent: text) { (model) in
             ASPerformBlockOnMainThread {
-//                let viewModel = TextMessageViewModel(model: model)
-//                
-//                self.insertMessage(viewModel: viewModel, at: 0)
+
             }
         }
     }
     
     @objc func keyboardAppear(notification: NSNotification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            let keyboardHeight = keyboardRectangle.height
+            
+            self.tableNode.contentInset = UIEdgeInsets(top: keyboardHeight, left: 0, bottom: 0, right: 0)
+            self.tableNode.scrollToRow(at: IndexPath(row: 0, section: 0))
+        }
+        
         self.chatBox.keyboardWillChange(notification: notification)
     }
     
     @objc func keyboardDisappear(notification: NSNotification) {
+        self.tableNode.contentInset = UIEdgeInsets.zero
+        self.tableNode.scrollToRow(at: IndexPath(row: 0, section: 0))
+        
         self.chatBox.keyboardWillChange(notification: notification)
     }
 }

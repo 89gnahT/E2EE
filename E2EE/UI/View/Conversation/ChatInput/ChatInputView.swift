@@ -9,7 +9,7 @@
 import UIKit
 import AsyncDisplayKit
 
-class ChatInput: ASDisplayNode {
+class ChatInputView: ASDisplayNode {
     
     var cameraBtn = ASButtonNode()
     var collapaseBtn = ASButtonNode()
@@ -56,8 +56,7 @@ class ChatInput: ASDisplayNode {
         inputChat.attributedPlaceholderText = placeholderText
         inputChat.style.flexGrow = 1.0
         inputChat.style.flexShrink = 1.0
-        inputChat.style.minWidth = ASDimension(unit: .points, value: UIScreen.main.bounds.width / 2)
-       
+        inputChat.style.minWidth = ASDimension(unit: .points, value: UIScreen.main.bounds.width / 2)       
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
@@ -66,3 +65,14 @@ class ChatInput: ASDisplayNode {
         return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10), child: box)
     }
 }
+
+extension ChatInputView: ASEditableTextNodeDelegate{
+    func editableTextNodeDidBeginEditing(_ editableTextNode: ASEditableTextNode) {
+        
+    }
+    
+    func editableTextNodeDidFinishEditing(_ editableTextNode: ASEditableTextNode) {
+       
+    }
+}
+

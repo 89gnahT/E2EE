@@ -167,6 +167,7 @@ extension DataManager{
                 
                 var messageModel = [MessageModel]()
                 for i in messages{
+                    
                     messageModel.append(i.convertToModel(withSender: self.people[i.senderId]!))
                 }
                 

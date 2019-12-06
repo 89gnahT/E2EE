@@ -108,7 +108,7 @@
 		DD49B532238E6703007163ED /* TextMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD49B531238E6703007163ED /* TextMessageCell.swift */; };
 		DDA11FA1238F5A9600425733 /* ImageMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FA0238F5A9600425733 /* ImageMessageViewModel.swift */; };
 		DDA11FA7238FC37400425733 /* ImagesMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FA6238FC37400425733 /* ImagesMessageCell.swift */; };
-		DDA11FAC2390D55A00425733 /* ChatInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FAB2390D55A00425733 /* ChatInput.swift */; };
+		DDA11FAC2390D55A00425733 /* ChatInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FAB2390D55A00425733 /* ChatInputView.swift */; };
 		DDA11FAE2391023900425733 /* ConversationTableNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FAD2391023900425733 /* ConversationTableNode.swift */; };
 		DDA11FB02391112100425733 /* ChatBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FAF2391112100425733 /* ChatBoxView.swift */; };
 		DDA11FB22397980200425733 /* MessageViewModelFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FB12397980200425733 /* MessageViewModelFactory.swift */; };
@@ -250,7 +250,7 @@
 		DD49B531238E6703007163ED /* TextMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessageCell.swift; sourceTree = "<group>"; };
 		DDA11FA0238F5A9600425733 /* ImageMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMessageViewModel.swift; sourceTree = "<group>"; };
 		DDA11FA6238FC37400425733 /* ImagesMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesMessageCell.swift; sourceTree = "<group>"; };
-		DDA11FAB2390D55A00425733 /* ChatInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInput.swift; sourceTree = "<group>"; };
+		DDA11FAB2390D55A00425733 /* ChatInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInputView.swift; sourceTree = "<group>"; };
 		DDA11FAD2391023900425733 /* ConversationTableNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTableNode.swift; sourceTree = "<group>"; };
 		DDA11FAF2391112100425733 /* ChatBoxView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatBoxView.swift; sourceTree = "<group>"; };
 		DDA11FB12397980200425733 /* MessageViewModelFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewModelFactory.swift; sourceTree = "<group>"; };
@@ -660,7 +660,7 @@
 		DDA11FAA2390D53D00425733 /* ChatInput */ = {
 			isa = PBXGroup;
 			children = (
-				DDA11FAB2390D55A00425733 /* ChatInput.swift */,
+				DDA11FAB2390D55A00425733 /* ChatInputView.swift */,
 				DDA11FAF2391112100425733 /* ChatBoxView.swift */,
 			);
 			path = ChatInput;
@@ -997,7 +997,7 @@
 				DD410257237BA20600DD4D72 /* InboxEntity.swift in Sources */,
 				C276376E236BD981007A563D /* PreKeySignalMessage.swift in Sources */,
 				482C45F7237D93E500C4F554 /* InboxViewCell.swift in Sources */,
-				DDA11FAC2390D55A00425733 /* ChatInput.swift in Sources */,
+				DDA11FAC2390D55A00425733 /* ChatInputView.swift in Sources */,
 				C2763774236BD981007A563D /* LocalStorage.pb.swift in Sources */,
 				C25D7284236BDEDD00359C11 /* DeviceConsistencyMessage.swift in Sources */,
 				C2763788236BD981007A563D /* SessionRecord.swift in Sources */,
