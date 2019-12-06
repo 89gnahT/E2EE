@@ -52,7 +52,6 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
             
             ASPerformBlockOnMainThread {
                 self.insertIntoLastWithMessages(viewModels: viewModels)
-                print(self.tableNode.contentSize)
             }
             
         }, callbackQueue: nil)
@@ -315,6 +314,10 @@ extension ChatScreenViewController: MessageCellDelegate{
         if longPressGesture.state == .began{
             self.view.addSubnode(editMessageView)
             editMessageView.messageCell = cell
+            
+           
+            //self.tableNode.contentSize.height = 100
+             print(self.tableNode.contentSize)
         }
     }
     

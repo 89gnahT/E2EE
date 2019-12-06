@@ -28,15 +28,21 @@ class ConversationTableNode: ASDisplayNode {
     
     var currentBatchContext : ASBatchContext = ASBatchContext()
     
-    var contentInset: UIEdgeInsets = UIEdgeInsets.zero{
-        didSet{
-            tableNode.contentInset = contentInset
+    var contentInset: UIEdgeInsets{
+        set{
+            tableNode.contentInset = newValue
+        }
+        get{
+            return tableNode.contentInset
         }
     }
     
-    var contentSize: CGFloat{
+    var contentSize: CGSize{
         get{
-            return tableNode.contentsRect.height
+            return tableNode.view.contentSize
+        }
+        set{
+            tableNode.view.contentSize = newValue
         }
     }
     
@@ -89,6 +95,11 @@ extension ConversationTableNode: ASTableDelegate{
         return ASSizeRangeMake(CGSize.init(width: self.view.frame.width, height: 0),
                                CGSize.init(width: self.view.frame.width, height: self.view.frame.height))
     }
+    
+    func tableNode(_ tableNode: ASTableNode, willDisplayRowWith node: ASCellNode) {
+        tableNode.indexPathsForVisibleRows()
+    }
+    
     
     func shouldBatchFetch(for tableNode: ASTableNode) -> Bool {
          return !currentBatchContext.isFetching()
