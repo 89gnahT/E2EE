@@ -35,7 +35,7 @@ class MessageCell: ASCellNode {
             }
         }
     }
-  
+    
     var avatarImageNode = ASNetworkImageNode()
     
     var timeNode = ASTextNode()
@@ -62,41 +62,44 @@ class MessageCell: ASCellNode {
         avatarImageNode.style.preferredSize = CGSize(squareEdge: 28)
         avatarImageNode.imageModificationBlock = ASImageNodeRoundBorderModificationBlock(0, nil)
         avatarImageNode.addTarget(self, action: #selector(avatarClicked(_:)), forControlEvents: .touchUpInside)
-    }
-    
-    func getViewModel() -> MessageViewModel{
-        assert(false, "getViewModel should be override in subClass")
-        return MessageViewModel(model: MessageModel())
-    }
-    
-    func updateCellAttributeWhenLayout(){
         
+        setupContent()
+        
+        updateUI()
     }
     
-    func layoutSpecForMessageContent(_ constrainedSize : ASSizeRange) -> ASLayoutSpec{
-        assert(false, "layoutSpecForMessageContent should be override in subClass")
-        return ASLayoutSpec()
+    override func didLoad() {
+        super.didLoad()
+        
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
+        longPressGesture.minimumPressDuration = 0.7
+        longPressGesture.delegate = self
+        getContentNode().view.addGestureRecognizer(longPressGesture)
     }
     
     public func updateUI(){
-        let viewModel = getViewModel()
-        avatarImageNode.url = viewModel.avatarURL
-        
-        isIncommingMessage = viewModel.isIncommingMessage
-    
-        timeNode.attributedText = viewModel.time
-        
-        statusNode.attributedText = viewModel.status
-        
-        insets = viewModel.insets
-        
-        avatarImageNode.isHidden = !viewModel.isShowAvatar
+        ASPerformBlockOnBackgroundThread {
+            let viewModel = self.getViewModel()
+            self.avatarImageNode.url = viewModel.avatarURL
+            
+            self.isIncommingMessage = viewModel.isIncommingMessage
+            
+            self.timeNode.attributedText = viewModel.time
+            
+            self.statusNode.attributedText = viewModel.status
+            
+            self.insets = viewModel.insets
+            
+            self.avatarImageNode.isHidden = !viewModel.isShowAvatar
+            
+            self.updateUIContent()
+        }
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         self.updateCellAttributeWhenLayout()
         let content = self.layoutSpecForMessageContent(constrainedSize)
-    
+        
         var subContentStackChildren : [ASLayoutElement]
         if hideDetails{
             subContentStackChildren = [content]
@@ -123,8 +126,37 @@ class MessageCell: ASCellNode {
         
         return ASInsetLayoutSpec(insets: insets, child: contentStack)
     }
+    
+// MARK: - Should be override in subclass
+    func setupContent(){
+        
+    }
+    
+    func getViewModel() -> MessageViewModel{
+        assert(false, "getViewModel should be override in subClass")
+        return MessageViewModel(model: MessageModel())
+    }
+    
+    func getContentNode() -> ContentNode{
+        assert(false, "getContentNode should be override in subClass")
+        return ContentNode()
+    }
+    
+    public func updateUIContent(){
+        
+    }
+    
+    func updateCellAttributeWhenLayout(){
+           
+       }
+    
+    func layoutSpecForMessageContent(_ constrainedSize : ASSizeRange) -> ASLayoutSpec{
+        assert(false, "layoutSpecForMessageContent should be override in subClass")
+        return ASLayoutSpec()
+    }
 }
 
+// MARK: - Handle UIGestureRecognizerDelegate
 extension MessageCell: UIGestureRecognizerDelegate{
     @objc func handleLongPress(longPressGesture: UILongPressGestureRecognizer) {
         ASPerformBlockOnMainThread {
@@ -143,8 +175,9 @@ extension MessageCell: UIGestureRecognizerDelegate{
     @objc func contentClicked(_ contentNode : ASDisplayNode){
         
     }
+    
 }
 
 extension MessageCell{
-   
+    
 }

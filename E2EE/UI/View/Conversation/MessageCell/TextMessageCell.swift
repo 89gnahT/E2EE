@@ -10,32 +10,31 @@ import UIKit
 import AsyncDisplayKit
 
 class TextMessageCell: MessageCell {
-
+    
     private var textContentNode: TextContentNode
     
     public var textViewModel : TextMessageViewModel
-  
-    init(viewModel: TextMessageViewModel, rootViewController: ChatScreenViewController?) {
+    
+    init(viewModel: TextMessageViewModel) {
         textViewModel = viewModel
         textContentNode = TextContentNode(viewModel: textViewModel)
         
         super.init()
     }
     
-    override func setup() {
-        super.setup()
+    
+    override func setupContent() {
         
-        updateUI()
     }
+    
+    override func getContentNode() -> ContentNode {
+        return textContentNode
+    }
+    
     
     override func didLoad() {
         super.didLoad()
-        
-        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
-        longPressGesture.minimumPressDuration = 0.7
-        longPressGesture.delegate = self
-        textContentNode.view.addGestureRecognizer(longPressGesture)
-        
+    
         textContentNode.addTarget(self, action: #selector(contentClicked(_:)), forControlEvents: .touchUpInside)
     }
     
@@ -43,16 +42,15 @@ class TextMessageCell: MessageCell {
         return textViewModel
     }
     
-    override func updateUI() {
-        super.updateUI()
-    
+    override func updateUIContent() {
         textContentNode.updateUI()
     }
+    
     
     override func layoutSpecForMessageContent(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         return ASInsetLayoutSpec(insets: UIEdgeInsets.zero, child: textContentNode)
     }
-   
+    
     override func contentClicked(_ contentNode: ASDisplayNode) {
         super.contentClicked(contentNode)
         

@@ -13,43 +13,47 @@ class TextContentNode: ContentNode {
     
     public var textViewModel : TextMessageViewModel
     
-    open var textMessageNode = ASTextNode()
-    
+    open var textBtnNode = ASButtonNode()
     open var textInsets = UIEdgeInsets(top: 9, left: 12, bottom: 9, right: 12) {
         didSet {
             setNeedsLayout()
         }
     }
     
-    open var bubble = Bubble()
+    override var isHighlighted: Bool{
+        didSet{
+            
+        }
+    }
     
-    init(viewModel: TextMessageViewModel, tapAction: Selector? = nil) {
+    init(viewModel: TextMessageViewModel) {
         textViewModel = viewModel
         
-        super.init(tapAction: tapAction)
+        super.init()
     }
     
     override func setup() {
         super.setup()
         
-        textMessageNode.maximumNumberOfLines = 50
-        textMessageNode.style.maxWidth = ASDimension(unit: .points, value: UIScreen.main.bounds.size.width * 0.6)
+        textBtnNode.style.maxWidth = ASDimension(unit: .points, value: UIScreen.main.bounds.size.width * 0.6)
+        textBtnNode.titleNode.maximumNumberOfLines = 50
+        textBtnNode.contentEdgeInsets = textInsets
     }
     
     override func didLoad() {
         super.didLoad()
-
+        
     }
     
     override func updateUI() {
         super.updateUI()
         
-        textMessageNode.attributedText = textViewModel.textContent
-        bubble.image = textViewModel.bubbleImage
+        textBtnNode.titleNode.attributedText = textViewModel.textContent
+        textBtnNode.setBackgroundImage(textViewModel.bubbleImage, for: .normal)
     }
     
+    
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        return ASBackgroundLayoutSpec(child: ASInsetLayoutSpec(insets: textInsets, child: textMessageNode),
-                                      background: bubble)
+        return ASInsetLayoutSpec(insets: UIEdgeInsets.zero, child: textBtnNode)
     }
 }

@@ -15,6 +15,8 @@ class MessageCellEditView: ASDisplayNode {
     
     private let copyBtn = ASButtonNode()
     
+    private let forward = ASButtonNode()
+    
     private let fontSize : CGFloat = 15
     
     private var edgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 16)
@@ -41,6 +43,10 @@ class MessageCellEditView: ASDisplayNode {
         removeBtn.setImage(UIImage(named: "trash"), for: .normal)
         removeBtn.laysOutHorizontally = false
         
+        forward.setAttributedTitle(attributedString("Forward", fontSize: fontSize, isBold: true, foregroundColor: .darkGray), for: .normal)
+        forward.setImage(UIImage(named: "right_arrow"), for: .normal)
+        forward.laysOutHorizontally = false
+        
         copyBtn.setAttributedTitle(attributedString("Copy", fontSize: fontSize, isBold: true, foregroundColor: .darkGray), for: .normal)
         copyBtn.setImage(UIImage(named: "copy"), for: .normal)
         copyBtn.laysOutHorizontally = false
@@ -49,8 +55,8 @@ class MessageCellEditView: ASDisplayNode {
         optionNode.automaticallyManagesSubnodes = true
         optionNode.layoutSpecBlock = { (node : ASDisplayNode, constrainedSize : ASSizeRange) -> ASLayoutSpec in
             let contentStack = ASStackLayoutSpec.horizontal()
-            contentStack.children = [self.copyBtn, self.removeBtn]
-            contentStack.justifyContent = .spaceBetween
+            contentStack.children = [self.copyBtn, self.forward, self.removeBtn]
+            contentStack.justifyContent = .spaceAround
             
             return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 8, left: 20, bottom: 8, right: 20), child: contentStack)
         }

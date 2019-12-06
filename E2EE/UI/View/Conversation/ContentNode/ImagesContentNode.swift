@@ -19,10 +19,10 @@ class ImagesContentNode: ContentNode {
     private var numberNodePerRow : Int!
     private var listImageNode = [ASNetworkImageNode]()
     
-    init(viewModel: ImageMessageViewModel, tapAction: Selector?) {
+    init(viewModel: ImageMessageViewModel) {
         imageViewModel = viewModel
         
-        super.init(tapAction: tapAction)
+        super.init()
     }
     
     override func setup() {
@@ -32,10 +32,8 @@ class ImagesContentNode: ContentNode {
         maxWidthNodeDemension = maxWidthDimension
         numberOfRow = 0
         numberNodePerRow = 3
-        
-        
-        updateUI()
     }
+    
     override func updateUI() {
         super.updateUI()
         getImageNodeFromURLs(imageViewModel.imageURLs)

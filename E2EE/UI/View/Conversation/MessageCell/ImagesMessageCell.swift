@@ -16,24 +16,29 @@ class ImagesMessageCell: MessageCell {
     
     init(viewModel: ImageMessageViewModel) {
         imageViewModel = viewModel
-        imagesContentNode = ImagesContentNode(viewModel: imageViewModel, tapAction: #selector(contentClicked(_:)))
+        imagesContentNode = ImagesContentNode(viewModel: imageViewModel)
         super.init()
     }
     
-    override func setup() {
-        super.setup()
+    override func setupContent() {
         
-        updateUI()
+    }
+    
+    override func getContentNode() -> ContentNode {
+        return imagesContentNode
+    }
+    
+    override func didLoad() {
+        super.didLoad()
+
+    }
+    
+    override func updateUIContent() {
+         imagesContentNode.updateUI()
     }
     
     override func getViewModel() -> MessageViewModel {
         return imageViewModel
-    }
-    
-    override func updateUI() {
-        super.updateUI()
-        
-        imagesContentNode.updateUI()
     }
     
     override func layoutSpecForMessageContent(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {

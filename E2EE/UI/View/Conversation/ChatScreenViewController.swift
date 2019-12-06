@@ -40,21 +40,24 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         super.viewDidLoad()
         tableNode.delegate = self
         tableNode.dataSource = self
+        let maxY = (navigationController != nil) ? navigationController!.navigationBar.frame.maxY : CGFloat(0)
+        let height = (tabBarController != nil) ? tabBarController!.tabBar.frame.minY - maxY : view.frame.height
+        tableNode.actualFrame = CGRect(x: 0, y: maxY, width: view.frame.width, height: height)
         
         DataManager.shared.addObserver(for: .messageChanged, target: self, callBackQueue: DispatchQueue.main)
         
-        DataManager.shared.fetchMessageModels(with: self.inboxID, { (models) in
-            var viewModels = [MessageViewModel]()
-            for i in models{
-                let viewModel = MessageViewModelFactory.viewModel(i)
-                viewModels.append(viewModel)
-            }
-            
-            ASPerformBlockOnMainThread {
-                self.insertIntoLastWithMessages(viewModels: viewModels)
-            }
-            
-        }, callbackQueue: nil)
+//        DataManager.shared.fetchMessageModels(with: self.inboxID, { (models) in
+//            var viewModels = [MessageViewModel]()
+//            for i in models{
+//                let viewModel = MessageViewModelFactory.viewModel(i)
+//                viewModels.append(viewModel)
+//            }
+//
+//            ASPerformBlockOnMainThread {
+//                self.insertIntoLastWithMessages(viewModels: viewModels)
+//            }
+//
+//        }, callbackQueue: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardAppear(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDisappear(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -108,36 +111,38 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
 extension ChatScreenViewController: ConversationTableNodeDelegate{
     
     func tableNode(_ tableNode: ConversationTableNode, willBeginBatchFetchWith context: ASBatchContext) {
-//        DataManager.shared.fetchMessageModels(with: self.inboxID, { (models) in
-//            context.completeBatchFetching(true)
-//
-//            var viewModels = [MessageViewModel]()
-//            for i in models{
-//                let viewModel = MessageViewModelFactory.viewModel(i)
-//                viewModels.append(viewModel)
-//            }
-//
-//            ASPerformBlockOnMainThread {
-//                self.insertIntoLastWithMessages(viewModels: viewModels)
-//            }
-//
-//        }, callbackQueue: nil)
+        DataManager.shared.fetchMessageModels(with: self.inboxID, { (models) in
+            context.completeBatchFetching(true)
+
+            var viewModels = [MessageViewModel]()
+            for i in models{
+                let viewModel = MessageViewModelFactory.viewModel(i)
+                viewModels.append(viewModel)
+            }
+
+            ASPerformBlockOnMainThread {
+                self.insertIntoLastWithMessages(viewModels: viewModels)
+            }
+
+        }, callbackQueue: nil)
     }
 }
 
 extension ChatScreenViewController: ConversationTableNodeDataSource{
     func tableNode(_ tableNode: ConversationTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
         let viewModel = viewModels[indexPath.row]
-        let rootViewController = self
-        let messageCellDelegate: MessageCellDelegate = self
+        
         return {
+            var cell: MessageCell
             if viewModel.model.type == .text{
-                let cell = TextMessageCell(viewModel: viewModel as! TextMessageViewModel, rootViewController: rootViewController)
-                cell.delegate = messageCellDelegate
-                return cell
+                cell = TextMessageCell(viewModel: viewModel as! TextMessageViewModel)
             }else{
-                return ImagesMessageCell(viewModel: viewModel as! ImageMessageViewModel)
+                cell = ImagesMessageCell(viewModel: viewModel as! ImageMessageViewModel)
             }
+            
+            cell.delegate = self
+            
+            return cell
         }
     }
     
@@ -150,7 +155,7 @@ extension ChatScreenViewController: ChatBoxDelegate{
     func sendButtonPressed(_ text: String) {
         DataManager.shared.sendTextMessage(inboxID: inboxID, withContent: text) { (model) in
             ASPerformBlockOnMainThread {
-
+                
             }
         }
     }
@@ -160,16 +165,14 @@ extension ChatScreenViewController: ChatBoxDelegate{
             let keyboardRectangle = keyboardFrame.cgRectValue
             let keyboardHeight = keyboardRectangle.height
             
-            self.tableNode.contentInset = UIEdgeInsets(top: keyboardHeight, left: 0, bottom: 0, right: 0)
-            self.tableNode.scrollToRow(at: IndexPath(row: 0, section: 0))
+            self.tableNode.keyboardWillAppear(withHeight: keyboardHeight)
         }
         
         self.chatBox.keyboardWillChange(notification: notification)
     }
     
     @objc func keyboardDisappear(notification: NSNotification) {
-        self.tableNode.contentInset = UIEdgeInsets.zero
-        self.tableNode.scrollToRow(at: IndexPath(row: 0, section: 0))
+        self.tableNode.keyboardWillDisappear()
         
         self.chatBox.keyboardWillChange(notification: notification)
     }
@@ -312,12 +315,13 @@ extension ChatScreenViewController: MessageCellDelegate{
     
     func messageCell(_ cell: MessageCell, longPressGesture: UILongPressGestureRecognizer) {
         if longPressGesture.state == .began{
-            self.view.addSubnode(editMessageView)
+            
             editMessageView.messageCell = cell
             
+            UIView.transition(with: self.view, duration: 0.25, options: .transitionCrossDissolve, animations: {
+                self.view.addSubnode(self.editMessageView)
+            }, completion: nil)
            
-            //self.tableNode.contentSize.height = 100
-             print(self.tableNode.contentSize)
         }
     }
     

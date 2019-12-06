@@ -106,7 +106,7 @@ extension Database{
             self.rooms.updateValue(Dictionary<MessageID, MessageEntity>(), forKey: c.id)
             let numberOfMessage = self.randomInt(50, 200)
             
-            for _ in 0..<1{
+            for _ in 0..<numberOfMessage{
                 let m = self.createMsgFrom(c)
                 self.rooms[c.id]?.updateValue(m, forKey: m.id)
             }

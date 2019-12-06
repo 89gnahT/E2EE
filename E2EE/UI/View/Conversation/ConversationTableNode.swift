@@ -37,14 +37,7 @@ class ConversationTableNode: ASDisplayNode {
         }
     }
     
-    var contentSize: CGSize{
-        get{
-            return tableNode.view.contentSize
-        }
-        set{
-            tableNode.view.contentSize = newValue
-        }
-    }
+    var actualFrame: CGRect!
     
     override init() {
         super.init()
@@ -53,7 +46,7 @@ class ConversationTableNode: ASDisplayNode {
         tableNode.inverted = true
         tableNode.dataSource = self
         tableNode.delegate = self
-        
+        tableNode.view.separatorStyle = .none
         
         //tableNode.leadingScreensForBatching = 3
     }
@@ -88,6 +81,16 @@ extension ConversationTableNode{
     func performBatch(animated: Bool, updates: (() -> Void)?, completion: ((Bool) -> Void)?){
         tableNode.performBatch(animated: animated, updates: updates, completion: completion)
     }
+    
+    func keyboardWillAppear(withHeight height: CGFloat){
+        contentInset.top = height
+        scrollToRow(at: IndexPath(row: 0, section: 0))
+    }
+    
+    func keyboardWillDisappear(){
+        contentInset.top = 0
+        scrollToRow(at: IndexPath(row: 0, section: 0))
+    }
 }
 
 extension ConversationTableNode: ASTableDelegate{
@@ -96,8 +99,28 @@ extension ConversationTableNode: ASTableDelegate{
                                CGSize.init(width: self.view.frame.width, height: self.view.frame.height))
     }
     
-    func tableNode(_ tableNode: ASTableNode, willDisplayRowWith node: ASCellNode) {
-        tableNode.indexPathsForVisibleRows()
+    func tableView(_ tableView: ASTableView, willDisplay node: ASCellNode, forRowAt indexPath: IndexPath) {
+        guard actualFrame != nil else {
+            return
+        }
+        
+//        if indexPath.row == 0{
+//            if tableNode.view.contentSize.height < actualFrame.height{
+//                var totalHeight: CGFloat = 0
+//                let numberOfCell = tableNode.numberOfRows(inSection: 0)
+//                for i in 0..<numberOfCell{
+//                    totalHeight += (tableNode.nodeForRow(at: IndexPath(row: i, section: 0))!.frame.height)
+//                }
+//                if totalHeight < actualFrame.height{
+//                    let topInset = actualFrame.height - totalHeight
+//
+//                    contentInset.top = topInset
+//                }
+//
+//            }else{
+//                contentInset.top = 0
+//            }
+//        }
     }
     
     
