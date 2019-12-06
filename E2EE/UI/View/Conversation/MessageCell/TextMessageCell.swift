@@ -11,6 +11,8 @@ import AsyncDisplayKit
 
 class TextMessageCell: MessageCell {
 
+    public var contentNode: ContentNode!
+    
     public var textViewModel : TextMessageViewModel
     
     open var textMessageNode = ASTextNode()
@@ -30,6 +32,10 @@ class TextMessageCell: MessageCell {
         
         self.rootViewController = rootViewController
     }
+    
+//    override func getContentNode() -> ContentNode {
+//        return ContentNode()
+//    }
     
     override func setup() {
         super.setup()

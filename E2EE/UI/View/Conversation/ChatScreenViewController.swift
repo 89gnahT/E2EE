@@ -20,6 +20,12 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     
     var chatBox : ChatBoxView!
     
+    lazy var editMessageView: MessageCellEditView = {
+        let frame = self.view.frame
+        
+        return MessageCellEditView(target: self, frame: frame, removeBtnAction: #selector(removeMessageBtnPressed))
+    }()
+    
     init(with inboxID : InboxID) {
         self.inboxID = inboxID
         
@@ -37,17 +43,24 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
       
         DataManager.shared.addObserver(for: .messageChanged, target: self, callBackQueue: DispatchQueue.main)
         
-        
-        DataManager.shared.fetchMessageModels(with: inboxID, { (models) in
+        DataManager.shared.fetchMessageModels(with: self.inboxID, { (models) in
+            var viewModels = [MessageViewModel]()
             for i in models{
                 let viewModel = MessageViewModelFactory.viewModel(i)
-
-                self.insertMessage(viewModel: viewModel, at: 0)
+                viewModels.append(viewModel)
             }
-        }, callbackQueue: DispatchQueue.main)
+            
+            ASPerformBlockOnMainThread {
+                self.insertIntoLastWithMessages(viewModels: viewModels)
+            }
+            
+        }, callbackQueue: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardAppear(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDisappear(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(tapEventInView(_:)))
+        self.view.addGestureRecognizer(gesture)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -59,6 +72,31 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         chatBox.delegate = self
         self.view.addSubnode(chatBox.chatBox)
     }
+    
+    @objc func tapEventInView(_ gesture: UITapGestureRecognizer){
+        self.editMessageView.removeFromSupernode()       
+    }
+    
+    @objc func removeMessageBtnPressed(_ button: ASButtonNode){
+        editMessageView.removeFromSupernode()
+        guard let messageCell = editMessageView.messageCell else {
+            return
+        }
+        self.removeMessageCell(messageCell)
+    }
+    
+    func removeMessageCell(_ cell: MessageCell) {
+        let messageID = cell.getViewModel().model.id
+        var index = 0
+        for i in 0..<self.viewModels.count{
+            if self.viewModels[i].model.id == messageID{
+                index = i
+                break
+            }
+        }
+        
+        self.removeMessage(at: index)
+    }
 }
 
 extension ChatScreenViewController: ConversationTableNodeDelegate{
@@ -67,20 +105,17 @@ extension ChatScreenViewController: ConversationTableNodeDelegate{
 //        DataManager.shared.fetchMessageModels(with: self.inboxID, { (models) in
 //            context.completeBatchFetching(true)
 //
-//            let pos = self.viewModels.count
+//            var viewModels = [MessageViewModel]()
 //            for i in models{
-//                var viewModel : MessageViewModel!
-//
-//                if i.type == .text{
-//                    viewModel = TextMessageViewModel(model: i as! TextMessageModel)
-//                }else if i.type == .image{
-//                    viewModel = ImageMessageViewModel(model: i as! ImageMessageModel)
-//                }
-//
-//                self.insertMessage(viewModel: viewModel, at: pos)
+//                let viewModel = MessageViewModelFactory.viewModel(i)
+//                viewModels.append(viewModel)
 //            }
 //
-//        }, callbackQueue: DispatchQueue.main)
+//            ASPerformBlockOnMainThread {
+//                self.insertIntoLastWithMessages(viewModels: viewModels)
+//            }
+//
+//        }, callbackQueue: nil)
     }
 }
 
@@ -129,6 +164,33 @@ extension ChatScreenViewController: ChatBoxDelegate{
 
 extension ChatScreenViewController{
     
+    private func removeMessage(at pos: Int){
+        let count = self.viewModels.count
+        guard pos >= 0 && pos < count else {
+            return
+        }
+        
+        let previous = count > pos + 1 ? self.viewModels[pos + 1] : nil
+        let after = pos > 0 ? self.viewModels[pos - 1] : nil
+        
+        if previous != nil{
+            previous!.setupPositionWith(previous: count > pos + 2 ? self.viewModels[pos + 2] : nil, andAfter: after)
+            
+            let preNode: MessageCell = tableNode.nodeForRowAt(IndexPath(row: pos + 1, section: 0)) as! MessageCell
+            preNode.updateUI()
+        }
+        
+        if after != nil{
+            after!.setupPositionWith(previous: previous, andAfter: pos > 1 ? self.viewModels[pos - 2] : nil)
+                        
+            let afterNode: MessageCell = tableNode.nodeForRowAt(IndexPath(row: pos - 1, section: 0)) as! MessageCell
+            afterNode.updateUI()
+        }
+                
+        self.viewModels.remove(at: pos)
+        self.tableNode.deleteRows(at: [IndexPath(row: pos, section: 0)])
+    }
+    
     private func insertMessage(viewModel : MessageViewModel, at pos: Int){
         
         if pos < 0 && pos > viewModels.count{
@@ -158,6 +220,41 @@ extension ChatScreenViewController{
         self.tableNode.insertRows(at: [IndexPath(row: pos, section: 0)])
     }
     
+    private func insertIntoLastWithMessages(viewModels : [MessageViewModel]){
+        if viewModels.isEmpty{
+            return
+        }
+        
+        var previous1: MessageViewModel?
+        var previous2: MessageViewModel?
+        
+        for v in viewModels{
+            previous1?.setupPositionWith(previous: previous2, andAfter: v)
+            v.setupPositionWith(previous: previous1, andAfter: nil)
+            
+            previous2 = previous1
+            previous1 = v
+        }
+        let after = self.viewModels.last
+        if after != nil{
+            let count = self.viewModels.count
+            after?.setupPositionWith(previous: viewModels.last!, andAfter: count > 1 ? self.viewModels[count - 2] : nil)
+            let afterNode: MessageCell = tableNode.nodeForRowAt(IndexPath(row: count - 1, section: 0)) as! MessageCell
+            afterNode.updateUI()
+        }
+        
+        tableNode.performBatch(animated: false, updates: {
+            var indexPaths = [IndexPath]()
+            var index = viewModels.count - 1
+            while index >= 0{
+                self.viewModels.append(viewModels[index])
+                indexPaths.append(IndexPath(row: index, section: 0))
+                index -= 1
+            }
+            
+            self.tableNode.insertRows(at: indexPaths)
+        }, completion: nil)
+    }
 }
 
 extension ChatScreenViewController: DataManagerListenerDelegate{
@@ -195,28 +292,23 @@ extension ChatScreenViewController: DataManagerListenerDelegate{
 }
 
 extension ChatScreenViewController: MessageCellDelegate{
+    func messageCell(_ cell: MessageCell, contentClicked contentNode: ASDisplayNode) {
+        
+    }
+    
+    func messageCell(_ cell: MessageCell, longPressGesture: UILongPressGestureRecognizer) {
+        if longPressGesture.state == .began{
+            self.view.addSubnode(editMessageView)
+            editMessageView.messageCell = cell
+        }
+    }
+    
     func messageCell(_ cell: MessageCell, avatarClicked avatarNode: ASImageNode) {
         
     }
     
     func messageCell(_ cell: MessageCell, subFunctionClicked subFunctionNode: ASImageNode) {
         
-    }
-    
-    func removeMessageCell(_ cell: MessageCell) {
-        ASPerformBlockOnMainThread {
-            let messageID = cell.getViewModel().model.id
-            var index = 0
-            for i in 0..<self.viewModels.count{
-                if self.viewModels[i].model.id == messageID{
-                    index = i
-                    break
-                }
-            }
-            
-            self.viewModels.remove(at: index)
-            self.tableNode.deleteRows(at: [IndexPath(row: index, section: 0)])
-        }
     }
     
 }

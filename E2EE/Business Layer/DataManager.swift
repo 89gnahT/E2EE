@@ -184,6 +184,8 @@ extension DataManager{
     
     public func deleteMessage(withInboxID iID : InboxID, messageID: MessageID, completion :  ((_ error : DataError) -> Void)?){
         taskQueue.async {
+            
+            //self.callbackForDataChanged(object: <#T##NSObject#>, forEvent: <#T##ValueChanged#>, updateType: <#T##UpdateType#>, oldVaule: <#T##NSObject?#>)
         }
     }
     

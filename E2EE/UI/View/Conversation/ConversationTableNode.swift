@@ -21,7 +21,7 @@ protocol ConversationTableNodeDataSource: NSObjectProtocol {
 }
 
 class ConversationTableNode: ASDisplayNode {
-    private var tableNode = ASTableNode()
+    var tableNode = ASTableNode()
     
     var delegate : ConversationTableNodeDelegate?
     var dataSource : ConversationTableNodeDataSource?
@@ -59,6 +59,10 @@ extension ConversationTableNode{
     
     func nodeForRowAt(_ indexPath: IndexPath) -> ASCellNode? {
         return tableNode.nodeForRow(at: indexPath)
+    }
+    
+    func performBatch(animated: Bool, updates: (() -> Void)?, completion: ((Bool) -> Void)?){
+        tableNode.performBatch(animated: animated, updates: updates, completion: completion)
     }
 }
 

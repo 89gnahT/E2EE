@@ -15,9 +15,7 @@ protocol MessageViewModelDelegate {
 class MessageViewModel: NSObject {
     private(set) var model : MessageModel
     
-    init(model : MessageModel) {
-        self.model = model
-    }
+    
     
     //public weak var delegate : MessageViewModelDelegate?
     
@@ -29,7 +27,7 @@ class MessageViewModel: NSObject {
     
     public var avatarURL : URL?
     
-    public var isShowAvatar : Bool = false
+    public var isShowAvatar : Bool = true
     
     public var bubbleImage : UIImage?
     
@@ -51,6 +49,10 @@ class MessageViewModel: NSObject {
     
     public var insets : UIEdgeInsets = UIEdgeInsets.zero
     
+    init(model : MessageModel) {
+        self.model = model
+    }
+    
     public func reloabdData(_ completion : (() -> Void)?){
         isIncommingMessage = !model.isMyMessage()
         avatarURL = URL(string: model.sender.avatarURL)
@@ -61,6 +63,31 @@ class MessageViewModel: NSObject {
         
         bubbleImage = bubleConfiguration.getBubbleImage(isIncoming: isIncommingMessage, position: position)
         
+    }
+    
+    // Don't care about afterItem
+    public func setupPositionWith(previous preItem: MessageViewModel?){
+        var tempPos : MessageCellPosition = .none
+        isShowAvatar = true
+        if preItem != nil && isGroupWith(preItem!){
+            insets.top = CGFloat(2)
+            tempPos = .last
+        }else{
+            insets.top = CGFloat(16)
+            tempPos = .none
+        }
+
+        position = tempPos
+    }
+    
+    // Don't care about previousItem
+    public func setupPositionWith(after afterItem: MessageViewModel?){
+        var tempPos : MessageCellPosition = position
+        if afterItem != nil && isGroupWith(afterItem!){
+            tempPos = tempPos == .none ? .first : .middle
+            isShowAvatar = false
+        }
+        position = tempPos
     }
     
     public func setupPositionWith(previous preItem: MessageViewModel?, andAfter afterItem: MessageViewModel?){

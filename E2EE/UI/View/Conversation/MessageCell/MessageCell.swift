@@ -14,7 +14,9 @@ protocol MessageCellDelegate {
     
     func messageCell(_ cell : MessageCell, subFunctionClicked subFunctionNode : ASImageNode)
     
-    func removeMessageCell(_ cell : MessageCell)
+    func messageCell(_ cell : MessageCell, contentClicked contentNode: ASDisplayNode)
+    
+    func messageCell(_ cell : MessageCell, longPressGesture: UILongPressGestureRecognizer)
 }
 
 class MessageCell: ASCellNode {
@@ -48,11 +50,10 @@ class MessageCell: ASCellNode {
     
     var insets : UIEdgeInsets = UIEdgeInsets.zero
     
-    lazy var editView : MessageCellEditView = {
-        let frame = self.rootViewController?.tabBarController?.tabBar.frame
-        
-        return MessageCellEditView(target: self, frame: frame!, removeBtnAction: #selector(removeMessageCell))
-    }()
+//    public func getContentNode() -> ContentNode{
+//        assert(false, "getContentNode should be override in subClass")
+//        return ContentNode()
+//    }
     
     override init() {
         super.init()
@@ -143,22 +144,12 @@ class MessageCell: ASCellNode {
 
 extension MessageCell: UIGestureRecognizerDelegate{
     @objc func handleLongPress(longPressGesture: UILongPressGestureRecognizer) {
-        if longPressGesture.state == .began{
-            ASPerformBlockOnMainThread {
-                
-                self.rootViewController?.view.addSubnode(self.editView)
-                
-            }
-        }
+        ASPerformBlockOnMainThread {
+            self.delegate?.messageCell(self, longPressGesture: longPressGesture)
+        }        
     }
 }
 
 extension MessageCell{
-    @objc private func removeMessageCell(){
-        delegate?.removeMessageCell(self)
-        
-        ASPerformBlockOnMainThread {
-            self.editView.removeFromSupernode()
-        }
-    }
+   
 }

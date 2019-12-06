@@ -20,6 +20,10 @@ extension Database{
         return Int.random(in: 0..<max)
     }
     
+    func randomInt(_ min: Int, _ max : Int) -> Int{
+        return Int.random(in: min..<max)
+    }
+    
     func randomMsgTime()->(TimeInterval, TimeInterval, TimeInterval){
         let sent = timeNow - Double(Int.random(in: 0...3600*24*30))
         let deliveried : TimeInterval = sent + Double(Int.random(in: 1...1000))
