@@ -133,6 +133,81 @@ class MessageCell: ASCellNode {
         return ASInsetLayoutSpec(insets: insets, child: contentStack)
     }
     
+    override func animateLayoutTransition(_ context: ASContextTransitioning) {
+        if context.isAnimated(){
+            if isHideDetails{
+                if self.isIncommingMessage{
+                    avatarImageNode.frame = context.finalFrame(for: avatarImageNode)
+                }
+                            
+                let contentNode: ASDisplayNode = getContentNode()
+                contentNode.frame = context.finalFrame(for: contentNode)
+                
+                var finalStatusNodeFrame = context.initialFrame(for: statusNode)
+                finalStatusNodeFrame.origin.y += finalStatusNodeFrame.size.height
+                statusNode.alpha = 0
+                
+                var finalTimeNodeFrame = context.initialFrame(for: timeNode)
+                finalTimeNodeFrame.origin.y += finalTimeNodeFrame.size.height
+                timeNode.alpha = 0
+                
+                UIView.animate(withDuration: 0.3, animations: {
+                    
+                    self.statusNode.frame = finalStatusNodeFrame
+                    self.statusNode.alpha = 0
+                                     
+                    self.timeNode.frame = finalTimeNodeFrame
+                    self.timeNode.alpha = 0
+                    
+                    contentNode.frame = context.initialFrame(for: contentNode)
+                    
+                    if self.isIncommingMessage{
+                        self.avatarImageNode.frame = context.initialFrame(for: self.avatarImageNode)
+                    }
+                    
+                }) { (finished) in
+                    context.completeTransition(finished)
+                }
+            }else{
+                if isIncommingMessage{
+                    avatarImageNode.frame = context.finalFrame(for: avatarImageNode)
+                }
+                
+                let contentNode: ASDisplayNode = getContentNode()
+                contentNode.frame = context.finalFrame(for: contentNode)
+                
+                var initialStatusNodeFrame = context.finalFrame(for: statusNode)
+                initialStatusNodeFrame.origin.y += initialStatusNodeFrame.size.height
+                statusNode.frame = initialStatusNodeFrame
+                statusNode.alpha = 0
+                
+                var initialTimeNodeFrame = context.finalFrame(for: timeNode)
+                initialTimeNodeFrame.origin.y += initialTimeNodeFrame.size.height
+                timeNode.frame = initialTimeNodeFrame
+                timeNode.alpha = 0
+                
+                UIView.animate(withDuration: 0.3, animations: {
+                    self.statusNode.frame = context.finalFrame(for: self.statusNode)
+                    self.statusNode.alpha = 1
+                    
+                    self.timeNode.frame = context.finalFrame(for: self.timeNode)
+                    self.timeNode.alpha = 1
+                    
+                    contentNode.frame = context.initialFrame(for: contentNode)
+          
+                    if self.isIncommingMessage{
+                        self.avatarImageNode.frame = context.initialFrame(for: self.avatarImageNode)
+                    }
+                    
+                }) { (finished) in
+                    context.completeTransition(finished)
+                }
+            }
+        }else{
+            super.animateLayoutTransition(context)
+        }
+        
+    }
     
 // MARK: - Should be override in subclass
     func setupContent(){
