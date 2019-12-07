@@ -20,6 +20,8 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     
     var chatBox : ChatBoxView!
     
+    var selectedCell: MessageCell?
+    
     lazy var editMessageView: MessageCellEditView = {
         let frame = self.view.frame
         
@@ -46,18 +48,18 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         
         DataManager.shared.addObserver(for: .messageChanged, target: self, callBackQueue: DispatchQueue.main)
         
-//        DataManager.shared.fetchMessageModels(with: self.inboxID, { (models) in
-//            var viewModels = [MessageViewModel]()
-//            for i in models{
-//                let viewModel = MessageViewModelFactory.viewModel(i)
-//                viewModels.append(viewModel)
-//            }
-//
-//            ASPerformBlockOnMainThread {
-//                self.insertIntoLastWithMessages(viewModels: viewModels)
-//            }
-//
-//        }, callbackQueue: nil)
+        //        DataManager.shared.fetchMessageModels(with: self.inboxID, { (models) in
+        //            var viewModels = [MessageViewModel]()
+        //            for i in models{
+        //                let viewModel = MessageViewModelFactory.viewModel(i)
+        //                viewModels.append(viewModel)
+        //            }
+        //
+        //            ASPerformBlockOnMainThread {
+        //                self.insertIntoLastWithMessages(viewModels: viewModels)
+        //            }
+        //
+        //        }, callbackQueue: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardAppear(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDisappear(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -109,25 +111,30 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
 }
 
 extension ChatScreenViewController: ConversationTableNodeDelegate{
+    func shouldBatchFetch(for tableNode: ConversationTableNode) -> Bool {
+        true
+    }
     
     func tableNode(_ tableNode: ConversationTableNode, willBeginBatchFetchWith context: ASBatchContext) {
         DataManager.shared.fetchMessageModels(with: self.inboxID, { (models) in
-            context.completeBatchFetching(true)
-
+                        
             var viewModels = [MessageViewModel]()
             for i in models{
                 let viewModel = MessageViewModelFactory.viewModel(i)
                 viewModels.append(viewModel)
             }
-
+            
             ASPerformBlockOnMainThread {
                 self.insertIntoLastWithMessages(viewModels: viewModels)
+                
+                context.completeBatchFetching(true)
             }
-
+            
         }, callbackQueue: nil)
     }
 }
 
+// MARK: ConversationTableNodeDataSource
 extension ChatScreenViewController: ConversationTableNodeDataSource{
     func tableNode(_ tableNode: ConversationTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
         let viewModel = viewModels[indexPath.row]
@@ -178,7 +185,7 @@ extension ChatScreenViewController: ChatBoxDelegate{
     }
 }
 
-
+// MARK: Handle Message
 extension ChatScreenViewController{
     
     private func removeMessage(at pos: Int){
@@ -199,11 +206,11 @@ extension ChatScreenViewController{
         
         if after != nil{
             after!.setupPositionWith(previous: previous, andAfter: pos > 1 ? self.viewModels[pos - 2] : nil)
-                        
+            
             let afterNode: MessageCell = tableNode.nodeForRowAt(IndexPath(row: pos - 1, section: 0)) as! MessageCell
             afterNode.updateUI()
         }
-                
+        
         self.viewModels.remove(at: pos)
         self.tableNode.deleteRows(at: [IndexPath(row: pos, section: 0)])
     }
@@ -274,6 +281,7 @@ extension ChatScreenViewController{
     }
 }
 
+// MARK: DataManagerListenerDelegate
 extension ChatScreenViewController: DataManagerListenerDelegate{
     func messageChanged(_ msg: MessageModel, updateType: UpdateType, oldValue: MessageModel?) {
         let viewModel = MessageViewModelFactory.viewModel(msg)
@@ -308,9 +316,19 @@ extension ChatScreenViewController: DataManagerListenerDelegate{
     }
 }
 
+// MARK: MessageCellDelegate
 extension ChatScreenViewController: MessageCellDelegate{
     func messageCell(_ cell: MessageCell, contentClicked contentNode: ASDisplayNode) {
-        
+        if selectedCell != nil{
+            if selectedCell === cell{
+                selectedCell = nil
+            }else{
+                selectedCell?.isHideDetails = true
+                selectedCell = cell
+            }
+        }else{
+            selectedCell = cell
+        }
     }
     
     func messageCell(_ cell: MessageCell, longPressGesture: UILongPressGestureRecognizer) {
@@ -321,7 +339,7 @@ extension ChatScreenViewController: MessageCellDelegate{
             UIView.transition(with: self.view, duration: 0.25, options: .transitionCrossDissolve, animations: {
                 self.view.addSubnode(self.editMessageView)
             }, completion: nil)
-           
+            
         }
     }
     

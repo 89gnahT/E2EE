@@ -54,6 +54,6 @@ class TextMessageCell: MessageCell {
     override func contentClicked(_ contentNode: ASDisplayNode) {
         super.contentClicked(contentNode)
         
-        hideDetails = !hideDetails
+        isHideDetails = !isHideDetails
     }
 }

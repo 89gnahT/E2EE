@@ -15,11 +15,11 @@ class ImageMessageViewModel: MessageViewModel {
     init(model : ImageMessageModel) {
         super.init(model: model)
         
-        reloabdData(nil)
+        updateData(nil)
     }
     
-    override func reloabdData(_ completion : (() -> Void)?) {
-        super.reloabdData(completion)
+    override func updateData(_ completion : (() -> Void)?) {
+        super.updateData(completion)
         
         for i in model.contents{
             let url = URL(string: i)

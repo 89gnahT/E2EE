@@ -24,17 +24,23 @@ public class StandardBubbleConfiguration : BubbleConfigurationProtocol{
     
     public func getBubbleImage(isIncoming incoming: Bool, position pos: MessageCellPosition) -> UIImage? {
         var image : UIImage?
+        var imageName: String
+        let color = getColor(isIncoming: incoming)
+        
         switch pos {
         case .first:
-            image = incoming ? UIImage(named: "bubble_in_first") : UIImage(named: "bubble_out_first")
+            imageName = incoming ? "bubble_in_first" : "bubble_out_first"
         case .middle:
-            image = incoming ? UIImage(named: "bubble_in_mid") : UIImage(named: "bubble_out_mid")
+            imageName = incoming ? "bubble_in_mid" : "bubble_out_mid"
         case .last:
-            image = incoming ? UIImage(named: "bubble_in_last") : UIImage(named: "bubble_out_last")
+            imageName = incoming ? "bubble_in_last" : "bubble_out_last"
         case .none:
-            image = incoming ? UIImage(named: "bubble_default") : UIImage(named: "bubble_default")
+            imageName = incoming ? "bubble_default" : "bubble_default"
         }
-                
-        return resizableImage(image, color: getColor(isIncoming: incoming))
+        
+        image = UIImage(named: imageName)
+        imageName += color.toHexString()
+        
+        return resizableImage(image, color: color, imageName: imageName)
     }
 }

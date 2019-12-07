@@ -23,11 +23,11 @@ class TextMessageViewModel: MessageViewModel {
     init(model : TextMessageModel) {
         super.init(model: model)
                 
-        reloabdData(nil)
+        updateData(nil)
     }
     
-    override func reloabdData(_ completion : (() -> Void)?) {
-        super.reloabdData(completion)
+    override func updateData(_ completion : (() -> Void)?) {
+        super.updateData(completion)
         
         textColor = isIncommingMessage ? .black : .white
         textContent = attributedString(textModel.content, fontSize: 17, isBold: false, foregroundColor: textColor)

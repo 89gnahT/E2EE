@@ -11,6 +11,8 @@ import AsyncDisplayKit
 
 @objc protocol ConversationTableNodeDelegate: NSObjectProtocol{
     func tableNode(_ tableNode: ConversationTableNode, willBeginBatchFetchWith context: ASBatchContext)
+    
+    func shouldBatchFetch(for tableNode: ConversationTableNode) -> Bool
 }
 
 
@@ -93,6 +95,7 @@ extension ConversationTableNode{
     }
 }
 
+// MARK: - Delegate
 extension ConversationTableNode: ASTableDelegate{
     func tableNode(_ tableNode: ASTableNode, constrainedSizeForRowAt indexPath: IndexPath) -> ASSizeRange {
         return ASSizeRangeMake(CGSize.init(width: self.view.frame.width, height: 0),
@@ -125,7 +128,7 @@ extension ConversationTableNode: ASTableDelegate{
     
     
     func shouldBatchFetch(for tableNode: ASTableNode) -> Bool {
-         return !currentBatchContext.isFetching()
+        return delegate?.shouldBatchFetch(for: self) ?? true && !currentBatchContext.isFetching()
     }
     
     func tableNode(_ tableNode: ASTableNode, willBeginBatchFetchWith context: ASBatchContext) {
@@ -139,6 +142,7 @@ extension ConversationTableNode: ASTableDelegate{
     }
 }
 
+// MARK: - DataSource
 extension ConversationTableNode: ASTableDataSource{
     func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
         return (dataSource?.tableNode(self, nodeBlockForRowAt: indexPath))!

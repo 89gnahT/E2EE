@@ -42,9 +42,9 @@ class MessageCell: ASCellNode {
     
     var statusNode = ASTextNode()
     
-    var hideDetails : Bool = true{
+    var isHideDetails : Bool = true{
         didSet{
-            setNeedsLayout()
+            updateUI()
         }
     }
     
@@ -80,6 +80,8 @@ class MessageCell: ASCellNode {
     public func updateUI(){
         ASPerformBlockOnBackgroundThread {
             let viewModel = self.getViewModel()
+            viewModel.updateData(nil)
+            
             self.avatarImageNode.url = viewModel.avatarURL
             
             self.isIncommingMessage = viewModel.isIncommingMessage
@@ -93,6 +95,8 @@ class MessageCell: ASCellNode {
             self.avatarImageNode.isHidden = !viewModel.isShowAvatar
             
             self.updateUIContent()
+            
+            self.setNeedsLayout()
         }
     }
     
@@ -101,7 +105,7 @@ class MessageCell: ASCellNode {
         let content = self.layoutSpecForMessageContent(constrainedSize)
         
         var subContentStackChildren : [ASLayoutElement]
-        if hideDetails{
+        if isHideDetails{
             subContentStackChildren = [content]
         }else{
             subContentStackChildren = [self.timeNode, content, self.statusNode]
@@ -173,7 +177,7 @@ extension MessageCell: UIGestureRecognizerDelegate{
     }
     
     @objc func contentClicked(_ contentNode : ASDisplayNode){
-        
+        delegate?.messageCell(self, contentClicked: getContentNode())
     }
     
 }

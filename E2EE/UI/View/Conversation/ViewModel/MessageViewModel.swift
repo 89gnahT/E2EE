@@ -15,8 +15,6 @@ protocol MessageViewModelDelegate {
 class MessageViewModel: NSObject {
     private(set) var model : MessageModel
     
-    
-    
     //public weak var delegate : MessageViewModelDelegate?
     
     private var bubleConfiguration = StandardBubbleConfiguration.shared
@@ -35,17 +33,15 @@ class MessageViewModel: NSObject {
         didSet{
             if self.isIncommingMessage{
                 insets.left = CGFloat(12)
+                insets.right = CGFloat(0)
             }else{
+                insets.left = CGFloat(0)
                 insets.right = CGFloat(12)
             }
         }
     }
     
-    public var position : MessageCellPosition = .none{
-        didSet{
-            bubbleImage = bubleConfiguration.getBubbleImage(isIncoming: isIncommingMessage, position: position)
-        }
-    }
+    public var position : MessageCellPosition = .none
     
     public var insets : UIEdgeInsets = UIEdgeInsets.zero
     
@@ -53,7 +49,7 @@ class MessageViewModel: NSObject {
         self.model = model
     }
     
-    public func reloabdData(_ completion : (() -> Void)?){
+    public func updateData(_ completion : (() -> Void)?){
         isIncommingMessage = !model.isMyMessage()
         avatarURL = URL(string: model.sender.avatarURL)
         
@@ -102,7 +98,7 @@ class MessageViewModel: NSObject {
         }
         
         if afterItem != nil && isGroupWith(afterItem!){
-            tempPos = tempPos == .none ? .first : .middle
+            tempPos = (tempPos == .none) ? .first : .middle
             isShowAvatar = false
         }
         

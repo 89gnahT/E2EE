@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import PINCache
 public enum MessageCellPosition {
     case first
     case middle
@@ -24,13 +24,26 @@ public protocol BubbleConfigurationProtocol {
 }
 
 extension BubbleConfigurationProtocol{
-    func resizableImage(_ i : UIImage?, color : UIColor) -> UIImage?{
+    func resizableImage(_ i : UIImage?, color : UIColor, imageName: String) -> UIImage?{
         guard let bubbleImage = i?.maskWithColor(color: color) else {
             return nil
         }
         
-        let center = CGPoint(x: bubbleImage.size.width / 2.0, y: bubbleImage.size.height / 2.0);
-        let capInsets = UIEdgeInsets(top: center.y - 1, left: center.x - 1, bottom: center.y - 1, right: center.x - 1);
-        return bubbleImage.resizableImage(withCapInsets: capInsets, resizingMode: .stretch)
+        let object = PINCache.shared.object(forKey: imageName)
+        var resultImage = object != nil ? (object as? UIImage) : nil
+        
+        if resultImage == nil{
+            let center = CGPoint(x: bubbleImage.size.width / 2.0, y: bubbleImage.size.height / 2.0);
+            let capInsets = UIEdgeInsets(top: center.y - 1,
+                                         left: center.x - 1,
+                                         bottom: center.y - 1,
+                                         right: center.x - 1);
+            resultImage = bubbleImage.resizableImage(withCapInsets: capInsets, resizingMode: .stretch)
+            
+            if resultImage != nil{
+                PINCache.shared.setObject(resultImage, forKey: imageName)
+            }
+        }
+        return resultImage
     }
 }
