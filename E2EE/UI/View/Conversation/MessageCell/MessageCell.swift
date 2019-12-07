@@ -44,7 +44,8 @@ class MessageCell: ASCellNode {
     
     var isHideDetails : Bool = true{
         didSet{
-            updateUI()
+            //updateUI()
+            self.transitionLayout(withAnimation: true, shouldMeasureAsync: false, measurementCompletion: nil)
         }
     }
     
@@ -61,7 +62,6 @@ class MessageCell: ASCellNode {
         
         avatarImageNode.style.preferredSize = CGSize(squareEdge: 28)
         avatarImageNode.imageModificationBlock = ASImageNodeRoundBorderModificationBlock(0, nil)
-        avatarImageNode.addTarget(self, action: #selector(avatarClicked(_:)), forControlEvents: .touchUpInside)
         
         setupContent()
         
@@ -70,6 +70,8 @@ class MessageCell: ASCellNode {
     
     override func didLoad() {
         super.didLoad()
+        
+        avatarImageNode.addTarget(self, action: #selector(avatarClicked(_:)), forControlEvents: .touchUpInside)
         
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPressGesture.minimumPressDuration = 0.7
@@ -130,6 +132,7 @@ class MessageCell: ASCellNode {
         
         return ASInsetLayoutSpec(insets: insets, child: contentStack)
     }
+    
     
 // MARK: - Should be override in subclass
     func setupContent(){

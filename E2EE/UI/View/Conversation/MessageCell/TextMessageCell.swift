@@ -31,7 +31,6 @@ class TextMessageCell: MessageCell {
         return textContentNode
     }
     
-    
     override func didLoad() {
         super.didLoad()
     
@@ -45,7 +44,6 @@ class TextMessageCell: MessageCell {
     override func updateUIContent() {
         textContentNode.updateUI()
     }
-    
     
     override func layoutSpecForMessageContent(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         return ASInsetLayoutSpec(insets: UIEdgeInsets.zero, child: textContentNode)

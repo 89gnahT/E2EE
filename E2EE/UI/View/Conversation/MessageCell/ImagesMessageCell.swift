@@ -17,6 +17,7 @@ class ImagesMessageCell: MessageCell {
     init(viewModel: ImageMessageViewModel) {
         imageViewModel = viewModel
         imagesContentNode = ImagesContentNode(viewModel: imageViewModel)
+        
         super.init()
     }
     

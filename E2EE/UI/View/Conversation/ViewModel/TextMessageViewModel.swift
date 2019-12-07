@@ -30,7 +30,7 @@ class TextMessageViewModel: MessageViewModel {
         super.updateData(completion)
         
         textColor = isIncommingMessage ? .black : .white
-        textContent = attributedString(textModel.content, fontSize: 17, isBold: false, foregroundColor: textColor)
+        textContent = attributedString(textModel.content, fontSize: 16, isBold: false, foregroundColor: textColor)
         
     }
     
