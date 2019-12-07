@@ -137,19 +137,17 @@ class MessageCell: ASCellNode {
         if context.isAnimated(){
             if isHideDetails{
                 if self.isIncommingMessage{
-                    avatarImageNode.frame = context.finalFrame(for: avatarImageNode)
+                    avatarImageNode.frame = context.initialFrame(for: avatarImageNode)
                 }
                             
                 let contentNode: ASDisplayNode = getContentNode()
-                contentNode.frame = context.finalFrame(for: contentNode)
+                contentNode.frame = context.initialFrame(for: contentNode)
                 
                 var finalStatusNodeFrame = context.initialFrame(for: statusNode)
                 finalStatusNodeFrame.origin.y += finalStatusNodeFrame.size.height
-                statusNode.alpha = 0
                 
                 var finalTimeNodeFrame = context.initialFrame(for: timeNode)
                 finalTimeNodeFrame.origin.y += finalTimeNodeFrame.size.height
-                timeNode.alpha = 0
                 
                 UIView.animate(withDuration: 0.3, animations: {
                     
@@ -159,10 +157,16 @@ class MessageCell: ASCellNode {
                     self.timeNode.frame = finalTimeNodeFrame
                     self.timeNode.alpha = 0
                     
-                    contentNode.frame = context.initialFrame(for: contentNode)
+                    contentNode.frame = context.finalFrame(for: contentNode)
                     
                     if self.isIncommingMessage{
-                        self.avatarImageNode.frame = context.initialFrame(for: self.avatarImageNode)
+                        self.avatarImageNode.frame = context.finalFrame(for: self.avatarImageNode)
+                    }
+  
+                    let fromSize = context.layout(forKey: ASTransitionContextFromLayoutKey)!.size
+                    let toSize = context.layout(forKey: ASTransitionContextToLayoutKey)!.size
+                    if !__CGSizeEqualToSize(fromSize, toSize){
+                        self.frame = CGRect(origin: self.frame.origin, size: toSize)                        
                     }
                     
                 }) { (finished) in
