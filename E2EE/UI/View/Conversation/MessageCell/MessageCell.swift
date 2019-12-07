@@ -135,85 +135,68 @@ class MessageCell: ASCellNode {
     
     override func animateLayoutTransition(_ context: ASContextTransitioning) {
         if context.isAnimated(){
+            
+            if isIncommingMessage{
+                avatarImageNode.frame = context.initialFrame(for: avatarImageNode)
+            }
+            
+            let contentNode: ASDisplayNode = getContentNode()
+            contentNode.frame = context.initialFrame(for: contentNode)
+            
+            var targetStatusFrame = CGRect.zero
+            var targetTimeNodeFrame = CGRect.zero
             if isHideDetails{
-                if self.isIncommingMessage{
-                    avatarImageNode.frame = context.initialFrame(for: avatarImageNode)
-                }
-                            
-                let contentNode: ASDisplayNode = getContentNode()
-                contentNode.frame = context.initialFrame(for: contentNode)
+                targetStatusFrame = context.initialFrame(for: statusNode)
+                targetStatusFrame.origin.y += targetStatusFrame.size.height
                 
-                var finalStatusNodeFrame = context.initialFrame(for: statusNode)
-                finalStatusNodeFrame.origin.y += finalStatusNodeFrame.size.height
-                
-                var finalTimeNodeFrame = context.initialFrame(for: timeNode)
-                finalTimeNodeFrame.origin.y += finalTimeNodeFrame.size.height
-                
-                UIView.animate(withDuration: 0.3, animations: {
-                    
-                    self.statusNode.frame = finalStatusNodeFrame
-                    self.statusNode.alpha = 0
-                                     
-                    self.timeNode.frame = finalTimeNodeFrame
-                    self.timeNode.alpha = 0
-                    
-                    contentNode.frame = context.finalFrame(for: contentNode)
-                    
-                    if self.isIncommingMessage{
-                        self.avatarImageNode.frame = context.finalFrame(for: self.avatarImageNode)
-                    }
-  
-                    let fromSize = context.layout(forKey: ASTransitionContextFromLayoutKey)!.size
-                    let toSize = context.layout(forKey: ASTransitionContextToLayoutKey)!.size
-                    if !__CGSizeEqualToSize(fromSize, toSize){
-                        self.frame = CGRect(origin: self.frame.origin, size: toSize)                        
-                    }
-                    
-                }) { (finished) in
-                    context.completeTransition(finished)
-                }
+                targetTimeNodeFrame = context.initialFrame(for: timeNode)
+                targetTimeNodeFrame.origin.y -= targetTimeNodeFrame.size.height
             }else{
-                if isIncommingMessage{
-                    avatarImageNode.frame = context.finalFrame(for: avatarImageNode)
-                }
-                
-                let contentNode: ASDisplayNode = getContentNode()
-                contentNode.frame = context.finalFrame(for: contentNode)
-                
                 var initialStatusNodeFrame = context.finalFrame(for: statusNode)
                 initialStatusNodeFrame.origin.y += initialStatusNodeFrame.size.height
                 statusNode.frame = initialStatusNodeFrame
                 statusNode.alpha = 0
+                targetStatusFrame = context.finalFrame(for: self.statusNode)
                 
                 var initialTimeNodeFrame = context.finalFrame(for: timeNode)
                 initialTimeNodeFrame.origin.y += initialTimeNodeFrame.size.height
                 timeNode.frame = initialTimeNodeFrame
                 timeNode.alpha = 0
-                
-                UIView.animate(withDuration: 0.3, animations: {
-                    self.statusNode.frame = context.finalFrame(for: self.statusNode)
+                targetTimeNodeFrame = context.finalFrame(for: self.timeNode)
+            }
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                if self.isHideDetails{
+                    self.statusNode.alpha = 0
+                    self.timeNode.alpha = 0
+                }else{
                     self.statusNode.alpha = 1
-                    
-                    self.timeNode.frame = context.finalFrame(for: self.timeNode)
                     self.timeNode.alpha = 1
-                    
-                    contentNode.frame = context.initialFrame(for: contentNode)
-          
-                    if self.isIncommingMessage{
-                        self.avatarImageNode.frame = context.initialFrame(for: self.avatarImageNode)
-                    }
-                    
-                }) { (finished) in
-                    context.completeTransition(finished)
                 }
+                self.statusNode.frame = targetStatusFrame
+                self.timeNode.frame = targetTimeNodeFrame
+                
+                contentNode.frame = context.finalFrame(for: contentNode)
+                
+                if self.isIncommingMessage{
+                    self.avatarImageNode.frame = context.finalFrame(for: self.avatarImageNode)
+                }
+                
+                let fromSize = context.layout(forKey: ASTransitionContextFromLayoutKey)!.size
+                let toSize = context.layout(forKey: ASTransitionContextToLayoutKey)!.size
+                if !__CGSizeEqualToSize(fromSize, toSize){
+                    self.frame = CGRect(origin: self.frame.origin, size: toSize)
+                }
+                
+            }) { (finished) in
+                context.completeTransition(finished)
             }
         }else{
             super.animateLayoutTransition(context)
-        }
-        
+        }        
     }
     
-// MARK: - Should be override in subclass
+    // MARK: - Should be override in subclass
     func setupContent(){
         
     }
@@ -233,8 +216,8 @@ class MessageCell: ASCellNode {
     }
     
     func updateCellAttributeWhenLayout(){
-           
-       }
+        
+    }
     
     func layoutSpecForMessageContent(_ constrainedSize : ASSizeRange) -> ASLayoutSpec{
         assert(false, "layoutSpecForMessageContent should be override in subClass")
