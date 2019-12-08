@@ -34,7 +34,7 @@ class ImagesContentNode: ContentNode {
         numberNodePerRow = 3
     }
     
-    override func updateUI() {
+    override func updateUI(_ isHightlight: Bool = false) {
         super.updateUI()
         getImageNodeFromURLs(imageViewModel.imageURLs)
     }

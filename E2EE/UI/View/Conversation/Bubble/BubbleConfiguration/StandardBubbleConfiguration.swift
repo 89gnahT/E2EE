@@ -9,23 +9,37 @@
 import UIKit
 
 public class StandardBubbleConfiguration : BubbleConfigurationProtocol{
-    
+            
     static let shared = StandardBubbleConfiguration()
     
     private init() {
         
     }
-    
-    public func getColor(isIncoming incoming: Bool) -> UIColor {
-        let c = CGFloat(240) / 255
-        return incoming ? UIColor(red: c, green: c, blue: c, alpha: 1) : UIColor.systemBlue;
-        //return  UIColor.systemBlue;
+       
+    public func getIncomingColor(isHighlight highlight: Bool) -> UIColor {
+        var c: UIColor
+        if highlight{
+            c = UIColor(r: 192, g: 192, b: 192)            
+        }else{
+            c = UIColor(r: 240, g: 240, b: 240)
+        }
+        return c
     }
     
-    public func getBubbleImage(isIncoming incoming: Bool, position pos: MessageCellPosition) -> UIImage? {
+    public func getOutcomingColor(isHighlight highlight: Bool) -> UIColor {
+        var c: UIColor
+        if highlight{
+            c = UIColor(r: 16, g: 108, b: 201)
+        }else{
+            c = UIColor(r: 23, g: 135, b: 251)
+        }
+        return c
+    }
+    
+    public func getBubbleImage(isIncoming incoming: Bool, position pos: MessageCellPosition, isHighlight highlight: Bool) -> UIImage? {
         var image : UIImage?
         var imageName: String
-        let color = getColor(isIncoming: incoming)
+        let color = getColor(isIncoming: incoming, isHighlight: highlight)
         
         switch pos {
         case .first:

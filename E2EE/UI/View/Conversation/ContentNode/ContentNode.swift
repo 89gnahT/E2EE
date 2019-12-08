@@ -25,7 +25,7 @@ class ContentNode: ASControlNode, UIGestureRecognizerDelegate {
         
     }
     
-    public func updateUI(){
+    public func updateUI(_ isHightlight: Bool = false){
         
     }
 }

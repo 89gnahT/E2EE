@@ -17,22 +17,28 @@ public enum MessageCellPosition {
 
 public protocol BubbleConfigurationProtocol {
     
-    func getColor(isIncoming incoming : Bool) -> UIColor
+    func getIncomingColor(isHighlight highlight: Bool) -> UIColor
     
-    func getBubbleImage(isIncoming incoming : Bool, position pos : MessageCellPosition) -> UIImage?
+    func getOutcomingColor(isHighlight highlight: Bool) -> UIColor
+    
+    func getBubbleImage(isIncoming incoming : Bool, position pos : MessageCellPosition, isHighlight highlight: Bool) -> UIImage?
     
 }
 
 extension BubbleConfigurationProtocol{
+    public func getColor(isIncoming incoming: Bool, isHighlight highlight: Bool) -> UIColor {
+        return incoming ? getIncomingColor(isHighlight: highlight) : getOutcomingColor(isHighlight: highlight)
+       }
+    
     func resizableImage(_ i : UIImage?, color : UIColor, imageName: String) -> UIImage?{
-        guard let bubbleImage = i?.maskWithColor(color: color) else {
-            return nil
-        }
-        
+                
         let object = PINCache.shared.object(forKey: imageName)
         var resultImage = object != nil ? (object as? UIImage) : nil
         
         if resultImage == nil{
+            guard let bubbleImage = i?.maskWithColor(color: color) else {
+                return nil
+            }
             let center = CGPoint(x: bubbleImage.size.width / 2.0, y: bubbleImage.size.height / 2.0);
             let capInsets = UIEdgeInsets(top: center.y - 1,
                                          left: center.x - 1,

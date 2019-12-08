@@ -45,11 +45,11 @@ class TextContentNode: ContentNode {
         
     }
     
-    override func updateUI() {
+    override func updateUI(_ isHightlight: Bool = false) {
         super.updateUI()
         
         textBtnNode.titleNode.attributedText = textViewModel.textContent
-        textBtnNode.setBackgroundImage(textViewModel.bubbleImage, for: .normal)
+        textBtnNode.setBackgroundImage(textViewModel.bubbleImage, for: .normal)    
     }
     
     

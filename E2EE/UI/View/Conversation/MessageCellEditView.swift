@@ -71,7 +71,11 @@ class MessageCellEditView: ASDisplayNode {
     }
     
     override func removeFromSupernode() {
-        super.removeFromSupernode()        
+        super.removeFromSupernode()
+        
+        if messageCell?.isHideDetails ?? false{
+            messageCell?.isHighlightContent = false
+        }
     }
     
     deinit {

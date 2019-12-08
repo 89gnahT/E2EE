@@ -41,6 +41,12 @@ class MessageViewModel: NSObject {
         }
     }
     
+    public var isHighlight: Bool = false{
+        didSet{
+            updateData(nil)
+        }
+    }
+    
     public var position : MessageCellPosition = .none
     
     public var insets : UIEdgeInsets = UIEdgeInsets.zero
@@ -57,7 +63,7 @@ class MessageViewModel: NSObject {
         
         status = attributedString("Delivered", fontSize: 13, isBold: false, foregroundColor: .darkGray)
         
-        bubbleImage = bubleConfiguration.getBubbleImage(isIncoming: isIncommingMessage, position: position)
+        bubbleImage = bubleConfiguration.getBubbleImage(isIncoming: isIncommingMessage, position: position, isHighlight: isHighlight)
         
     }
     

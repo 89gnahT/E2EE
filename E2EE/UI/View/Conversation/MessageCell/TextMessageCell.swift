@@ -45,6 +45,11 @@ class TextMessageCell: MessageCell {
         textContentNode.updateUI()
     }
     
+    override func updateHighlightContentIfNeed() {
+        self.textViewModel.isHighlight = isHighlightContent
+        self.textContentNode.updateUI(isHighlightContent)
+    }
+    
     override func layoutSpecForMessageContent(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         return ASInsetLayoutSpec(insets: UIEdgeInsets.zero, child: textContentNode)
     }
@@ -54,4 +59,5 @@ class TextMessageCell: MessageCell {
         
         isHideDetails = !isHideDetails
     }
+    
 }

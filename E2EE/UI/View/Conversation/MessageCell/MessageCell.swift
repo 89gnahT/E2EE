@@ -44,8 +44,23 @@ class MessageCell: ASCellNode {
     
     var isHideDetails : Bool = true{
         didSet{
-            //updateUI()
-            self.transitionLayout(withAnimation: true, shouldMeasureAsync: false, measurementCompletion: nil)
+            let setHighlightContentIfNeed = isHideDetails ? false : true
+            
+            ASPerformBlockOnBackgroundThread {
+                self.isHighlightContent = setHighlightContentIfNeed
+                
+                ASPerformBlockOnMainThread {
+                    self.transitionLayout(withAnimation: true, shouldMeasureAsync: true, measurementCompletion: nil)
+                }
+            }
+        }
+    }
+    
+    var isHighlightContent: Bool = false{
+        didSet{
+            ASPerformBlockOnBackgroundThread {
+                self.updateHighlightContentIfNeed()
+            }
         }
     }
     
@@ -193,7 +208,7 @@ class MessageCell: ASCellNode {
             }
         }else{
             super.animateLayoutTransition(context)
-        }        
+        }
     }
     
     // MARK: - Should be override in subclass
@@ -215,6 +230,10 @@ class MessageCell: ASCellNode {
         
     }
     
+    public func updateHighlightContentIfNeed(){
+        
+    }
+    
     func updateCellAttributeWhenLayout(){
         
     }
@@ -230,6 +249,8 @@ extension MessageCell: UIGestureRecognizerDelegate{
     @objc func handleLongPress(longPressGesture: UILongPressGestureRecognizer) {
         ASPerformBlockOnMainThread {
             self.delegate?.messageCell(self, longPressGesture: longPressGesture)
+            
+            self.isHighlightContent = true
         }        
     }
     
