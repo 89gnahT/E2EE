@@ -21,6 +21,12 @@
 		C203CE202371654500E71171 /* NetworkSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = C203CE1F2371654500E71171 /* NetworkSocket.swift */; };
 		C203CE222371670100E71171 /* NetBaseSocketAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C203CE212371670100E71171 /* NetBaseSocketAdapter.swift */; };
 		C203CE2823717E7600E71171 /* StreamSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = C203CE2723717E7600E71171 /* StreamSocket.swift */; };
+		C2094865239E46A200DC8A7D /* FirebaseUserStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2094864239E46A200DC8A7D /* FirebaseUserStorage.swift */; };
+		C2094867239E46AD00DC8A7D /* FirebaseKeyStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2094866239E46AD00DC8A7D /* FirebaseKeyStorage.swift */; };
+		C209486A239E46DA00DC8A7D /* CurrentLoginUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2094869239E46DA00DC8A7D /* CurrentLoginUser.swift */; };
+		C209486C239E542C00DC8A7D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C209486B239E542C00DC8A7D /* GoogleService-Info.plist */; };
+		C209486E239E56D000DC8A7D /* AliceActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C209486D239E56D000DC8A7D /* AliceActivity.swift */; };
+		C2094870239E56DE00DC8A7D /* BobActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C209486F239E56DE00DC8A7D /* BobActivity.swift */; };
 		C25D7282236BDD0B00359C11 /* DeviceConsistencySignature.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25D7281236BDD0B00359C11 /* DeviceConsistencySignature.swift */; };
 		C25D7284236BDEDD00359C11 /* DeviceConsistencyMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25D7283236BDEDD00359C11 /* DeviceConsistencyMessage.swift */; };
 		C25D7286236BE48D00359C11 /* DeviceConsistencyCommitment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25D7285236BE48D00359C11 /* DeviceConsistencyCommitment.swift */; };
@@ -132,6 +138,12 @@
 		C203CE1F2371654500E71171 /* NetworkSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSocket.swift; sourceTree = "<group>"; };
 		C203CE212371670100E71171 /* NetBaseSocketAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetBaseSocketAdapter.swift; sourceTree = "<group>"; };
 		C203CE2723717E7600E71171 /* StreamSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSocket.swift; sourceTree = "<group>"; };
+		C2094864239E46A200DC8A7D /* FirebaseUserStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseUserStorage.swift; sourceTree = "<group>"; };
+		C2094866239E46AD00DC8A7D /* FirebaseKeyStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseKeyStorage.swift; sourceTree = "<group>"; };
+		C2094869239E46DA00DC8A7D /* CurrentLoginUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentLoginUser.swift; sourceTree = "<group>"; };
+		C209486B239E542C00DC8A7D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C209486D239E56D000DC8A7D /* AliceActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AliceActivity.swift; sourceTree = "<group>"; };
+		C209486F239E56DE00DC8A7D /* BobActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BobActivity.swift; sourceTree = "<group>"; };
 		C25D7281236BDD0B00359C11 /* DeviceConsistencySignature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceConsistencySignature.swift; sourceTree = "<group>"; };
 		C25D7283236BDEDD00359C11 /* DeviceConsistencyMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceConsistencyMessage.swift; sourceTree = "<group>"; };
 		C25D7285236BE48D00359C11 /* DeviceConsistencyCommitment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceConsistencyCommitment.swift; sourceTree = "<group>"; };
@@ -277,6 +289,7 @@
 		814F61B923595A3700A6AA44 /* E2EE */ = {
 			isa = PBXGroup;
 			children = (
+				C2094862239E468000DC8A7D /* FirebaseStorage */,
 				C273C80F2384F81100CC7522 /* LocalKeyStorage */,
 				53DC8FE2236FBA18007AF733 /* Network */,
 				C2763720236BD981007A563D /* Security */,
@@ -287,6 +300,7 @@
 				814F61C323595A3A00A6AA44 /* Assets.xcassets */,
 				814F61C523595A3A00A6AA44 /* LaunchScreen.storyboard */,
 				814F61C823595A3A00A6AA44 /* Info.plist */,
+				C209486B239E542C00DC8A7D /* GoogleService-Info.plist */,
 			);
 			path = E2EE;
 			sourceTree = "<group>";
@@ -298,6 +312,8 @@
 				814F61D323595A3B00A6AA44 /* Info.plist */,
 				C26D3991238D34FC0087C867 /* GroupComunicationTest.swift */,
 				C278C5542394B3A10095757A /* NetworkTest.swift */,
+				C209486D239E56D000DC8A7D /* AliceActivity.swift */,
+				C209486F239E56DE00DC8A7D /* BobActivity.swift */,
 			);
 			path = E2EETests;
 			sourceTree = "<group>";
@@ -350,6 +366,16 @@
 				C203CE1F2371654500E71171 /* NetworkSocket.swift */,
 			);
 			path = NetworkSocket;
+			sourceTree = "<group>";
+		};
+		C2094862239E468000DC8A7D /* FirebaseStorage */ = {
+			isa = PBXGroup;
+			children = (
+				C2094864239E46A200DC8A7D /* FirebaseUserStorage.swift */,
+				C2094866239E46AD00DC8A7D /* FirebaseKeyStorage.swift */,
+				C2094869239E46DA00DC8A7D /* CurrentLoginUser.swift */,
+			);
+			path = FirebaseStorage;
 			sourceTree = "<group>";
 		};
 		C25D7280236BDCED00359C11 /* DeviceConsistency */ = {
@@ -549,6 +575,7 @@
 				814F61C923595A3B00A6AA44 /* Sources */,
 				814F61CA23595A3B00A6AA44 /* Frameworks */,
 				814F61CB23595A3B00A6AA44 /* Resources */,
+				66A0F2BE2922CA415B14DCEF /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -629,6 +656,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				814F61C723595A3A00A6AA44 /* LaunchScreen.storyboard in Resources */,
+				C209486C239E542C00DC8A7D /* GoogleService-Info.plist in Resources */,
 				814F61C423595A3A00A6AA44 /* Assets.xcassets in Resources */,
 				814F61C223595A3700A6AA44 /* Main.storyboard in Resources */,
 			);
@@ -688,6 +716,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		66A0F2BE2922CA415B14DCEF /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-E2EETests/Pods-E2EETests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-E2EETests/Pods-E2EETests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-E2EETests/Pods-E2EETests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		995C6A7AD75A8994BA23D13A /* [CP] Embed Pods Frameworks */ = {
@@ -792,6 +837,8 @@
 				C276376B236BD981007A563D /* SessionStore.swift in Sources */,
 				C203CE202371654500E71171 /* NetworkSocket.swift in Sources */,
 				C276375D236BD981007A563D /* PublicKey.swift in Sources */,
+				C2094867239E46AD00DC8A7D /* FirebaseKeyStorage.swift in Sources */,
+				C209486A239E46DA00DC8A7D /* CurrentLoginUser.swift in Sources */,
 				C2763765236BD981007A563D /* ScannableFingerprint.swift in Sources */,
 				C2763762236BD981007A563D /* SignalError.swift in Sources */,
 				C2763770236BD981007A563D /* SenderKeyMessage.swift in Sources */,
@@ -799,6 +846,7 @@
 				C276376E236BD981007A563D /* PreKeySignalMessage.swift in Sources */,
 				C2763774236BD981007A563D /* LocalStorage.pb.swift in Sources */,
 				537280F123730A570074F9EA /* SignalSocket.swift in Sources */,
+				C2094865239E46A200DC8A7D /* FirebaseUserStorage.swift in Sources */,
 				C25D7284236BDEDD00359C11 /* DeviceConsistencyMessage.swift in Sources */,
 				C2763788236BD981007A563D /* SessionRecord.swift in Sources */,
 				C2763778236BD981007A563D /* ProtocolBufferConvertible.swift in Sources */,
@@ -836,6 +884,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C26D3992238D34FC0087C867 /* GroupComunicationTest.swift in Sources */,
+				C209486E239E56D000DC8A7D /* AliceActivity.swift in Sources */,
+				C2094870239E56DE00DC8A7D /* BobActivity.swift in Sources */,
 				C278C5552394B3A10095757A /* NetworkTest.swift in Sources */,
 				814F61D223595A3B00A6AA44 /* PairComunicationTest.swift in Sources */,
 			);

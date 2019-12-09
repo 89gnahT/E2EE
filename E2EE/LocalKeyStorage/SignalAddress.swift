@@ -16,6 +16,11 @@ public struct SignalAddress {
         self.identifier = identifier
         self.deviceId = deviceId
     }
+    
+    func toDictionary() -> Dictionary<String, Any> {
+        return ["Identifier": self.identifier,
+                "deviceId": self.deviceId]
+    }
 }
 
 extension SignalAddress : Equatable {

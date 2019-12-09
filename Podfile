@@ -6,11 +6,19 @@ target 'E2EE' do
   use_frameworks!
   pod 'SwiftProtobuf', '~> 1.7.0'
   pod 'Curve25519'
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Storage'
+  pod 'Firebase/Database'
+  pod 'Firebase/Auth'
   # Pods for E2EE
 
   target 'E2EETests' do
     inherit! :search_paths
     # Pods for testing
+    pod 'Firebase/Analytics'
+    pod 'Firebase/Storage'
+    pod 'Firebase/Database'
+    pod 'Firebase/Auth'
   end
 
   target 'E2EEUITests' do
