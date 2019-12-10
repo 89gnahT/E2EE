@@ -22,6 +22,8 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     
     var selectedCell: MessageCell?
     
+    var currentOrientation: UIDeviceOrientation!
+    
     lazy var editMessageView: MessageCellEditView = {
         let frame = self.view.frame
         
@@ -46,20 +48,9 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         let height = (tabBarController != nil) ? tabBarController!.tabBar.frame.minY - maxY : view.frame.height
         tableNode.actualFrame = CGRect(x: 0, y: maxY, width: view.frame.width, height: height)
         
-        DataManager.shared.addObserver(for: .messageChanged, target: self, callBackQueue: DispatchQueue.main)
+        currentOrientation = UIDevice.current.orientation
         
-        //        DataManager.shared.fetchMessageModels(with: self.inboxID, { (models) in
-        //            var viewModels = [MessageViewModel]()
-        //            for i in models{
-        //                let viewModel = MessageViewModelFactory.viewModel(i)
-        //                viewModels.append(viewModel)
-        //            }
-        //
-        //            ASPerformBlockOnMainThread {
-        //                self.insertIntoLastWithMessages(viewModels: viewModels)
-        //            }
-        //
-        //        }, callbackQueue: nil)
+        DataManager.shared.addObserver(for: .messageChanged, target: self, callBackQueue: DispatchQueue.main)
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardAppear(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDisappear(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -68,19 +59,42 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         self.view.addGestureRecognizer(gesture)
     }
     
+    @objc func deviceOrientationDidChange(_ notification: Notification) {
+        let orientation = UIDevice.current.orientation
+        guard currentOrientation != orientation else {
+            return
+        }
+        
+        currentOrientation = orientation
+            
+        editMessageView.frame = view.frame
+        
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
         
         tabBarController?.tabBar.isHidden = true
         
         self.chatBox = ChatBoxView(target: self, chatboxFrame: tabBarController!.tabBar.frame)
         chatBox.delegate = self
-        self.view.addSubnode(chatBox.chatBox)
+        //self.view.addSubnode(chatBox.chatBox)
+        
+        let chatInput = ChatInputView()
+        chatInput.frame = tabBarController!.tabBar.frame
+//        chatInput.frame.origin.y -= 100
+//        chatInput.frame.size.height += 100
+        view.addSubnode(chatInput)
+    
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         tabBarController?.tabBar.isHidden = false
+        
+        NotificationCenter.default.removeObserver(self)
     }
     
     @objc func tapEventInView(_ gesture: UITapGestureRecognizer){
@@ -117,7 +131,7 @@ extension ChatScreenViewController: ConversationTableNodeDelegate{
     
     func tableNode(_ tableNode: ConversationTableNode, willBeginBatchFetchWith context: ASBatchContext) {
         DataManager.shared.fetchMessageModels(with: self.inboxID, { (models) in
-                        
+            
             var viewModels = [MessageViewModel]()
             for i in models{
                 let viewModel = MessageViewModelFactory.viewModel(i)
@@ -333,13 +347,8 @@ extension ChatScreenViewController: MessageCellDelegate{
     
     func messageCell(_ cell: MessageCell, longPressGesture: UILongPressGestureRecognizer) {
         if longPressGesture.state == .began{
-            
             editMessageView.messageCell = cell
-            
-            UIView.transition(with: self.view, duration: 0.25, options: .transitionCrossDissolve, animations: {
-                self.view.addSubnode(self.editMessageView)
-            }, completion: nil)
-            
+            self.view.addSubnode(self.editMessageView)
         }
     }
     

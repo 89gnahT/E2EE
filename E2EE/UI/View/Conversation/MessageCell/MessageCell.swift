@@ -180,7 +180,7 @@ class MessageCell: ASCellNode {
                 targetTimeNodeFrame = context.finalFrame(for: self.timeNode)
             }
             
-            UIView.animate(withDuration: 0.3, animations: {
+            UIView.animate(withDuration: 0.35, animations: {
                 if self.isHideDetails{
                     self.statusNode.alpha = 0
                     self.timeNode.alpha = 0

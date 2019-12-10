@@ -17,7 +17,7 @@ class MessageCellEditView: ASDisplayNode {
     
     private let forward = ASButtonNode()
     
-    private let fontSize : CGFloat = 15
+    private let fontSize : CGFloat = 13
     
     private var edgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 16)
     
@@ -39,15 +39,15 @@ class MessageCellEditView: ASDisplayNode {
         self.edgeInsets = UIEdgeInsets.zero
         
         removeBtn.addTarget(target, action: removeBtnAction, forControlEvents: .touchUpInside)
-        removeBtn.setAttributedTitle(attributedString("Remove", fontSize: fontSize, isBold: true, foregroundColor: .systemRed), for: .normal)
+        removeBtn.setAttributedTitle(attributedString("Remove", fontSize: fontSize, isBold: false, foregroundColor: .systemRed), for: .normal)
         removeBtn.setImage(UIImage(named: "trash"), for: .normal)
         removeBtn.laysOutHorizontally = false
         
-        forward.setAttributedTitle(attributedString("Forward", fontSize: fontSize, isBold: true, foregroundColor: .darkGray), for: .normal)
+        forward.setAttributedTitle(attributedString("Forward", fontSize: fontSize, isBold: false, foregroundColor: .darkGray), for: .normal)
         forward.setImage(UIImage(named: "right_arrow"), for: .normal)
         forward.laysOutHorizontally = false
         
-        copyBtn.setAttributedTitle(attributedString("Copy", fontSize: fontSize, isBold: true, foregroundColor: .darkGray), for: .normal)
+        copyBtn.setAttributedTitle(attributedString("Copy", fontSize: fontSize, isBold: false, foregroundColor: .darkGray), for: .normal)
         copyBtn.setImage(UIImage(named: "copy"), for: .normal)
         copyBtn.laysOutHorizontally = false
                        
@@ -58,14 +58,15 @@ class MessageCellEditView: ASDisplayNode {
             contentStack.children = [self.copyBtn, self.forward, self.removeBtn]
             contentStack.justifyContent = .spaceAround
             
-            return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 8, left: 20, bottom: 8, right: 20), child: contentStack)
+            return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 0, left: 0, bottom: 8, right: 0), child: contentStack)
         }
+        optionNode.setNeedsLayout()
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        let optionNodePosition = constrainedSize.max.height * 8 / 9
-        optionNode.style.layoutPosition = CGPoint(x: 0, y: optionNodePosition)
-        optionNode.style.preferredSize = CGSize(width: constrainedSize.max.width, height: constrainedSize.max.height - optionNodePosition)
+        let optionNodeHeight = CGFloat(65)
+        optionNode.style.layoutPosition = CGPoint(x: 0, y: constrainedSize.max.height - optionNodeHeight)
+        optionNode.style.preferredSize = CGSize(width: constrainedSize.max.width, height: optionNodeHeight)
         
         return ASAbsoluteLayoutSpec(children: [optionNode])
     }

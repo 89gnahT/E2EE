@@ -94,4 +94,8 @@ extension UIColor {
     convenience init(r: UInt8, g: UInt8 , b: UInt8 , a: UInt8 = 255) {
         self.init(red: CGFloat(r)/255, green: CGFloat(g)/255, blue: CGFloat(b)/255, alpha: CGFloat(a)/255)
     }
+    
+    convenience init(rgb: UInt8 , a: UInt8 = 255) {
+        self.init(red: CGFloat(rgb)/255, green: CGFloat(rgb)/255, blue: CGFloat(rgb)/255, alpha: CGFloat(a)/255)
+    }
 }

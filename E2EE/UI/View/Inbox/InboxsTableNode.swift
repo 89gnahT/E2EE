@@ -147,8 +147,7 @@ extension InboxsTableNode: ASTableDelegate{
     // MARK: DataSource
 extension InboxsTableNode: ASTableDataSource{
     func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
-        return {
-            print("create cell node")
+        return {           
             let cellNode  = InboxViewCell(viewModel: self.viewModels[indexPath.row])
             return cellNode
         }
