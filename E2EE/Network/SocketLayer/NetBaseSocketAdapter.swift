@@ -49,6 +49,5 @@ public protocol NetbaseSocketDelegate {
 public protocol GenericSocket: NSObjectProtocol {
     var delegate: NetbaseSocketDelegate? { get set }
     func loadSetting(host:String, port:String) throws
-    func setService() throws
     func send(_ data: Data)
 }

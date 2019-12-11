@@ -11,6 +11,7 @@ import Network
 
 @available(iOS 12.0, *)
 class NetWorkSocket: NSObject, GenericSocket {
+    
     var delegate: NetbaseSocketDelegate?
     var connection: NWConnection?
     var host: NWEndpoint.Host?
@@ -47,10 +48,6 @@ class NetWorkSocket: NSObject, GenericSocket {
         }
     }
     
-    func setService() throws {
-        
-    }
-    
     func stateDidChange(to state: NWConnection.State) {
         guard let delegate = self.delegate else { return }
         switch state {
@@ -74,19 +71,6 @@ class NetWorkSocket: NSObject, GenericSocket {
     }
     
     open func send(_ data: Data){
-//        self.outputQueue.async { [weak self] in
-//            guard let connection = self?.connection else {
-//                return
-//            }
-//            data.withUnsafeBytes({(buffer: UnsafeRawBufferPointer) -> Void in
-//                let typedBuffer = buffer.bindMemory(to: UInt8.self)
-//                let pointer = typedBuffer.baseAddress!
-//                var isComplete = false
-//                while !isComplete {
-//                    connection.send(content: <#T##DataProtocol?#>, contentContext: <#T##NWConnection.ContentContext#>, isComplete: <#T##Bool#>, completion: <#T##NWConnection.SendCompletion#>)
-//                }
-//            })
-//        }
         guard let connection = self.connection else { return }
         connection.send(content: data, contentContext: .defaultStream, isComplete: true, completion: .contentProcessed({(nwerror: NWError?) -> Void in
             guard nwerror != nil else {
@@ -95,7 +79,7 @@ class NetWorkSocket: NSObject, GenericSocket {
         }))
     }
     
-    open func receive(){
+    open func setupReceiver(){
         self.connection?.receiveMessage(completion: {(receivedData: Data?, context: NWConnection.ContentContext?, isSuccess: Bool, nwerror: NWError?) -> Void in
             guard nwerror != nil else {
                 return
@@ -105,7 +89,7 @@ class NetWorkSocket: NSObject, GenericSocket {
             }
             
             if isSuccess {
-                self.receive()
+                self.setupReceiver()
             }
         })
     }

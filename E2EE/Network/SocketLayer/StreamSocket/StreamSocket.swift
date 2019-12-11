@@ -47,10 +47,6 @@ class StreamSocket: NSObject, GenericSocket {
         //self.runloop?.run()
     }
     
-    func setService() throws {
-        
-    }
-    
     open func removeSocketSetting() throws {
         self.input?.close()
         self.output?.close()
@@ -87,23 +83,6 @@ class StreamSocket: NSObject, GenericSocket {
                 total += length
             }
         })
-//        outputQueue.async { [weak self] in
-//            guard let o = self.output else {
-//                return
-//            }
-//            data.withUnsafeBytes({(buffer: UnsafeRawBufferPointer) -> Void in
-//                let typedBuffer = buffer.bindMemory(to: UInt8.self)
-//                let pointer = typedBuffer.baseAddress!
-//                var total: Int = 0
-//                while total < data.count {
-//                    let length = o.write(pointer.advanced(by: total), maxLength: data.count)
-//                    if length <= 0 {
-//                        break
-//                    }
-//                    total += length
-//                }
-//            })
-//        }
     }
 }
 

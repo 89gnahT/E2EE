@@ -15,9 +15,9 @@ class NetworkTest: XCTestCase {
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        self.socket = NetWorkSocket()
+        self.socket = StreamSocket()
         do {
-            try socket?.loadSetting(host: "127.0.0.1", port: "3000")
+            try socket?.loadSetting(host: "127.0.0.1", port: "8000")
             self.socket?.delegate = self
         } catch let error as NetBaseError {
             XCTFail(error.description)
@@ -31,9 +31,10 @@ class NetworkTest: XCTestCase {
     }
 
     func testSendMessage() {
-        let message = "join:Minh Cong"
-        self.socket?.send(message.data(using: .utf8)!)
-        semaphore.wait()
+        let message = "200\r\n"
+        let data = message.data(using: .utf8)
+        self.socket?.send(data!)
+        RunLoop.current.run()
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
