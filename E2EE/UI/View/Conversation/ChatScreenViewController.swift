@@ -80,14 +80,7 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         
         self.chatBox = ChatBoxView(target: self, chatboxFrame: tabBarController!.tabBar.frame)
         chatBox.delegate = self
-        //self.view.addSubnode(chatBox.chatBox)
-        
-        let chatInput = ChatInputView()
-        chatInput.frame = tabBarController!.tabBar.frame
-//        chatInput.frame.origin.y -= 100
-//        chatInput.frame.size.height += 100
-        view.addSubnode(chatInput)
-    
+        self.view.addSubnode(chatBox.chatBox)    
     }
     
     override func viewWillDisappear(_ animated: Bool) {

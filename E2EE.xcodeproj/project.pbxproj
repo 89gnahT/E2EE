@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0670785F10ACD65243E377E8 /* Pods_E2EE_E2EEUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 669DCAAD94F20C41F7BA0FBC /* Pods_E2EE_E2EEUITests.framework */; };
+		48052AA423A088A8006A1543 /* ChatScreenNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48052AA323A088A8006A1543 /* ChatScreenNode.swift */; };
 		480AEFAD2378473E009B1179 /* Color.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 480AEFAC2378473E009B1179 /* Color.xcassets */; };
 		482C45EB237D86DC00C4F554 /* ChatInboxModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482C45EA237D86DC00C4F554 /* ChatInboxModel.swift */; };
 		482C45ED237D879400C4F554 /* GroupInboxModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482C45EC237D879400C4F554 /* GroupInboxModel.swift */; };
@@ -141,6 +142,7 @@
 		1EC2E78D4FDB9D02A56600AC /* Pods-E2EETests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EETests.debug.xcconfig"; path = "Target Support Files/Pods-E2EETests/Pods-E2EETests.debug.xcconfig"; sourceTree = "<group>"; };
 		2B4F3E4287CAF0019291820F /* Pods_E2EETests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_E2EETests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		317644017F8F555E3EE757CF /* Pods_E2EE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_E2EE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		48052AA323A088A8006A1543 /* ChatScreenNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScreenNode.swift; sourceTree = "<group>"; };
 		480AEFAC2378473E009B1179 /* Color.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Color.xcassets; sourceTree = "<group>"; };
 		482C45EA237D86DC00C4F554 /* ChatInboxModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInboxModel.swift; sourceTree = "<group>"; };
 		482C45EC237D879400C4F554 /* GroupInboxModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupInboxModel.swift; sourceTree = "<group>"; };
@@ -433,6 +435,7 @@
 				DDC1052F2387922600139CB9 /* MessageCell */,
 				4857460F2398133300A497BB /* MessageCellEditView.swift */,
 				DDA11FAD2391023900425733 /* ConversationTableNode.swift */,
+				48052AA323A088A8006A1543 /* ChatScreenNode.swift */,
 				48CF710023841AF2003BFCE4 /* ChatScreenViewController.swift */,
 			);
 			path = Conversation;
@@ -958,6 +961,7 @@
 				DDA11FA7238FC37400425733 /* ImagesMessageCell.swift in Sources */,
 				C2763766236BD981007A563D /* GroupKeyStore.swift in Sources */,
 				DDA11FA1238F5A9600425733 /* ImageMessageViewModel.swift in Sources */,
+				48052AA423A088A8006A1543 /* ChatScreenNode.swift in Sources */,
 				C2763773236BD981007A563D /* Fingerprint.proto in Sources */,
 				4883F84723751A0E004C3F83 /* ContactViewModel.swift in Sources */,
 				48BC3F12237C660100B96361 /* Database.swift in Sources */,

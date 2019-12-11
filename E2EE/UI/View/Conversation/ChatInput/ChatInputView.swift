@@ -78,18 +78,15 @@ class ChatInputView: ASDisplayNode {
     
     override func animateLayoutTransition(_ context: ASContextTransitioning) {
         if context.isAnimated(){
-            var optionFinalFrame: CGRect!
+            var optionFinalFrame: CGRect
             var collapaseFinalFrame: CGRect
             
             inputChat.frame = context.initialFrame(for: inputChat)
             sendBtn.frame = context.initialFrame(for: sendBtn)
             
             if inputExpanded{
-                if !inputChatDidChangeLine{
-                    optionFinalFrame = context.initialFrame(for: option)
-                    optionFinalFrame.origin.x -= optionFinalFrame.width
-                }
-                
+                optionFinalFrame = context.initialFrame(for: option)
+                optionFinalFrame.origin.x -= optionFinalFrame.width
                 
                 let collapaseInitialFrame = context.finalFrame(for: collapseBtn)
                 collapaseFinalFrame = collapaseInitialFrame
@@ -105,7 +102,7 @@ class ChatInputView: ASDisplayNode {
                 collapseBtn.alpha = 1
             }
                 
-            UIView.animate(withDuration: 2.25, animations: {
+            UIView.animate(withDuration: 0.25, animations: {
                 if self.inputExpanded{
                     self.option.alpha = 0
                     self.collapseBtn.alpha = 1
@@ -114,18 +111,11 @@ class ChatInputView: ASDisplayNode {
                     self.collapseBtn.alpha = 0
                 }
                 
-                if !self.inputChatDidChangeLine{
-                    self.option.frame = optionFinalFrame
-                }
-                
+                self.option.frame = optionFinalFrame
                 self.collapseBtn.frame = collapaseFinalFrame
-                    
+                
                 self.inputChat.frame = context.finalFrame(for: self.inputChat)
                 self.sendBtn.frame = context.finalFrame(for: self.sendBtn)
-              
-                if self.newFrame != CGRect.zero{
-                    self.frame = self.newFrame
-                }
                 
             }) { (finished) in
                 context.completeTransition(finished)
@@ -160,13 +150,14 @@ extension ChatInputView: TextInputChatDelegate{
     }
     
     func textInputChatSizeDidChange(textInput: TextInputChat, newSize: CGSize) {
-        let delta = newSize.height - textInput.frame.height
-        newFrame = frame
-        newFrame.origin.y -= delta
-        newFrame.size.height += delta
-        
-        inputChatDidChangeLine = true
-        transitionLayout(withAnimation: true, shouldMeasureAsync: true, measurementCompletion: nil)
+//        let delta = newSize.height - textInput.frame.height
+//        newFrame = frame
+//        newFrame.origin.y -= delta
+//        newFrame.size.height += delta
+//
+//        inputChatDidChangeLine = true
+        //transitionLayout(withAnimation: true, shouldMeasureAsync: true, measurementCompletion: nil)
+        setNeedsLayout()
     }
     
 }
@@ -247,7 +238,7 @@ extension TextInputChat: ASEditableTextNodeDelegate{
                 
                 editableTextNode.style.preferredSize.height = numberOfLines <= max ? sizeThatFitsTextView.height : max * lineHeight + heightInset
                 
-                //self.setNeedsLayout()
+                self.setNeedsLayout()
                 
                 ASPerformBlockOnMainThread {
                     self.delegate?.textInputChatSizeDidChange(textInput: self, newSize: editableTextNode.style.preferredSize)
