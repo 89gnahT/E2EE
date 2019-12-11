@@ -17,6 +17,9 @@
 		814F61C723595A3A00A6AA44 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 814F61C523595A3A00A6AA44 /* LaunchScreen.storyboard */; };
 		814F61D223595A3B00A6AA44 /* PairComunicationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814F61D123595A3B00A6AA44 /* PairComunicationTest.swift */; };
 		814F61DD23595A3B00A6AA44 /* E2EEUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814F61DC23595A3B00A6AA44 /* E2EEUITests.swift */; };
+		819F5A7423A0D109002021AE /* AuthenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819F5A7323A0D109002021AE /* AuthenProvider.swift */; };
+		819F5A7623A0D5AD002021AE /* LoginInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819F5A7523A0D5AD002021AE /* LoginInfo.swift */; };
+		819F5A7A23A0E120002021AE /* FirebasePhoneAuthen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819F5A7923A0E120002021AE /* FirebasePhoneAuthen.swift */; };
 		9E57540C4342436078C7A840 /* Pods_E2EE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 317644017F8F555E3EE757CF /* Pods_E2EE.framework */; };
 		C203CE202371654500E71171 /* NetworkSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = C203CE1F2371654500E71171 /* NetworkSocket.swift */; };
 		C203CE222371670100E71171 /* NetBaseSocketAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C203CE212371670100E71171 /* NetBaseSocketAdapter.swift */; };
@@ -134,6 +137,10 @@
 		814F61D823595A3B00A6AA44 /* E2EEUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = E2EEUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		814F61DC23595A3B00A6AA44 /* E2EEUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EEUITests.swift; sourceTree = "<group>"; };
 		814F61DE23595A3B00A6AA44 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		819F5A7223A0CCA9002021AE /* E2EE.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = E2EE.entitlements; sourceTree = "<group>"; };
+		819F5A7323A0D109002021AE /* AuthenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenProvider.swift; sourceTree = "<group>"; };
+		819F5A7523A0D5AD002021AE /* LoginInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginInfo.swift; sourceTree = "<group>"; };
+		819F5A7923A0E120002021AE /* FirebasePhoneAuthen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebasePhoneAuthen.swift; sourceTree = "<group>"; };
 		91924533B0CE1BBD58F6278C /* Pods-E2EETests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EETests.release.xcconfig"; path = "Target Support Files/Pods-E2EETests/Pods-E2EETests.release.xcconfig"; sourceTree = "<group>"; };
 		C203CE1F2371654500E71171 /* NetworkSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSocket.swift; sourceTree = "<group>"; };
 		C203CE212371670100E71171 /* NetBaseSocketAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetBaseSocketAdapter.swift; sourceTree = "<group>"; };
@@ -289,6 +296,8 @@
 		814F61B923595A3700A6AA44 /* E2EE */ = {
 			isa = PBXGroup;
 			children = (
+				819F5A7223A0CCA9002021AE /* E2EE.entitlements */,
+				819F5A6D23A09F5D002021AE /* Authentication */,
 				C2094862239E468000DC8A7D /* FirebaseStorage */,
 				C273C80F2384F81100CC7522 /* LocalKeyStorage */,
 				53DC8FE2236FBA18007AF733 /* Network */,
@@ -325,6 +334,16 @@
 				814F61DE23595A3B00A6AA44 /* Info.plist */,
 			);
 			path = E2EEUITests;
+			sourceTree = "<group>";
+		};
+		819F5A6D23A09F5D002021AE /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				819F5A7523A0D5AD002021AE /* LoginInfo.swift */,
+				819F5A7323A0D109002021AE /* AuthenProvider.swift */,
+				819F5A7923A0E120002021AE /* FirebasePhoneAuthen.swift */,
+			);
+			path = Authentication;
 			sourceTree = "<group>";
 		};
 		C203CE1B2371601400E71171 /* MessageCommunication */ = {
@@ -808,6 +827,7 @@
 				C2763761236BD981007A563D /* SenderKeyState.swift in Sources */,
 				C2763768236BD981007A563D /* KeyStore.swift in Sources */,
 				C2763786236BD981007A563D /* SessionPreKeyBundle.swift in Sources */,
+				819F5A7A23A0E120002021AE /* FirebasePhoneAuthen.swift in Sources */,
 				C276376A236BD981007A563D /* SenderKeyStore.swift in Sources */,
 				C2763777236BD981007A563D /* Messages.proto in Sources */,
 				C2763772236BD981007A563D /* Fingerprint.pb.swift in Sources */,
@@ -857,9 +877,11 @@
 				C2763781236BD981007A563D /* SenderChainKey.swift in Sources */,
 				C273C8172384FE3A00CC7522 /* SignalSessionStore.swift in Sources */,
 				C273C81F238524FC00CC7522 /* SignalSenderKeyName.swift in Sources */,
+				819F5A7423A0D109002021AE /* AuthenProvider.swift in Sources */,
 				C276377D236BD981007A563D /* RatchetMessageKey.swift in Sources */,
 				C276375E236BD981007A563D /* CommonSignalCrypto.swift in Sources */,
 				C2763783236BD981007A563D /* PendingPreKey.swift in Sources */,
+				819F5A7623A0D5AD002021AE /* LoginInfo.swift in Sources */,
 				C276377B236BD981007A563D /* HKDF.swift in Sources */,
 				C273C8192384FE8700CC7522 /* SignalPreKeyStore.swift in Sources */,
 				C276375B236BD981007A563D /* KeyPair.swift in Sources */,
@@ -1053,16 +1075,17 @@
 			baseConfigurationReference = FEEAD81F2887B72589C0187B /* Pods-E2EE.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = E2EE/E2EE.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3NLA5R24DG;
+				DEVELOPMENT_TEAM = SKQY859ZK7;
 				INFOPLIST_FILE = E2EE/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = fresher.assignment.E2EE;
+				PRODUCT_BUNDLE_IDENTIFIER = fresher.E2EEChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -1075,16 +1098,17 @@
 			baseConfigurationReference = CB87BCF5BB3B7F7B68654098 /* Pods-E2EE.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = E2EE/E2EE.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3NLA5R24DG;
+				DEVELOPMENT_TEAM = SKQY859ZK7;
 				INFOPLIST_FILE = E2EE/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = fresher.assignment.E2EE;
+				PRODUCT_BUNDLE_IDENTIFIER = fresher.E2EEChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;

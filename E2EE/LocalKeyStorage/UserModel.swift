@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import FirebaseAuth
 
 public class UserModel: NSObject {
     private var userName: String = String()

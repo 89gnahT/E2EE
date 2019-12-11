@@ -10,12 +10,12 @@ import Foundation
 import Firebase
 
 class CurrentLoginUser {
-    let localKeyBundle: SessionPreKeyBundle
+    let keyBundle: SessionPreKeyBundle
     let remoteIdentityBundle: FirebaseUserStorage
     var ref: DatabaseReference!
     
-    init(localKey: SessionPreKeyBundle, firebaseKey: FirebaseUserStorage) {
-        localKeyBundle = localKey
+    init(keyBundle: SessionPreKeyBundle, firebaseKey: FirebaseUserStorage) {
+        self.keyBundle = keyBundle
         remoteIdentityBundle = firebaseKey
     }
     
