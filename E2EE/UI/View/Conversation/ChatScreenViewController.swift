@@ -12,9 +12,9 @@ import AsyncDisplayKit
 class ChatScreenViewController: ASViewController<ASDisplayNode> {
     var tableNode = ConversationTableNode()
     
-    var viewModels = [MessageViewModel]()
+    var chatInputNode = ChatInputNode()
     
-    var currentBatchContext : ASBatchContext = ASBatchContext()
+    var viewModels = [MessageViewModel]()
     
     var inboxID : InboxID!
     
@@ -32,7 +32,7 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     
     init(with inboxID : InboxID) {
         self.inboxID = inboxID
-        
+       
         super.init(node: tableNode)
     }
     
@@ -42,16 +42,20 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+       
         tableNode.delegate = self
         tableNode.dataSource = self
         let maxY = (navigationController != nil) ? navigationController!.navigationBar.frame.maxY : CGFloat(0)
         let height = (tabBarController != nil) ? tabBarController!.tabBar.frame.minY - maxY : view.frame.height
         tableNode.actualFrame = CGRect(x: 0, y: maxY, width: view.frame.width, height: height)
         
+        chatInputNode.frame = tabBarController!.tabBar.frame
+        view.addSubnode(chatInputNode)
+        
         currentOrientation = UIDevice.current.orientation
         
         DataManager.shared.addObserver(for: .messageChanged, target: self, callBackQueue: DispatchQueue.main)
-        
+    
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardAppear(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDisappear(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         
@@ -77,10 +81,6 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
         
         tabBarController?.tabBar.isHidden = true
-        
-        self.chatBox = ChatBoxView(target: self, chatboxFrame: tabBarController!.tabBar.frame)
-        chatBox.delegate = self
-        self.view.addSubnode(chatBox.chatBox)    
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -165,14 +165,11 @@ extension ChatScreenViewController: ConversationTableNodeDataSource{
     }
 }
 
-extension ChatScreenViewController: ChatBoxDelegate{
-    func sendButtonPressed(_ text: String) {
-        DataManager.shared.sendTextMessage(inboxID: inboxID, withContent: text) { (model) in
-            ASPerformBlockOnMainThread {
-                
-            }
-        }
+extension ChatScreenViewController: ChatInputNodeDelegate{
+    func CHatInputNodeFrameDidChange(_ chatInputNode: ChatInputNode, newFrame nf: CGRect, oldFrame of: CGRect) {
+        
     }
+    
     
     @objc func keyboardAppear(notification: NSNotification) {
         if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
@@ -180,15 +177,13 @@ extension ChatScreenViewController: ChatBoxDelegate{
             let keyboardHeight = keyboardRectangle.height
             
             self.tableNode.keyboardWillAppear(withHeight: keyboardHeight)
+            self.chatInputNode.frame.origin.y -= keyboardHeight            
         }
-        
-        self.chatBox.keyboardWillChange(notification: notification)
     }
     
     @objc func keyboardDisappear(notification: NSNotification) {
         self.tableNode.keyboardWillDisappear()
-        
-        self.chatBox.keyboardWillChange(notification: notification)
+        self.chatInputNode.frame = self.tabBarController!.tabBar.frame
     }
 }
 

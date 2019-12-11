@@ -85,7 +85,7 @@ extension ConversationTableNode{
     }
     
     func keyboardWillAppear(withHeight height: CGFloat){
-        contentInset.top = height
+        contentInset.top += height
         scrollToRow(at: IndexPath(row: 0, section: 0))
     }
     
@@ -138,7 +138,7 @@ extension ConversationTableNode: ASTableDelegate{
         }
         currentBatchContext = context
         
-        delegate!.tableNode(self, willBeginBatchFetchWith: context)
+        delegate?.tableNode(self, willBeginBatchFetchWith: context)
     }
 }
 
@@ -153,6 +153,6 @@ extension ConversationTableNode: ASTableDataSource{
     }
     
     func tableNode(_ tableNode: ASTableNode, numberOfRowsInSection section: Int) -> Int {
-        dataSource!.tableNode(self, numberOfRowsInSection: section)
+        dataSource?.tableNode(self, numberOfRowsInSection: section) ?? 0
     }
 }
