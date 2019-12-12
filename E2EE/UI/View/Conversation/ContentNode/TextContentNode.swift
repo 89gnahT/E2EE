@@ -35,7 +35,6 @@ class TextContentNode: ContentNode {
     override func setup() {
         super.setup()
         
-        textBtnNode.style.maxWidth = ASDimension(unit: .points, value: UIScreen.main.bounds.size.width * 0.6)
         textBtnNode.titleNode.maximumNumberOfLines = 50
         textBtnNode.contentEdgeInsets = textInsets
     }
@@ -54,6 +53,8 @@ class TextContentNode: ContentNode {
     
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
+        textBtnNode.style.maxWidth = ASDimension(unit: .points, value: UIScreen.main.bounds.size.width * 0.6)
+        
         return ASInsetLayoutSpec(insets: UIEdgeInsets.zero, child: textBtnNode)
     }
 }

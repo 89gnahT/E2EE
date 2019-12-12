@@ -10,7 +10,9 @@ import UIKit
 import AsyncDisplayKit
 
 protocol ChatInputNodeDelegate {
-    func CHatInputNodeFrameDidChange(_ chatInputNode: ChatInputNode, newFrame nf: CGRect, oldFrame of: CGRect)
+    func chatInputNodeFrameDidChange(_ chatInputNode: ChatInputNode, newFrame nf: CGRect, oldFrame of: CGRect)
+    
+    func chatInputNode(_ chatInputNode: ChatInputNode, sendText text: String)
 }
 
 class ChatInputNode: ASDisplayNode {
@@ -27,18 +29,24 @@ class ChatInputNode: ASDisplayNode {
     
     var quickSendBtn = ASButtonNode()
     
+    var delegate: ChatInputNodeDelegate?
+
     private var inputExpanded: Bool = false
+    
+    private var isTransition: Bool = false
     
     private var inputContentSizeChanged: Bool = false
     
     private var quickSendBtnEnable: Bool = true
+    
+    private var lastContentBeforCollapse: String?
     
     override init() {
         super.init()
         
         automaticallyManagesSubnodes = true
         style.flexGrow = 1.0
-        backgroundColor = .black
+        backgroundColor = .white
         
         let backgroundColor = UIColor(rgb: 240, a: 255)
         let imageName = "background_input_chat"
@@ -68,9 +76,14 @@ class ChatInputNode: ASDisplayNode {
         
         collapseBtn.addTarget(self, action: #selector(collapsePressed(_:)), forControlEvents: .touchUpInside)
         
-        let inputTap = UIGestureRecognizer(target: self, action: #selector(inputTapped(_:)))
+        let inputTap = UITapGestureRecognizer(target: self, action: #selector(inputTapped(_:)))
         inputTap.delegate = self
-        editTextNode.textView.addGestureRecognizer(inputTap)
+        editTextNode.view.addGestureRecognizer(inputTap)
+        
+        sendBtn.addTarget(self, action: #selector(sendText(_:)), forControlEvents: .touchUpInside)
+        
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(tapEventInView(_:)))
+        view.addGestureRecognizer(gesture)
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
@@ -83,56 +96,50 @@ class ChatInputNode: ASDisplayNode {
         
         let x = ASStackLayoutSpec(direction: .vertical, spacing: 0, justifyContent: .start, alignItems: .stretch, children: [contentSatck])
         
-        return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 20), child: x)
+        return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10), child: x)
     }
     
     
     override func animateLayoutTransition(_ context: ASContextTransitioning) {
-        func setSendBtnInitialFrame(){
-            quickSendBtn.alpha = quickSendBtnEnable ? 0 : 1
-            sendBtn.alpha = quickSendBtnEnable ? 1 : 0
-        }
+        let delta = context.finalFrame(for: editTextNode).height - editTextNode.frame.height
+        var newFrame = view.frame
+        newFrame.origin.y -= delta
+        newFrame.size.height += delta
         
-        func setSendBtnFinalFrame(){
-            quickSendBtn.alpha = quickSendBtnEnable ? 1 : 0
-            sendBtn.alpha = quickSendBtnEnable ? 0 : 1
-        }
-        
-        if inputContentSizeChanged{
-            let delta = context.finalFrame(for: editTextNode).height - editTextNode.frame.height
-            
-            setSendBtnInitialFrame()
-            
-            UIView.animate(withDuration: 0.15, animations: {
-                
-                setSendBtnFinalFrame()
-                
-                self.collapseBtn.frame = context.finalFrame(for: self.collapseBtn)
-                self.sendBtn.frame = context.finalFrame(for: self.sendBtn)
-                
-                self.editTextNode.frame = context.finalFrame(for: self.editTextNode)
-                self.backgroundEditTextNode.frame = context.finalFrame(for: self.backgroundEditTextNode)
-                
-                self.view.frame.origin.y -= delta
-                self.view.frame.size.height += delta
-            }) { (finished) in
-                context.completeTransition(finished)
-                self.inputContentSizeChanged = false
+        if delta != 0{
+            ASPerformBlockOnMainThread {
+                self.delegate?.chatInputNodeFrameDidChange(self, newFrame: newFrame, oldFrame: self.view.frame)
             }
-            
+        }
+        
+        let animateDuration = 0.2
+        if quickSendBtnEnable{
+            var quickSendBtnInitialFrame = context.initialFrame(for: quickSendBtn)
+            if quickSendBtnInitialFrame.origin.x == .infinity || quickSendBtnInitialFrame.origin.y == .infinity{
+                quickSendBtnInitialFrame = context.finalFrame(for: quickSendBtn)
+            }
+            quickSendBtn.frame = quickSendBtnInitialFrame
+            quickSendBtn.alpha = 1
+            sendBtn.alpha = 0
         }else{
-            if inputExpanded{
+            var sendBtnInitialFrame = context.initialFrame(for: sendBtn)
+            if sendBtnInitialFrame.origin.x == .infinity || sendBtnInitialFrame.origin.y == .infinity{
+                sendBtnInitialFrame = context.finalFrame(for: sendBtn)
+            }
+            sendBtn.frame = sendBtnInitialFrame
+            quickSendBtn.alpha = 0
+            sendBtn.alpha = 1
+        }
+        
+        if inputExpanded{
+            if isTransition{
                 var optionFinalFrame = optionNode.frame
                 optionFinalFrame.origin.x -= optionFinalFrame.width
                 optionNode.alpha = 1
                 
                 self.collapseBtn.alpha = 0
                 
-                setSendBtnInitialFrame()
-                
-                UIView.animate(withDuration: 0.25, animations: {
-                    setSendBtnFinalFrame()
-                    
+                UIView.animate(withDuration: animateDuration, animations: {
                     self.optionNode.frame = optionFinalFrame
                     self.optionNode.alpha = 0
                     
@@ -141,10 +148,36 @@ class ChatInputNode: ASDisplayNode {
                     
                     self.editTextNode.frame = context.finalFrame(for: self.editTextNode)
                     self.backgroundEditTextNode.frame = context.finalFrame(for: self.backgroundEditTextNode)
+                    
+                    self.view.frame = newFrame
+                    
+                }) { (finished) in
+                    context.completeTransition(finished)
+                    self.isTransition = false
+                }
+            }else{
+                UIView.animate(withDuration: animateDuration, animations: {
+                    
+                    if self.quickSendBtnEnable{
+                        self.quickSendBtn.frame = context.finalFrame(for: self.quickSendBtn)
+                    }else{
+                        self.sendBtn.frame = context.finalFrame(for: self.sendBtn)
+                    }
+                    
+                    self.collapseBtn.frame = context.finalFrame(for: self.collapseBtn)
+                    
+                    self.editTextNode.frame = context.finalFrame(for: self.editTextNode)
+                    self.backgroundEditTextNode.frame = context.finalFrame(for: self.backgroundEditTextNode)
+                    
+                    self.view.frame = newFrame
+                    
                 }) { (finished) in
                     context.completeTransition(finished)
                 }
-            }else{
+            }
+            
+        }else{
+            if isTransition{
                 var optionIntialFrame = context.finalFrame(for: optionNode)
                 optionIntialFrame.origin.x -= optionIntialFrame.width
                 optionNode.frame = optionIntialFrame
@@ -152,11 +185,7 @@ class ChatInputNode: ASDisplayNode {
                 
                 collapseBtn.alpha = 1
                 
-                setSendBtnInitialFrame()
-                
-                UIView.animate(withDuration: 0.25, animations: {
-                    setSendBtnFinalFrame()
-                    
+                UIView.animate(withDuration: animateDuration, animations: {
                     self.optionNode.frame = context.finalFrame(for: self.optionNode)
                     self.optionNode.alpha = 1
                     
@@ -164,6 +193,28 @@ class ChatInputNode: ASDisplayNode {
                     
                     self.editTextNode.frame = context.finalFrame(for: self.editTextNode)
                     self.backgroundEditTextNode.frame = context.finalFrame(for: self.backgroundEditTextNode)
+                    
+                    self.view.frame = newFrame
+                    
+                }) { (finished) in
+                    context.completeTransition(finished)
+                    self.isTransition = false
+                }
+            }else{
+                UIView.animate(withDuration: animateDuration, animations: {
+                    if self.quickSendBtnEnable{
+                        self.quickSendBtn.frame = context.finalFrame(for: self.quickSendBtn)
+                    }else{
+                        self.sendBtn.frame = context.finalFrame(for: self.sendBtn)
+                    }
+                    
+                    self.optionNode.frame = context.finalFrame(for: self.optionNode)
+                    
+                    self.editTextNode.frame = context.finalFrame(for: self.editTextNode)
+                    self.backgroundEditTextNode.frame = context.finalFrame(for: self.backgroundEditTextNode)
+                    
+                    self.view.frame = newFrame
+                    
                 }) { (finished) in
                     context.completeTransition(finished)
                 }
@@ -191,6 +242,14 @@ extension ChatInputNode: ASEditableTextNodeDelegate{
     }
     
     func editableTextNodeDidUpdateText(_ editableTextNode: ASEditableTextNode) {
+        textInputDidChanged(editableTextNode)
+    }
+    
+}
+
+extension ChatInputNode{
+    
+    func textInputDidChanged(_ editableTextNode: ASEditableTextNode) {
         var needToMeasure: Bool = false
         
         let lineHeight = editableTextNode.textView.font?.lineHeight ?? 1
@@ -220,40 +279,108 @@ extension ChatInputNode: ASEditableTextNodeDelegate{
             }
         }
         
-        if needToMeasure{
-            transitionLayout(withAnimation: true, shouldMeasureAsync: true, measurementCompletion: nil)
+        if !inputExpanded{
+            guard var addText = editableTextNode.attributedText?.string else {
+                return
+            }
+            
+            if lastContentBeforCollapse != nil{
+                addText.removeFirst(3)
+                lastContentBeforCollapse! += addText
+            }else{
+                lastContentBeforCollapse = addText
+            }
+            
+            expand()
+        }else{
+            if needToMeasure{
+                transitionLayout(withAnimation: true, shouldMeasureAsync: true, measurementCompletion: nil)
+            }
         }
     }
     
-}
-
-extension ChatInputNode{
     func collapse(){
-        if inputExpanded{
+        if inputExpanded && !isTransition{
             inputExpanded = false
+            isTransition = true
+            
+            lastContentBeforCollapse = editTextNode.attributedText?.string
+            if lastContentBeforCollapse != nil{
+                editTextNode.textView.text = "..."
+            }
+            
+            let lineHeight = editTextNode.textView.font?.lineHeight ?? 1
+            let size = CGSize(width: editTextNode.frame.width, height: .infinity)
+            let estimatedSize = editTextNode.calculateSizeThatFits(size)
+            let estimatedNumberLine = estimatedSize.height / lineHeight
+            let currentNumberLine = editTextNode.frame.height / lineHeight
+            
+            editTextNode.scrollEnabled = estimatedNumberLine <= 6 ? false : true
+            
+            if abs(estimatedNumberLine - currentNumberLine) >= 1 && estimatedNumberLine <= 6{
+                editTextNode.style.preferredSize.height = estimatedSize.height
+            }
             
             transitionLayout(withAnimation: true, shouldMeasureAsync: true, measurementCompletion: nil)
         }
     }
     
     func expand(){
-        if !inputExpanded{
+        if !inputExpanded && !isTransition{
             inputExpanded = true
+            isTransition = true
+            
+            if lastContentBeforCollapse != nil{
+                editTextNode.textView.text = lastContentBeforCollapse
+            }
+    
+            let lineHeight = editTextNode.textView.font?.lineHeight ?? 1
+            let size = CGSize(width: editTextNode.frame.width, height: .infinity)
+            let estimatedSize = editTextNode.calculateSizeThatFits(size)
+            let estimatedNumberLine = estimatedSize.height / lineHeight
+            let currentNumberLine = editTextNode.frame.height / lineHeight
+            
+            editTextNode.scrollEnabled = estimatedNumberLine <= 6 ? false : true
+            
+            if abs(estimatedNumberLine - currentNumberLine) >= 1 && estimatedNumberLine <= 6{
+                editTextNode.style.preferredSize.height = estimatedSize.height
+            }
+            
             transitionLayout(withAnimation: true, shouldMeasureAsync: true, measurementCompletion: nil)
         }
     }
+    
+    @objc func sendText(_ button: ASButtonNode){
+        guard let text = inputExpanded ? editTextNode.attributedText?.string : lastContentBeforCollapse else {
+            return
+        }
+        
+        if !inputExpanded{
+            lastContentBeforCollapse = nil
+        }
+        
+        editTextNode.attributedText = nil
+        delegate?.chatInputNode(self, sendText: text)
+        
+        textInputDidChanged(editTextNode)
+    }
+    
     
     @objc func collapsePressed(_ button: ASButtonNode){
         collapse()
     }
     
     @objc func inputTapped(_ gesture: UITapGestureRecognizer){
-        
+        expand()
+    }
+    
+    @objc func tapEventInView(_ gesture: UITapGestureRecognizer){
+      
     }
 }
 
 extension ChatInputNode: UIGestureRecognizerDelegate{
-    
+
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }

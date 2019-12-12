@@ -69,6 +69,11 @@ class InboxesViewController: ASViewController<ASDisplayNode>{
         setup()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+       
+    }
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }

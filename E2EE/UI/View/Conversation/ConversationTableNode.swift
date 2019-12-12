@@ -39,7 +39,7 @@ class ConversationTableNode: ASDisplayNode {
         }
     }
     
-    var actualFrame: CGRect!
+    private var keyboardFrame: CGRect = CGRect.zero
     
     override init() {
         super.init()
@@ -64,6 +64,10 @@ extension ConversationTableNode{
         
     }
     
+    func scrollToRow(at row: Int){
+        scrollToRow(at: IndexPath(row: row, section: 0))
+    }
+    
     func scrollToRow(at indexPath: IndexPath){
         tableNode.scrollToRow(at: indexPath, at: UITableView.ScrollPosition.top, animated: false)
     }
@@ -84,14 +88,18 @@ extension ConversationTableNode{
         tableNode.performBatch(animated: animated, updates: updates, completion: completion)
     }
     
-    func keyboardWillAppear(withHeight height: CGFloat){
-        contentInset.top += height
-        scrollToRow(at: IndexPath(row: 0, section: 0))
+    func changeSize(withHeight height: CGFloat){
+        view.frame.origin.y -= height
+        tableNode.contentInset.bottom += height
+    }
+    
+    func keyboardWillAppear(withFrame frame: CGRect){
+        keyboardFrame = frame
+        changeSize(withHeight: keyboardFrame.height)
     }
     
     func keyboardWillDisappear(){
-        contentInset.top = 0
-        scrollToRow(at: IndexPath(row: 0, section: 0))
+        changeSize(withHeight: -keyboardFrame.height)
     }
 }
 
@@ -101,31 +109,6 @@ extension ConversationTableNode: ASTableDelegate{
         return ASSizeRangeMake(CGSize.init(width: self.view.frame.width, height: 0),
                                CGSize.init(width: self.view.frame.width, height: self.view.frame.height))
     }
-    
-    func tableView(_ tableView: ASTableView, willDisplay node: ASCellNode, forRowAt indexPath: IndexPath) {
-        guard actualFrame != nil else {
-            return
-        }
-        
-//        if indexPath.row == 0{
-//            if tableNode.view.contentSize.height < actualFrame.height{
-//                var totalHeight: CGFloat = 0
-//                let numberOfCell = tableNode.numberOfRows(inSection: 0)
-//                for i in 0..<numberOfCell{
-//                    totalHeight += (tableNode.nodeForRow(at: IndexPath(row: i, section: 0))!.frame.height)
-//                }
-//                if totalHeight < actualFrame.height{
-//                    let topInset = actualFrame.height - totalHeight
-//
-//                    contentInset.top = topInset
-//                }
-//
-//            }else{
-//                contentInset.top = 0
-//            }
-//        }
-    }
-    
     
     func shouldBatchFetch(for tableNode: ASTableNode) -> Bool {
         return delegate?.shouldBatchFetch(for: self) ?? true && !currentBatchContext.isFetching()

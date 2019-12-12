@@ -110,7 +110,6 @@
 		DDA11FA1238F5A9600425733 /* ImageMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FA0238F5A9600425733 /* ImageMessageViewModel.swift */; };
 		DDA11FA7238FC37400425733 /* ImagesMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FA6238FC37400425733 /* ImagesMessageCell.swift */; };
 		DDA11FAE2391023900425733 /* ConversationTableNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FAD2391023900425733 /* ConversationTableNode.swift */; };
-		DDA11FB02391112100425733 /* ChatBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FAF2391112100425733 /* ChatBoxView.swift */; };
 		DDA11FB22397980200425733 /* MessageViewModelFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FB12397980200425733 /* MessageViewModelFactory.swift */; };
 		DDA11FB7239A04B000425733 /* ContentNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FB6239A04B000425733 /* ContentNode.swift */; };
 		DDA11FB9239A04F300425733 /* TextContentNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA11FB8239A04F300425733 /* TextContentNode.swift */; };
@@ -252,7 +251,6 @@
 		DDA11FA0238F5A9600425733 /* ImageMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMessageViewModel.swift; sourceTree = "<group>"; };
 		DDA11FA6238FC37400425733 /* ImagesMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesMessageCell.swift; sourceTree = "<group>"; };
 		DDA11FAD2391023900425733 /* ConversationTableNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTableNode.swift; sourceTree = "<group>"; };
-		DDA11FAF2391112100425733 /* ChatBoxView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatBoxView.swift; sourceTree = "<group>"; };
 		DDA11FB12397980200425733 /* MessageViewModelFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewModelFactory.swift; sourceTree = "<group>"; };
 		DDA11FB6239A04B000425733 /* ContentNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentNode.swift; sourceTree = "<group>"; };
 		DDA11FB8239A04F300425733 /* TextContentNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextContentNode.swift; sourceTree = "<group>"; };
@@ -661,7 +659,6 @@
 			isa = PBXGroup;
 			children = (
 				484EEAA523A13451009CCF2A /* ChatInputNode.swift */,
-				DDA11FAF2391112100425733 /* ChatBoxView.swift */,
 			);
 			path = ChatInput;
 			sourceTree = "<group>";
@@ -1020,7 +1017,6 @@
 				48CF710123841AF2003BFCE4 /* ChatScreenViewController.swift in Sources */,
 				48CF70FB238414AE003BFCE4 /* MessageCell.swift in Sources */,
 				814F61BB23595A3700A6AA44 /* AppDelegate.swift in Sources */,
-				DDA11FB02391112100425733 /* ChatBoxView.swift in Sources */,
 				C2763784236BD981007A563D /* SessionBuilder.swift in Sources */,
 				DDC105322387C13E00139CB9 /* TextMessageViewModel.swift in Sources */,
 				48BC3F14237C692F00B96361 /* Database+FakeData.swift in Sources */,
@@ -1220,7 +1216,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = truongnguyen.chatapp;
+				PRODUCT_BUNDLE_IDENTIFIER = truongnguyen.chatapp1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -1242,7 +1238,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = truongnguyen.chatapp;
+				PRODUCT_BUNDLE_IDENTIFIER = truongnguyen.chatapp1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;

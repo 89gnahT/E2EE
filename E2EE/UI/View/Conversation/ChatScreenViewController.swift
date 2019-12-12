@@ -18,11 +18,9 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     
     var inboxID : InboxID!
     
-    var chatBox : ChatBoxView!
-    
     var selectedCell: MessageCell?
     
-    var currentOrientation: UIDeviceOrientation!
+    var currentOrientation: UIDeviceOrientation = UIDevice.current.orientation
     
     lazy var editMessageView: MessageCellEditView = {
         let frame = self.view.frame
@@ -32,8 +30,8 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     
     init(with inboxID : InboxID) {
         self.inboxID = inboxID
-       
-        super.init(node: tableNode)
+    
+        super.init(node: ASDisplayNode())
     }
     
     required init?(coder: NSCoder) {
@@ -45,39 +43,53 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
        
         tableNode.delegate = self
         tableNode.dataSource = self
-        let maxY = (navigationController != nil) ? navigationController!.navigationBar.frame.maxY : CGFloat(0)
-        let height = (tabBarController != nil) ? tabBarController!.tabBar.frame.minY - maxY : view.frame.height
-        tableNode.actualFrame = CGRect(x: 0, y: maxY, width: view.frame.width, height: height)
+        tableNode.frame = view.frame
+        view.addSubnode(tableNode)
         
         chatInputNode.frame = tabBarController!.tabBar.frame
+        chatInputNode.delegate = self
         view.addSubnode(chatInputNode)
-        
-        currentOrientation = UIDevice.current.orientation
+
+        switch currentOrientation {
+        case .faceDown, .faceDown, .portraitUpsideDown, .unknown:
+            currentOrientation = .portrait
+        default:
+            break
+        }
         
         DataManager.shared.addObserver(for: .messageChanged, target: self, callBackQueue: DispatchQueue.main)
     
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardAppear(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDisappear(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-        
         let gesture = UITapGestureRecognizer(target: self, action: #selector(tapEventInView(_:)))
         self.view.addGestureRecognizer(gesture)
     }
     
+    
     @objc func deviceOrientationDidChange(_ notification: Notification) {
         let orientation = UIDevice.current.orientation
-        guard currentOrientation != orientation else {
-            return
-        }
-        
-        currentOrientation = orientation
+        switch orientation {
+        case .portrait, .landscapeLeft, .landscapeRight:
+            if currentOrientation != orientation{
+                currentOrientation = orientation
+                
+                self.editMessageView.frame = self.view.frame
+                
+                self.chatInputNode.frame = self.tabBarController!.tabBar.frame
+                
+                self.tableNode.frame = self.view.frame
+                self.tableNode.reloadData()
+                
+            }
             
-        editMessageView.frame = view.frame
-        
+        default:
+            break
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardAppear(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDisappear(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
         
         tabBarController?.tabBar.isHidden = true
@@ -166,18 +178,25 @@ extension ChatScreenViewController: ConversationTableNodeDataSource{
 }
 
 extension ChatScreenViewController: ChatInputNodeDelegate{
-    func CHatInputNodeFrameDidChange(_ chatInputNode: ChatInputNode, newFrame nf: CGRect, oldFrame of: CGRect) {
-        
+    func chatInputNode(_ chatInputNode: ChatInputNode, sendText text: String) {
+        DataManager.shared.sendTextMessage(inboxID: inboxID, withContent: text, nil)
     }
     
+    func chatInputNodeFrameDidChange(_ chatInputNode: ChatInputNode, newFrame nf: CGRect, oldFrame of: CGRect) {
+        let delta = nf.height - of.height
+        
+        UIView.animate(withDuration: 0.15
+            , animations: {
+            self.tableNode.changeSize(withHeight: delta)
+        }, completion: nil)
+    }
     
     @objc func keyboardAppear(notification: NSNotification) {
         if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
-            let keyboardHeight = keyboardRectangle.height
-            
-            self.tableNode.keyboardWillAppear(withHeight: keyboardHeight)
-            self.chatInputNode.frame.origin.y -= keyboardHeight            
+           
+            self.tableNode.keyboardWillAppear(withFrame: keyboardRectangle)
+            self.chatInputNode.frame.origin.y -= keyboardRectangle.height
         }
     }
     
@@ -291,6 +310,7 @@ extension ChatScreenViewController: DataManagerListenerDelegate{
         switch updateType {
         case .new:
             insertMessage(viewModel: viewModel, at: 0)        
+            tableNode.scrollToRow(at: 0)
             
         case .changed:
             break
