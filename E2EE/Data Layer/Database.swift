@@ -79,6 +79,33 @@ class Database: NSObject {
 }
 
 extension Database{
+    public func deleteMessage(withInboxID iID : InboxID, messageID: MessageID, completion :  ((_ error : DataError, _ messageEntity: MessageEntity?) -> Void)?, callbackQueue : DispatchQueue?){
+        taskQueue.async {
+            let messageRemoved = self.rooms[iID]?.removeValue(forKey: messageID)
+            let error: DataError = messageRemoved != nil ? .none : .notFound
+            
+            let queue = callbackQueue != nil ? callbackQueue : self.callBackQueue
+            queue?.async {
+                completion?(error, messageRemoved)
+            }
+        }
+    }
+    
+    public func receiveMessage(_ message: MessageEntity, completion :  ((_ error : DataError) -> Void)?){
+        taskQueue.async {
+            if self.rooms[message.inboxID] == nil{
+                self.rooms.updateValue(Dictionary<MessageID, MessageEntity>(), forKey: message.inboxID)
+            }
+            self.rooms[message.inboxID]?.updateValue(message, forKey: message.id)
+            
+            self.callBackQueue.async {
+                completion?(.none)
+            }
+        }
+    }
+}
+
+extension Database{
     private func fetchOwnerData(){
         self.you = UserEntity(id: self.randomUserID(),
                               name: "Anh Trường",

@@ -68,6 +68,8 @@ extension DataManager{
         guard let sender = people[message.senderId] else {
             return
         }
+        Database.shared.receiveMessage(message, completion: nil)
+        
         let model = message.convertToModel(withSender: sender);
         
         callbackForDataChanged(object: model, forEvent: .messageChanged, updateType: .new, oldVaule: nil)
@@ -90,6 +92,7 @@ extension DataManager{
                 }
                 
                 let t = MessageEntity(id: iID + String(timeNow), conversationID: iID, senderId: userID, type: .text, contents: [text], timeSent: timeNow, timeDeliveried: 0, timeSeen: 0)
+                
                 self.receivedMessage(t)
             }
         }
@@ -174,7 +177,7 @@ extension DataManager{
                 queue?.async {
                     completion(messageModel)
                 }
-            }, callbackQueue: self.taskQueue)
+            }, callbackQueue: self.callBackQueue)
         }
     }
 }
@@ -184,8 +187,15 @@ extension DataManager{
     
     public func deleteMessage(withInboxID iID : InboxID, messageID: MessageID, completion :  ((_ error : DataError) -> Void)?){
         taskQueue.async {
-            
-           
+            Database.shared.deleteMessage(withInboxID: iID, messageID: messageID, completion: { (error, message) in
+                if error == .none && message != nil{
+                    let model = message!.convertToModel(withSender: self.people[message!.senderId]!)
+                    
+                    self.callbackForDataChanged(object: model, forEvent: .messageChanged, updateType: .delete, oldVaule: model)
+                }
+                
+                completion?(error)
+            }, callbackQueue: self.callBackQueue)
         }
     }
     

@@ -116,16 +116,8 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     }
     
     func removeMessageCell(_ cell: MessageCell) {
-        let messageID = cell.getViewModel().model.id
-        var index = -1
-        for i in 0..<self.viewModels.count{
-            if self.viewModels[i].model.id == messageID{
-                index = i
-                break
-            }
-        }
-        
-        self.removeMessage(at: index)
+        let model = cell.getViewModel().model
+        DataManager.shared.deleteMessage(withInboxID: model.conversationID, messageID: model.id, completion: nil)
     }
 }
 
@@ -208,10 +200,22 @@ extension ChatScreenViewController: ChatInputNodeDelegate{
 // MARK: Handle Message
 extension ChatScreenViewController{
     
+    private func removeMessage(_ msg: MessageModel){
+        var index = -1
+        for i in 0..<viewModels.count{
+            if viewModels[i].model.id == msg.id{
+                index = i
+                break
+            }
+        }
+        removeMessage(at: index)
+    }
+    
     private func removeMessage(at pos: Int){
         if pos < 0{
             return
         }
+        
         let count = self.viewModels.count
         guard pos >= 0 && pos < count else {
             return
@@ -223,20 +227,22 @@ extension ChatScreenViewController{
         if previous != nil{
             previous!.setupPositionWith(previous: count > pos + 2 ? self.viewModels[pos + 2] : nil, andAfter: after)
             
-            let preNode: MessageCell = tableNode.nodeForRowAt(IndexPath(row: pos + 1, section: 0)) as! MessageCell
+            let preNode: MessageCell = self.tableNode.nodeForRowAt(IndexPath(row: pos + 1, section: 0)) as! MessageCell
             preNode.updateUI()
         }
         
         if after != nil{
             after!.setupPositionWith(previous: previous, andAfter: pos > 1 ? self.viewModels[pos - 2] : nil)
             
-            let afterNode: MessageCell = tableNode.nodeForRowAt(IndexPath(row: pos - 1, section: 0)) as! MessageCell
+            let afterNode: MessageCell = self.tableNode.nodeForRowAt(IndexPath(row: pos - 1, section: 0)) as! MessageCell
             afterNode.updateUI()
         }
         
         self.viewModels.remove(at: pos)
         self.tableNode.deleteRows(at: [IndexPath(row: pos, section: 0)])
     }
+    
+    
     
     private func insertMessage(viewModel : MessageViewModel, at pos: Int){
         
@@ -320,17 +326,7 @@ extension ChatScreenViewController: DataManagerListenerDelegate{
         case .changed:
             break
         case .delete:
-            var index = 0
-            
-            for i in 0..<viewModels.count{
-                if viewModels[i].model.id == viewModel.model.id{
-                    index = i
-                    break
-                }
-            }
-            
-            viewModels.remove(at: index)
-            tableNode.deleteRows(at: [IndexPath(row: index, section: 0)])
+            removeMessage(msg)
         }
     }
     
