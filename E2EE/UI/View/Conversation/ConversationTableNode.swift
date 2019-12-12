@@ -39,8 +39,6 @@ class ConversationTableNode: ASDisplayNode {
         }
     }
     
-    private var keyboardFrame: CGRect = CGRect.zero
-    
     override init() {
         super.init()
         
@@ -91,15 +89,6 @@ extension ConversationTableNode{
     func changeSize(withHeight height: CGFloat){
         view.frame.origin.y -= height
         tableNode.contentInset.bottom += height
-    }
-    
-    func keyboardWillAppear(withFrame frame: CGRect){
-        keyboardFrame = frame
-        changeSize(withHeight: keyboardFrame.height)
-    }
-    
-    func keyboardWillDisappear(){
-        changeSize(withHeight: -keyboardFrame.height)
     }
 }
 

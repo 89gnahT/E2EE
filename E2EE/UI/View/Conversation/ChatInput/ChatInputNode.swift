@@ -30,7 +30,7 @@ class ChatInputNode: ASDisplayNode {
     var quickSendBtn = ASButtonNode()
     
     var delegate: ChatInputNodeDelegate?
-
+    
     private var inputExpanded: Bool = false
     
     private var isTransition: Bool = false
@@ -106,16 +106,27 @@ class ChatInputNode: ASDisplayNode {
         newFrame.origin.y -= delta
         newFrame.size.height += delta
         
-        if delta != 0{
-            ASPerformBlockOnMainThread {
-                self.delegate?.chatInputNodeFrameDidChange(self, newFrame: newFrame, oldFrame: self.view.frame)
+        func commonAnimate(){
+            if quickSendBtnEnable{
+                quickSendBtn.frame = context.finalFrame(for: quickSendBtn)
+            }else{
+                sendBtn.frame = context.finalFrame(for: sendBtn)
             }
+            
+            self.editTextNode.frame = context.finalFrame(for: self.editTextNode)
+            self.backgroundEditTextNode.frame = context.finalFrame(for: self.backgroundEditTextNode)
+            
+            self.delegate?.chatInputNodeFrameDidChange(self, newFrame: newFrame, oldFrame: self.view.frame)
+            
+            self.view.frame = newFrame
         }
         
-        let animateDuration = 0.2
+        let animateTransitionDuration = 0.2
+        
+        // Setup sendBtn before animating
         if quickSendBtnEnable{
             var quickSendBtnInitialFrame = context.initialFrame(for: quickSendBtn)
-            if quickSendBtnInitialFrame.origin.x == .infinity || quickSendBtnInitialFrame.origin.y == .infinity{
+            if quickSendBtnInitialFrame.originInfinity(){
                 quickSendBtnInitialFrame = context.finalFrame(for: quickSendBtn)
             }
             quickSendBtn.frame = quickSendBtnInitialFrame
@@ -123,7 +134,7 @@ class ChatInputNode: ASDisplayNode {
             sendBtn.alpha = 0
         }else{
             var sendBtnInitialFrame = context.initialFrame(for: sendBtn)
-            if sendBtnInitialFrame.origin.x == .infinity || sendBtnInitialFrame.origin.y == .infinity{
+            if sendBtnInitialFrame.originInfinity(){
                 sendBtnInitialFrame = context.finalFrame(for: sendBtn)
             }
             sendBtn.frame = sendBtnInitialFrame
@@ -139,37 +150,24 @@ class ChatInputNode: ASDisplayNode {
                 
                 self.collapseBtn.alpha = 0
                 
-                UIView.animate(withDuration: animateDuration, animations: {
+                UIView.animate(withDuration: animateTransitionDuration, animations: {
                     self.optionNode.frame = optionFinalFrame
                     self.optionNode.alpha = 0
                     
                     self.collapseBtn.alpha = 1
                     self.collapseBtn.frame = context.finalFrame(for: self.collapseBtn)
                     
-                    self.editTextNode.frame = context.finalFrame(for: self.editTextNode)
-                    self.backgroundEditTextNode.frame = context.finalFrame(for: self.backgroundEditTextNode)
-                    
-                    self.view.frame = newFrame
+                    commonAnimate()
                     
                 }) { (finished) in
                     context.completeTransition(finished)
                     self.isTransition = false
                 }
             }else{
-                UIView.animate(withDuration: animateDuration, animations: {
-                    
-                    if self.quickSendBtnEnable{
-                        self.quickSendBtn.frame = context.finalFrame(for: self.quickSendBtn)
-                    }else{
-                        self.sendBtn.frame = context.finalFrame(for: self.sendBtn)
-                    }
-                    
+                UIView.animate(withDuration: animateTransitionDuration, animations: {
                     self.collapseBtn.frame = context.finalFrame(for: self.collapseBtn)
                     
-                    self.editTextNode.frame = context.finalFrame(for: self.editTextNode)
-                    self.backgroundEditTextNode.frame = context.finalFrame(for: self.backgroundEditTextNode)
-                    
-                    self.view.frame = newFrame
+                    commonAnimate()
                     
                 }) { (finished) in
                     context.completeTransition(finished)
@@ -185,35 +183,23 @@ class ChatInputNode: ASDisplayNode {
                 
                 collapseBtn.alpha = 1
                 
-                UIView.animate(withDuration: animateDuration, animations: {
+                UIView.animate(withDuration: animateTransitionDuration, animations: {
                     self.optionNode.frame = context.finalFrame(for: self.optionNode)
                     self.optionNode.alpha = 1
                     
                     self.collapseBtn.alpha = 0
                     
-                    self.editTextNode.frame = context.finalFrame(for: self.editTextNode)
-                    self.backgroundEditTextNode.frame = context.finalFrame(for: self.backgroundEditTextNode)
-                    
-                    self.view.frame = newFrame
+                    commonAnimate()
                     
                 }) { (finished) in
                     context.completeTransition(finished)
                     self.isTransition = false
                 }
             }else{
-                UIView.animate(withDuration: animateDuration, animations: {
-                    if self.quickSendBtnEnable{
-                        self.quickSendBtn.frame = context.finalFrame(for: self.quickSendBtn)
-                    }else{
-                        self.sendBtn.frame = context.finalFrame(for: self.sendBtn)
-                    }
-                    
+                UIView.animate(withDuration: animateTransitionDuration, animations: {
                     self.optionNode.frame = context.finalFrame(for: self.optionNode)
                     
-                    self.editTextNode.frame = context.finalFrame(for: self.editTextNode)
-                    self.backgroundEditTextNode.frame = context.finalFrame(for: self.backgroundEditTextNode)
-                    
-                    self.view.frame = newFrame
+                    commonAnimate()
                     
                 }) { (finished) in
                     context.completeTransition(finished)
@@ -333,7 +319,7 @@ extension ChatInputNode{
             if lastContentBeforCollapse != nil{
                 editTextNode.textView.text = lastContentBeforCollapse
             }
-    
+            
             let lineHeight = editTextNode.textView.font?.lineHeight ?? 1
             let size = CGSize(width: editTextNode.frame.width, height: .infinity)
             let estimatedSize = editTextNode.calculateSizeThatFits(size)
@@ -375,12 +361,12 @@ extension ChatInputNode{
     }
     
     @objc func tapEventInView(_ gesture: UITapGestureRecognizer){
-      
+        
     }
 }
 
 extension ChatInputNode: UIGestureRecognizerDelegate{
-
+    
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }

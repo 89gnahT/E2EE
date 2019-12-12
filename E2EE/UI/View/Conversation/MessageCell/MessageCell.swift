@@ -107,9 +107,9 @@ class MessageCell: ASCellNode {
             
             self.statusNode.attributedText = viewModel.status
             
-            self.insets = viewModel.insets
-            
             self.avatarImageNode.isHidden = !viewModel.isShowAvatar
+            
+            self.insets = viewModel.insets
             
             self.updateUIContent()
             
@@ -119,33 +119,34 @@ class MessageCell: ASCellNode {
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         self.updateCellAttributeWhenLayout()
-        let content = self.layoutSpecForMessageContent(constrainedSize)
         
-        var subContentStackChildren : [ASLayoutElement]
-        if isHideDetails{
-            subContentStackChildren = [content]
-        }else{
-            subContentStackChildren = [self.timeNode, content, self.statusNode]
+        let topStack = ASStackLayoutSpec(direction: .horizontal, spacing: 0, justifyContent: .center, alignItems: .stretch, children: [timeNode])
+        
+        let contentStack = ASStackLayoutSpec(direction: .vertical, spacing: 5, justifyContent: justifyContent, alignItems: .end, children: [self.layoutSpecForMessageContent(constrainedSize)])
+        if !isHideDetails{
+            contentStack.children?.append(statusNode)
         }
-        let subContentStack = ASStackLayoutSpec(direction: .vertical,
-                                                spacing: 5,
-                                                justifyContent: justifyContent, alignItems: .stretch,
-                                                children: subContentStackChildren)
+        contentStack.alignItems = isIncommingMessage ? .start : .end
         
-        let contentStack = ASStackLayoutSpec(direction: .horizontal,
-                                             spacing: 10,
-                                             justifyContent: justifyContent,
-                                             alignItems: .center,
-                                             children: [subContentStack])
-        
+        let bottomStack = ASStackLayoutSpec(direction: .horizontal, spacing: 10, justifyContent: justifyContent, alignItems: .stretch, children: [contentStack])
         if isIncommingMessage{
-            contentStack.children?.insert(self.avatarImageNode, at: 0)
+            bottomStack.children?.insert(avatarImageNode, at: 0)
         }
         
-        contentStack.style.maxSize = constrainedSize.max
-        contentStack.style.minSize = constrainedSize.min
+        let stack = ASStackLayoutSpec(direction: .vertical, spacing: 15, justifyContent: justifyContent, alignItems: .stretch, children: [bottomStack])
+        if !isHideDetails{
+            stack.children?.insert(topStack, at: 0)
+        }
+        stack.style.maxSize = constrainedSize.max
+        stack.style.minSize = constrainedSize.min
+     
+        var newInset = insets
+        if !isHideDetails{
+            newInset.top += 15
+            newInset.bottom += 5
+        }
         
-        return ASInsetLayoutSpec(insets: insets, child: contentStack)
+        return ASInsetLayoutSpec(insets: newInset, child: stack)
     }
     
     override func animateLayoutTransition(_ context: ASContextTransitioning) {

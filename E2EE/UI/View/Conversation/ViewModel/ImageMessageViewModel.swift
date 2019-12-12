@@ -21,6 +21,7 @@ class ImageMessageViewModel: MessageViewModel {
     override func updateData(_ completion : (() -> Void)?) {
         super.updateData(completion)
         
+        imageURLs.removeAll()
         for i in model.contents{
             let url = URL(string: i)
             if url != nil{

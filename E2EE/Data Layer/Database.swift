@@ -54,14 +54,25 @@ class Database: NSObject {
         }
     }
     
-    public func fetchMesaages(with inboxID : InboxID, _ completion: @escaping (([MessageEntity]) -> Void), callbackQueue : DispatchQueue?){
+    public func fetchMesaages(with inboxID : InboxID, currentNumberMessages number: Int, howManyMessageReceive receive: Int, _ completion: @escaping (([MessageEntity]) -> Void), callbackQueue : DispatchQueue?){
         taskQueue.async {
             let messages = self.rooms[inboxID]!.values.sorted { (a, b) -> Bool in
                 return a.sent < b.sent
             }
+            
+            var messageReceive = [MessageEntity]()
+            if messages.count > number{
+                var minCount = number + receive
+                minCount = minCount > messages.count ? messages.count : minCount
+                for i in number..<minCount{
+                    messageReceive.append(messages[i])
+                    print("choose message ", i, " witdh id ", messages[i].id, " with content: ", messages[i].contents[0])
+                }
+            }
+            
             let queue = callbackQueue != nil ? callbackQueue : self.callBackQueue
             queue?.async {
-                completion(messages)
+                completion(messageReceive)
             }
         }
     }
@@ -94,7 +105,7 @@ extension Database{
     
     private func fetchConversations(){
         for i in self.people.values{
-            if i.id != self.you.id {
+            if i.id != self.you.id && self.randomInt(100) % 7 == 0{
                 let c = self.createConversationFrom(i.id)
                 self.conversations.updateValue(c, forKey: c.id)
             }
@@ -104,7 +115,7 @@ extension Database{
     private func fetchRoomsChat(){
         for c in self.conversations.values{
             self.rooms.updateValue(Dictionary<MessageID, MessageEntity>(), forKey: c.id)
-            let numberOfMessage = self.randomInt(50, 200)
+            let numberOfMessage = self.randomInt(500, 2000)
             
             for _ in 0..<numberOfMessage{
                 let m = self.createMsgFrom(c)
@@ -127,9 +138,10 @@ extension Database{
     private func createMsgFrom(_ cvs : InboxEntity) -> MessageEntity{
         
         let senderID = self.random() % 2 == 0 ? cvs.membersID.first! : cvs.membersID.last!
-        let msgID = senderID + String(timeNow)
-        let (contents, type) = self.random() % 30 == 0 ?
-            (self.randomImageURL(self.randomInt(10) + 1), MessageType.image) :
+        let msgID = self.randomMsgID(with: senderID)
+//        print("create message id ", msgID)
+        let (contents, type) = self.random() % 25 == 0 ?
+            (self.randomImageURL(self.randomInt(1, 10)), MessageType.image) :
             ([self.textMsg[self.randomInt(self.textMsg.count)]], MessageType.text)
         let (sent, delivered, seen) = self.randomMsgTime()
         

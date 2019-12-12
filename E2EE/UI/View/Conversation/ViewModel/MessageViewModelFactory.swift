@@ -10,7 +10,7 @@ import UIKit
 import AsyncDisplayKit
 
 class MessageViewModelFactory: NSObject {
-    class func viewModel(_ model: MessageModel) -> MessageViewModel{
+    class func createViewModel(_ model: MessageModel) -> MessageViewModel{
         var viewModel: MessageViewModel!
         
         if model.type == .text{

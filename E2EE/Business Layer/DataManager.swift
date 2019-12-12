@@ -161,13 +161,12 @@ extension DataManager{
         }
     }
     
-    public func fetchMessageModels(with inboxID : InboxID, _ completion : @escaping (_ models : [MessageModel]) -> Void, callbackQueue : DispatchQueue?){
+    public func fetchMessageModels(with inboxID : InboxID, currentNumberMessages number: Int, howManyMessageReceive receive: Int, _ completion : @escaping (_ models : [MessageModel]) -> Void, callbackQueue : DispatchQueue?){
         taskQueue.async {
-            Database.shared.fetchMesaages(with: inboxID, { (messages) in
+            Database.shared.fetchMesaages(with: inboxID, currentNumberMessages: number, howManyMessageReceive: receive, { (messages) in
                 
                 var messageModel = [MessageModel]()
                 for i in messages{
-                    
                     messageModel.append(i.convertToModel(withSender: self.people[i.senderId]!))
                 }
                 
@@ -186,7 +185,7 @@ extension DataManager{
     public func deleteMessage(withInboxID iID : InboxID, messageID: MessageID, completion :  ((_ error : DataError) -> Void)?){
         taskQueue.async {
             
-            //self.callbackForDataChanged(object: <#T##NSObject#>, forEvent: <#T##ValueChanged#>, updateType: <#T##UpdateType#>, oldVaule: <#T##NSObject?#>)
+           
         }
     }
     

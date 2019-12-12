@@ -41,6 +41,7 @@
 		48BC3F6F237D53F200B96361 /* InboxModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48BC3F6E237D53F200B96361 /* InboxModel.swift */; };
 		48CF70FB238414AE003BFCE4 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CF70FA238414AE003BFCE4 /* MessageCell.swift */; };
 		48CF710123841AF2003BFCE4 /* ChatScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CF710023841AF2003BFCE4 /* ChatScreenViewController.swift */; };
+		48EBC39023A299710089993C /* CGRect+OriginInfinity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EBC38F23A299710089993C /* CGRect+OriginInfinity.swift */; };
 		814F61BB23595A3700A6AA44 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814F61BA23595A3700A6AA44 /* AppDelegate.swift */; };
 		814F61BD23595A3700A6AA44 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814F61BC23595A3700A6AA44 /* SceneDelegate.swift */; };
 		814F61C223595A3700A6AA44 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 814F61C023595A3700A6AA44 /* Main.storyboard */; };
@@ -173,6 +174,7 @@
 		48BC3F6E237D53F200B96361 /* InboxModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxModel.swift; sourceTree = "<group>"; };
 		48CF70FA238414AE003BFCE4 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
 		48CF710023841AF2003BFCE4 /* ChatScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScreenViewController.swift; sourceTree = "<group>"; };
+		48EBC38F23A299710089993C /* CGRect+OriginInfinity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+OriginInfinity.swift"; sourceTree = "<group>"; };
 		5EF4F8F96B03EC46DAEF9048 /* Pods-E2EE-E2EEUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E2EE-E2EEUITests.release.xcconfig"; path = "Target Support Files/Pods-E2EE-E2EEUITests/Pods-E2EE-E2EEUITests.release.xcconfig"; sourceTree = "<group>"; };
 		669DCAAD94F20C41F7BA0FBC /* Pods_E2EE_E2EEUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_E2EE_E2EEUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		814F61B723595A3700A6AA44 /* E2EE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = E2EE.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -374,6 +376,7 @@
 				483020EA2375A770002AC97B /* CGSize+Square.swift */,
 				48400F15238575B1008E2A0B /* UIImage+MaskColor.swift */,
 				483F567D2386E302008EA1F7 /* UIColor.swift */,
+				48EBC38F23A299710089993C /* CGRect+OriginInfinity.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1030,6 +1033,7 @@
 				C276377A236BD981007A563D /* ProtocolBufferSerializable.swift in Sources */,
 				C276376F236BD981007A563D /* SenderKeyDistributionMessage.swift in Sources */,
 				C276375C236BD981007A563D /* PrivateKey.swift in Sources */,
+				48EBC39023A299710089993C /* CGRect+OriginInfinity.swift in Sources */,
 				483F56802386E383008EA1F7 /* Bubble.swift in Sources */,
 				C2763775236BD981007A563D /* LocalStorage.proto in Sources */,
 				DD49B532238E6703007163ED /* TextMessageCell.swift in Sources */,

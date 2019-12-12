@@ -59,7 +59,7 @@ class MessageViewModel: NSObject {
         isIncommingMessage = !model.isMyMessage()
         avatarURL = URL(string: model.sender.avatarURL)
         
-        time = attributedString(getTimeWithFormath(time: model.time.sent, format: "dd/MM/yyyy"), fontSize: 13, isBold: false, foregroundColor: .darkGray)
+        time = attributedString(getTimeWithFormath(time: model.time.sent, format: "hh:mm dd/MM/yyyy"), fontSize: 13, isBold: false, foregroundColor: .darkGray)
         
         status = attributedString("Delivered", fontSize: 13, isBold: false, foregroundColor: .darkGray)
         

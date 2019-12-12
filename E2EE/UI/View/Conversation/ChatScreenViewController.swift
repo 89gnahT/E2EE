@@ -30,7 +30,7 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     
     init(with inboxID : InboxID) {
         self.inboxID = inboxID
-    
+        
         super.init(node: ASDisplayNode())
     }
     
@@ -40,7 +40,7 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        
         tableNode.delegate = self
         tableNode.dataSource = self
         tableNode.frame = view.frame
@@ -49,7 +49,7 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         chatInputNode.frame = tabBarController!.tabBar.frame
         chatInputNode.delegate = self
         view.addSubnode(chatInputNode)
-
+        
         switch currentOrientation {
         case .faceDown, .faceDown, .portraitUpsideDown, .unknown:
             currentOrientation = .portrait
@@ -58,7 +58,7 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         }
         
         DataManager.shared.addObserver(for: .messageChanged, target: self, callBackQueue: DispatchQueue.main)
-    
+        
         let gesture = UITapGestureRecognizer(target: self, action: #selector(tapEventInView(_:)))
         self.view.addGestureRecognizer(gesture)
     }
@@ -117,7 +117,7 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     
     func removeMessageCell(_ cell: MessageCell) {
         let messageID = cell.getViewModel().model.id
-        var index = 0
+        var index = -1
         for i in 0..<self.viewModels.count{
             if self.viewModels[i].model.id == messageID{
                 index = i
@@ -135,18 +135,18 @@ extension ChatScreenViewController: ConversationTableNodeDelegate{
     }
     
     func tableNode(_ tableNode: ConversationTableNode, willBeginBatchFetchWith context: ASBatchContext) {
-        DataManager.shared.fetchMessageModels(with: self.inboxID, { (models) in
+        DataManager.shared.fetchMessageModels(with: self.inboxID, currentNumberMessages: viewModels.count, howManyMessageReceive: 40, { (models) in
             
             var viewModels = [MessageViewModel]()
             for i in models{
-                let viewModel = MessageViewModelFactory.viewModel(i)
+                let viewModel = MessageViewModelFactory.createViewModel(i)
                 viewModels.append(viewModel)
             }
             
             ASPerformBlockOnMainThread {
-                self.insertIntoLastWithMessages(viewModels: viewModels)
-                
-                context.completeBatchFetching(true)
+                self.insertIntoLastWithMessages(viewModels: viewModels) { (success) in
+                    context.completeBatchFetching(true)
+                }
             }
             
         }, callbackQueue: nil)
@@ -183,26 +183,25 @@ extension ChatScreenViewController: ChatInputNodeDelegate{
     }
     
     func chatInputNodeFrameDidChange(_ chatInputNode: ChatInputNode, newFrame nf: CGRect, oldFrame of: CGRect) {
-        let delta = nf.height - of.height
-        
-        UIView.animate(withDuration: 0.15
-            , animations: {
-            self.tableNode.changeSize(withHeight: delta)
-        }, completion: nil)
+        self.tableNode.changeSize(withHeight: nf.height - of.height)
     }
     
     @objc func keyboardAppear(notification: NSNotification) {
         if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
-           
-            self.tableNode.keyboardWillAppear(withFrame: keyboardRectangle)
+            
+            self.tableNode.changeSize(withHeight: keyboardRectangle.height)
             self.chatInputNode.frame.origin.y -= keyboardRectangle.height
         }
     }
     
     @objc func keyboardDisappear(notification: NSNotification) {
-        self.tableNode.keyboardWillDisappear()
-        self.chatInputNode.frame = self.tabBarController!.tabBar.frame
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            
+            self.tableNode.changeSize(withHeight: -keyboardRectangle.height)
+            self.chatInputNode.frame.origin.y += keyboardRectangle.height
+        }
     }
 }
 
@@ -210,6 +209,9 @@ extension ChatScreenViewController: ChatInputNodeDelegate{
 extension ChatScreenViewController{
     
     private func removeMessage(at pos: Int){
+        if pos < 0{
+            return
+        }
         let count = self.viewModels.count
         guard pos >= 0 && pos < count else {
             return
@@ -265,8 +267,9 @@ extension ChatScreenViewController{
         self.tableNode.insertRows(at: [IndexPath(row: pos, section: 0)])
     }
     
-    private func insertIntoLastWithMessages(viewModels : [MessageViewModel]){
+    private func insertIntoLastWithMessages(viewModels : [MessageViewModel], completion: ((_ success: Bool) -> Void)?){
         if viewModels.isEmpty{
+            completion?(false)
             return
         }
         
@@ -293,19 +296,21 @@ extension ChatScreenViewController{
             var index = viewModels.count - 1
             while index >= 0{
                 self.viewModels.append(viewModels[index])
-                indexPaths.append(IndexPath(row: index, section: 0))
+                indexPaths.append(IndexPath(row: self.viewModels.count - 1, section: 0))
                 index -= 1
             }
             
             self.tableNode.insertRows(at: indexPaths)
-        }, completion: nil)
+        }, completion: { (success) in
+            completion?(success)
+        })
     }
 }
 
 // MARK: DataManagerListenerDelegate
 extension ChatScreenViewController: DataManagerListenerDelegate{
     func messageChanged(_ msg: MessageModel, updateType: UpdateType, oldValue: MessageModel?) {
-        let viewModel = MessageViewModelFactory.viewModel(msg)
+        let viewModel = MessageViewModelFactory.createViewModel(msg)
         
         switch updateType {
         case .new:
