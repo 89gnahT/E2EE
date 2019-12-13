@@ -22,11 +22,17 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     
     var currentOrientation: UIDeviceOrientation = UIDevice.current.orientation
     
-    lazy var editMessageView: MessageCellEditView = {
+    var keyboardAppeared: Bool = false
+    
+    var currentKeyboardFrame: CGRect = CGRect.zero
+    
+    lazy var editMessageView: MessageEditView = {
         let frame = self.view.frame
         
-        return MessageCellEditView(target: self, frame: frame, removeBtnAction: #selector(removeMessageBtnPressed))
+        return MessageEditView(target: self, frame: frame, removeBtnAction: #selector(removeMessageBtnPressed))
     }()
+    
+    var lastSafeAreaInsets: UIEdgeInsets!
     
     init(with inboxID : InboxID) {
         self.inboxID = inboxID
@@ -41,15 +47,23 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableNode.delegate = self
-        tableNode.dataSource = self
-        tableNode.frame = view.frame
-        view.addSubnode(tableNode)
         
-        chatInputNode.frame = tabBarController!.tabBar.frame
+        
+        tableNode.tableNode.automaticallyAdjustsContentOffset = false
+        tableNode.tableNode.view.contentInsetAdjustmentBehavior = .never
+        
+        lastSafeAreaInsets = UIEdgeInsets.zero
+        
+        let chatInputHeight = CGFloat(49)
+        chatInputNode.frame = CGRect(x: 0, y: view.frame.height - chatInputHeight, width: view.frame.width, height: chatInputHeight)
         chatInputNode.delegate = self
         view.addSubnode(chatInputNode)
         
+        tableNode.delegate = self
+        tableNode.dataSource = self
+        tableNode.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - chatInputHeight)
+        view.addSubnode(tableNode)
+       
         switch currentOrientation {
         case .faceDown, .faceDown, .portraitUpsideDown, .unknown:
             currentOrientation = .portrait
@@ -63,6 +77,25 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         self.view.addGestureRecognizer(gesture)
     }
     
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        
+        let safeAreaInsets = view.safeAreaInsets
+        
+        // Remove lastSafeAreaInsets and add safeAreaInsets
+        var oldFrame = chatInputNode.frame
+        chatInputNode.frame = CGRect(x: oldFrame.minX - lastSafeAreaInsets.left + safeAreaInsets.left,
+                                     y: oldFrame.minY + lastSafeAreaInsets.bottom - safeAreaInsets.bottom,
+                                     width: oldFrame.width + lastSafeAreaInsets.left + lastSafeAreaInsets.right - safeAreaInsets.left - safeAreaInsets.right,
+                                     height: oldFrame .height - lastSafeAreaInsets.bottom + safeAreaInsets.bottom)
+        
+        oldFrame = tableNode.frame
+        tableNode.frame = CGRect(x: oldFrame.minX - lastSafeAreaInsets.left + safeAreaInsets.left,
+                                 y: oldFrame.minY,
+                                 width: oldFrame.width + lastSafeAreaInsets.left + lastSafeAreaInsets.right - safeAreaInsets.left - safeAreaInsets.right,
+                                 height: oldFrame .height + lastSafeAreaInsets.bottom - safeAreaInsets.bottom)
+        lastSafeAreaInsets = safeAreaInsets
+    }
     
     @objc func deviceOrientationDidChange(_ notification: Notification) {
         let orientation = UIDevice.current.orientation
@@ -72,12 +105,38 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
                 currentOrientation = orientation
                 
                 self.editMessageView.frame = self.view.frame
+         
+                // Remove
+                var oldFrame = chatInputNode.frame
+                chatInputNode.frame = CGRect(x: oldFrame.minX - lastSafeAreaInsets.left,
+                                             y: oldFrame.minY + lastSafeAreaInsets.bottom,
+                                             width: oldFrame.width + lastSafeAreaInsets.left + lastSafeAreaInsets.right,
+                                             height: oldFrame .height - lastSafeAreaInsets.bottom )
                 
-                self.chatInputNode.frame = self.tabBarController!.tabBar.frame
+                oldFrame = tableNode.frame
+                tableNode.frame = CGRect(x: oldFrame.minX - lastSafeAreaInsets.left,
+                                         y: oldFrame.minY,
+                                         width: oldFrame.width + lastSafeAreaInsets.left + lastSafeAreaInsets.right,
+                                         height: oldFrame .height + lastSafeAreaInsets.bottom )
                 
-                self.tableNode.frame = self.view.frame
-                self.tableNode.reloadData()
+                let chatInputHeight = chatInputNode.frame.height
+                let frame = view.frame
+                chatInputNode.frame = CGRect(x: frame.minX, y: frame.maxY - chatInputHeight, width: frame.width, height: chatInputHeight)
+                tableNode.frame = CGRect(x: frame.minX, y: frame.minY, width: frame.width, height: frame.height - chatInputHeight)
                 
+                oldFrame = chatInputNode.frame
+                chatInputNode.frame = CGRect(x: oldFrame.minX + lastSafeAreaInsets.left,
+                                             y: oldFrame.minY - lastSafeAreaInsets.bottom ,
+                                             width: oldFrame.width - lastSafeAreaInsets.left - lastSafeAreaInsets.right,
+                                             height: oldFrame .height + lastSafeAreaInsets.bottom )
+                
+                oldFrame = tableNode.frame
+                tableNode.frame = CGRect(x: oldFrame.minX + lastSafeAreaInsets.left,
+                                         y: oldFrame.minY,
+                                         width: oldFrame.width - lastSafeAreaInsets.left - lastSafeAreaInsets.right ,
+                                         height: oldFrame .height - lastSafeAreaInsets.bottom )
+                
+                tableNode.reloadData()
             }
             
         default:
@@ -92,32 +151,16 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDisappear(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
         
-        tabBarController?.tabBar.isHidden = true
+        //tabBarController?.tabBar.isHidden = true
+        
+        
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        tabBarController?.tabBar.isHidden = false
+        //tabBarController?.tabBar.isHidden = false
         
         NotificationCenter.default.removeObserver(self)
-    }
-    
-    @objc func tapEventInView(_ gesture: UITapGestureRecognizer){
-        self.editMessageView.removeFromSupernode()
-        self.view.endEditing(true)
-    }
-    
-    @objc func removeMessageBtnPressed(_ button: ASButtonNode){
-        editMessageView.removeFromSupernode()
-        guard let messageCell = editMessageView.messageCell else {
-            return
-        }
-        self.removeMessageCell(messageCell)
-    }
-    
-    func removeMessageCell(_ cell: MessageCell) {
-        let model = cell.getViewModel().model
-        DataManager.shared.deleteMessage(withInboxID: model.conversationID, messageID: model.id, completion: nil)
     }
 }
 
@@ -166,34 +209,6 @@ extension ChatScreenViewController: ConversationTableNodeDataSource{
     
     func tableNode(_ tableNode: ConversationTableNode, numberOfRowsInSection section: Int) -> Int {
         return viewModels.count
-    }
-}
-
-extension ChatScreenViewController: ChatInputNodeDelegate{
-    func chatInputNode(_ chatInputNode: ChatInputNode, sendText text: String) {
-        DataManager.shared.sendTextMessage(inboxID: inboxID, withContent: text, nil)
-    }
-    
-    func chatInputNodeFrameDidChange(_ chatInputNode: ChatInputNode, newFrame nf: CGRect, oldFrame of: CGRect) {
-        self.tableNode.changeSize(withHeight: nf.height - of.height)
-    }
-    
-    @objc func keyboardAppear(notification: NSNotification) {
-        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-            let keyboardRectangle = keyboardFrame.cgRectValue
-            
-            self.tableNode.changeSize(withHeight: keyboardRectangle.height)
-            self.chatInputNode.frame.origin.y -= keyboardRectangle.height
-        }
-    }
-    
-    @objc func keyboardDisappear(notification: NSNotification) {
-        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-            let keyboardRectangle = keyboardFrame.cgRectValue
-            
-            self.tableNode.changeSize(withHeight: -keyboardRectangle.height)
-            self.chatInputNode.frame.origin.y += keyboardRectangle.height
-        }
     }
 }
 
@@ -339,6 +354,16 @@ extension ChatScreenViewController: DataManagerListenerDelegate{
     }
 }
 
+extension ChatScreenViewController: ChatInputNodeDelegate{
+    func chatInputNode(_ chatInputNode: ChatInputNode, sendText text: String) {
+        DataManager.shared.sendTextMessage(inboxID: inboxID, withContent: text, nil)
+    }
+    
+    func chatInputNodeFrameDidChange(_ chatInputNode: ChatInputNode, newFrame nf: CGRect, oldFrame of: CGRect) {
+        self.tableNode.changeSize(withHeight: nf.height - of.height)
+    }
+}
+
 // MARK: MessageCellDelegate
 extension ChatScreenViewController: MessageCellDelegate{
     func messageCell(_ cell: MessageCell, contentClicked contentNode: ASDisplayNode) {
@@ -356,8 +381,12 @@ extension ChatScreenViewController: MessageCellDelegate{
     
     func messageCell(_ cell: MessageCell, longPressGesture: UILongPressGestureRecognizer) {
         if longPressGesture.state == .began{
+            if keyboardAppeared{
+                view.endEditing(true)
+            }
             editMessageView.messageCell = cell
             self.view.addSubnode(self.editMessageView)
+            editMessageView.transitionLayout(withAnimation: true, shouldMeasureAsync: true, measurementCompletion: nil)
         }
     }
     
@@ -369,4 +398,44 @@ extension ChatScreenViewController: MessageCellDelegate{
         
     }
     
+}
+
+extension ChatScreenViewController{
+    @objc func tapEventInView(_ gesture: UITapGestureRecognizer){
+        self.editMessageView.removeFromSupernode()
+        self.view.endEditing(true)
+    }
+    
+    @objc func removeMessageBtnPressed(_ button: ASButtonNode){
+        editMessageView.removeFromSupernode()
+        guard let messageCell = editMessageView.messageCell else {
+            return
+        }
+        self.removeMessageCell(messageCell)
+    }
+    
+    func removeMessageCell(_ cell: MessageCell) {
+        let model = cell.getViewModel().model
+        DataManager.shared.deleteMessage(withInboxID: model.conversationID, messageID: model.id, completion: nil)
+    }
+    
+    @objc func keyboardAppear(notification: NSNotification) {
+        if !keyboardAppeared, let keyboardValue: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            keyboardAppeared = true
+            
+            currentKeyboardFrame = keyboardValue.cgRectValue
+            print("keyboardAppear ", currentKeyboardFrame)
+            self.tableNode.changeSize(withHeight: currentKeyboardFrame.height)
+            self.chatInputNode.frame.origin.y -= currentKeyboardFrame.height
+        }
+    }
+    
+    @objc func keyboardDisappear(notification: NSNotification) {
+        if keyboardAppeared{
+            keyboardAppeared = false
+            print("keyboardDisappear ", currentKeyboardFrame)
+            self.tableNode.changeSize(withHeight: -currentKeyboardFrame.height)
+            self.chatInputNode.frame.origin.y += currentKeyboardFrame.height
+        }
+    }
 }

@@ -55,7 +55,7 @@ class ChatInputNode: ASDisplayNode {
         let fontSize = CGFloat(15)
         editTextNode.attributedPlaceholderText = attributedString("Aa", fontSize: fontSize, isBold: false, foregroundColor: .darkGray)
         editTextNode.textView.font = UIFont.defaultFont(ofSize: fontSize)
-        editTextNode.textContainerInset = UIEdgeInsets(top: 7, left: 20, bottom: 7, right: 12)
+        editTextNode.textContainerInset = UIEdgeInsets(top: 8.5, left: 20, bottom: 8.5, right: 12)
         editTextNode.scrollEnabled = false
         editTextNode.delegate = self
         
@@ -67,8 +67,7 @@ class ChatInputNode: ASDisplayNode {
         sendBtn.style.preferredSize = buttonPreferredSize
         
         quickSendBtn.setBackgroundImage(UIImage(named: "likeFilledBtn"), for: .normal)
-        quickSendBtn.style.preferredSize = buttonPreferredSize
-        
+        quickSendBtn.style.preferredSize = buttonPreferredSize        
     }
     
     override func didLoad() {
@@ -99,7 +98,6 @@ class ChatInputNode: ASDisplayNode {
         return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10), child: x)
     }
     
-    
     override func animateLayoutTransition(_ context: ASContextTransitioning) {
         let delta = context.finalFrame(for: editTextNode).height - editTextNode.frame.height
         var newFrame = view.frame
@@ -115,9 +113,10 @@ class ChatInputNode: ASDisplayNode {
             
             self.editTextNode.frame = context.finalFrame(for: self.editTextNode)
             self.backgroundEditTextNode.frame = context.finalFrame(for: self.backgroundEditTextNode)
-            
-            self.delegate?.chatInputNodeFrameDidChange(self, newFrame: newFrame, oldFrame: self.view.frame)
-            
+            if delta != 0{
+                 self.delegate?.chatInputNodeFrameDidChange(self, newFrame: newFrame, oldFrame: self.view.frame)
+            }
+                       
             self.view.frame = newFrame
         }
         
@@ -399,7 +398,7 @@ class OptionalChatInput: ASDisplayNode{
         imageBtn.style.preferredSize = btnSize
         
         voiceBtn.setBackgroundImage(UIImage(named: "voiceBtn"), for: .normal)
-        voiceBtn.style.preferredSize = btnSize
+        voiceBtn.style.preferredSize = CGSize(width: 20, height: 25)
         
     }
     

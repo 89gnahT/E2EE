@@ -9,7 +9,7 @@
 import UIKit
 import AsyncDisplayKit
 
-class MessageCellEditView: ASDisplayNode {
+class MessageEditView: ASDisplayNode {
     
     private let removeBtn = ASButtonNode ()
     
@@ -64,11 +64,24 @@ class MessageCellEditView: ASDisplayNode {
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        let optionNodeHeight = CGFloat(65)
+        let optionNodeHeight = CGFloat(70)
         optionNode.style.layoutPosition = CGPoint(x: 0, y: constrainedSize.max.height - optionNodeHeight)
         optionNode.style.preferredSize = CGSize(width: constrainedSize.max.width, height: optionNodeHeight)
         
         return ASAbsoluteLayoutSpec(children: [optionNode])
+    }
+    
+    override func animateLayoutTransition(_ context: ASContextTransitioning) {
+        optionNode.frame.origin.y += optionNode.frame.height
+        optionNode.alpha = 0
+        
+        UIView.animate(withDuration: 0.25, animations: {
+            self.optionNode.frame = context.finalFrame(for: self.optionNode)
+            self.optionNode.alpha = 1
+            
+        }) { (finished) in
+            context.completeTransition(finished)
+        }
     }
     
     override func removeFromSupernode() {

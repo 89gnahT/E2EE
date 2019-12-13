@@ -25,7 +25,7 @@ extension Database{
     }
     
     func randomMsgTime()->(TimeInterval, TimeInterval, TimeInterval){
-        let sent = timeNow - Double(Int.random(in: 0...3600*24*30))
+        let sent = timeNow - Double(Int.random(in: 2000...3600*24*30))
         let deliveried : TimeInterval = sent + Double(Int.random(in: 1...1000))
         var seen : TimeInterval = deliveried + Double(Int.random(in: 1...1000))
         

@@ -34,6 +34,10 @@ class ImagesContentNode: ContentNode {
         numberNodePerRow = 3
     }
     
+    override func getViewModel() -> MessageViewModel {
+        return imageViewModel
+    }
+    
     override func updateUI(_ isHightlight: Bool = false) {
         super.updateUI()
         getImageNodeFromURLs(imageViewModel.imageURLs)

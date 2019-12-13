@@ -39,6 +39,10 @@ class TextContentNode: ContentNode {
         textBtnNode.contentEdgeInsets = textInsets
     }
     
+    override func getViewModel() -> MessageViewModel {
+        return textViewModel
+    }
+    
     override func didLoad() {
         super.didLoad()
         
@@ -53,7 +57,8 @@ class TextContentNode: ContentNode {
     
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        textBtnNode.style.maxWidth = ASDimension(unit: .points, value: UIScreen.main.bounds.size.width * 0.6)
+        let maxWidth = isIncommingMessage ? UIScreen.main.bounds.size.width * 0.6 : UIScreen.main.bounds.size.width * 0.7
+        textBtnNode.style.maxWidth = ASDimension(unit: .points, value: maxWidth)
         
         return ASInsetLayoutSpec(insets: UIEdgeInsets.zero, child: textBtnNode)
     }

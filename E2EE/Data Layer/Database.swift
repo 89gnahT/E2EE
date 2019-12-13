@@ -57,7 +57,7 @@ class Database: NSObject {
     public func fetchMesaages(with inboxID : InboxID, currentNumberMessages number: Int, howManyMessageReceive receive: Int, _ completion: @escaping (([MessageEntity]) -> Void), callbackQueue : DispatchQueue?){
         taskQueue.async {
             let messages = self.rooms[inboxID]!.values.sorted { (a, b) -> Bool in
-                return a.sent < b.sent
+                return a.sent > b.sent
             }
             
             var messageReceive = [MessageEntity]()
@@ -66,7 +66,6 @@ class Database: NSObject {
                 minCount = minCount > messages.count ? messages.count : minCount
                 for i in number..<minCount{
                     messageReceive.append(messages[i])
-                    print("choose message ", i, " witdh id ", messages[i].id, " with content: ", messages[i].contents[0])
                 }
             }
             
@@ -93,13 +92,14 @@ extension Database{
     
     public func receiveMessage(_ message: MessageEntity, completion :  ((_ error : DataError) -> Void)?){
         taskQueue.async {
+            var error: DataError = .none
             if self.rooms[message.inboxID] == nil{
                 self.rooms.updateValue(Dictionary<MessageID, MessageEntity>(), forKey: message.inboxID)
             }
             self.rooms[message.inboxID]?.updateValue(message, forKey: message.id)
             
             self.callBackQueue.async {
-                completion?(.none)
+                completion?(error)
             }
         }
     }
@@ -142,7 +142,7 @@ extension Database{
     private func fetchRoomsChat(){
         for c in self.conversations.values{
             self.rooms.updateValue(Dictionary<MessageID, MessageEntity>(), forKey: c.id)
-            let numberOfMessage = self.randomInt(500, 2000)
+            let numberOfMessage = 40//self.randomInt(500, 2000)
             
             for _ in 0..<numberOfMessage{
                 let m = self.createMsgFrom(c)
@@ -166,7 +166,7 @@ extension Database{
         
         let senderID = self.random() % 2 == 0 ? cvs.membersID.first! : cvs.membersID.last!
         let msgID = self.randomMsgID(with: senderID)
-//        print("create message id ", msgID)
+
         let (contents, type) = self.random() % 25 == 0 ?
             (self.randomImageURL(self.randomInt(1, 10)), MessageType.image) :
             ([self.textMsg[self.randomInt(self.textMsg.count)]], MessageType.text)
