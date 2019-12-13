@@ -17,6 +17,8 @@ protocol ChatInputNodeDelegate {
 
 class ChatInputNode: ASDisplayNode {
     
+    let baseHeight = CGFloat(49)
+    
     let editTextNode = ASEditableTextNode()
     
     let backgroundEditTextNode = ASImageNode()
@@ -30,6 +32,14 @@ class ChatInputNode: ASDisplayNode {
     var quickSendBtn = ASButtonNode()
     
     var delegate: ChatInputNodeDelegate?
+    
+    var contentInsets: UIEdgeInsets = .zero{
+        didSet{
+            //transitionLayout(withAnimation: false, shouldMeasureAsync: true, measurementCompletion: nil)
+        }
+    }
+    
+    var maximumLinesToDisplay: CGFloat = 6
     
     private var inputExpanded: Bool = false
     
@@ -91,15 +101,16 @@ class ChatInputNode: ASDisplayNode {
         
         let leftNode = inputExpanded ? collapseBtn : optionNode
         let rightNode = quickSendBtnEnable ? quickSendBtn : sendBtn
-        let contentSatck = ASStackLayoutSpec(direction: .horizontal, spacing: 10, justifyContent: .center, alignItems: .center, children: [leftNode, input, rightNode])
+        let stack = ASStackLayoutSpec(direction: .horizontal, spacing: 10, justifyContent: .center, alignItems: .center, children: [leftNode, input, rightNode])
         
-        let x = ASStackLayoutSpec(direction: .vertical, spacing: 0, justifyContent: .start, alignItems: .stretch, children: [contentSatck])
-        
-        return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10), child: x)
+        let stackWrapper = ASStackLayoutSpec(direction: .vertical, spacing: 0, justifyContent: .start, alignItems: .stretch, children: [stack])
+        let insetLayout = ASInsetLayoutSpec(insets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10), child: stackWrapper)
+        return ASInsetLayoutSpec(insets: contentInsets, child: insetLayout)
     }
     
     override func animateLayoutTransition(_ context: ASContextTransitioning) {
         let delta = context.finalFrame(for: editTextNode).height - editTextNode.frame.height
+        let oldFrame = view.frame
         var newFrame = view.frame
         newFrame.origin.y -= delta
         newFrame.size.height += delta
@@ -114,9 +125,9 @@ class ChatInputNode: ASDisplayNode {
             self.editTextNode.frame = context.finalFrame(for: self.editTextNode)
             self.backgroundEditTextNode.frame = context.finalFrame(for: self.backgroundEditTextNode)
             if delta != 0{
-                 self.delegate?.chatInputNodeFrameDidChange(self, newFrame: newFrame, oldFrame: self.view.frame)
+                self.delegate?.chatInputNodeFrameDidChange(self, newFrame: newFrame, oldFrame: oldFrame)
             }
-                       
+            
             self.view.frame = newFrame
         }
         
@@ -243,9 +254,9 @@ extension ChatInputNode{
         let estimatedNumberLine = estimatedSize.height / lineHeight
         let currentNumberLine = editableTextNode.frame.height / lineHeight
         
-        editableTextNode.scrollEnabled = estimatedNumberLine <= 6 ? false : true
+        editableTextNode.scrollEnabled = estimatedNumberLine <= maximumLinesToDisplay ? false : true
         
-        if abs(estimatedNumberLine - currentNumberLine) >= 1 && estimatedNumberLine <= 6{
+        if abs(estimatedNumberLine - currentNumberLine) >= 1 && estimatedNumberLine <= maximumLinesToDisplay{
             editableTextNode.style.preferredSize.height = estimatedSize.height
             
             inputContentSizeChanged = true
@@ -300,9 +311,9 @@ extension ChatInputNode{
             let estimatedNumberLine = estimatedSize.height / lineHeight
             let currentNumberLine = editTextNode.frame.height / lineHeight
             
-            editTextNode.scrollEnabled = estimatedNumberLine <= 6 ? false : true
+            editTextNode.scrollEnabled = estimatedNumberLine <= maximumLinesToDisplay ? false : true
             
-            if abs(estimatedNumberLine - currentNumberLine) >= 1 && estimatedNumberLine <= 6{
+            if abs(estimatedNumberLine - currentNumberLine) >= 1 && estimatedNumberLine <= maximumLinesToDisplay{
                 editTextNode.style.preferredSize.height = estimatedSize.height
             }
             
@@ -325,10 +336,12 @@ extension ChatInputNode{
             let estimatedNumberLine = estimatedSize.height / lineHeight
             let currentNumberLine = editTextNode.frame.height / lineHeight
             
-            editTextNode.scrollEnabled = estimatedNumberLine <= 6 ? false : true
+            editTextNode.scrollEnabled = estimatedNumberLine <= maximumLinesToDisplay ? false : true
             
-            if abs(estimatedNumberLine - currentNumberLine) >= 1 && estimatedNumberLine <= 6{
+            if abs(estimatedNumberLine - currentNumberLine) >= 1 && estimatedNumberLine <= maximumLinesToDisplay{
                 editTextNode.style.preferredSize.height = estimatedSize.height
+            }else if estimatedNumberLine > maximumLinesToDisplay{
+                editTextNode.style.preferredSize.height = maximumLinesToDisplay * lineHeight
             }
             
             transitionLayout(withAnimation: true, shouldMeasureAsync: true, measurementCompletion: nil)

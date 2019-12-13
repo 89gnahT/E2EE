@@ -32,7 +32,7 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         return MessageEditView(target: self, frame: frame, removeBtnAction: #selector(removeMessageBtnPressed))
     }()
     
-    var lastSafeAreaInsets: UIEdgeInsets!
+    var lastSafeAreaInsets: UIEdgeInsets = UIEdgeInsets.zero
     
     init(with inboxID : InboxID) {
         self.inboxID = inboxID
@@ -47,25 +47,22 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+        view.backgroundColor = .black
         
         tableNode.tableNode.automaticallyAdjustsContentOffset = false
         tableNode.tableNode.view.contentInsetAdjustmentBehavior = .never
         
-        lastSafeAreaInsets = UIEdgeInsets.zero
-        
-        let chatInputHeight = CGFloat(49)
-        chatInputNode.frame = CGRect(x: 0, y: view.frame.height - chatInputHeight, width: view.frame.width, height: chatInputHeight)
+        chatInputNode.frame = CGRect(x: 0, y: view.frame.height - chatInputNode.baseHeight, width: view.frame.width, height: chatInputNode.baseHeight)
         chatInputNode.delegate = self
         view.addSubnode(chatInputNode)
         
         tableNode.delegate = self
         tableNode.dataSource = self
-        tableNode.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - chatInputHeight)
+        tableNode.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - chatInputNode.baseHeight)
         view.addSubnode(tableNode)
        
         switch currentOrientation {
-        case .faceDown, .faceDown, .portraitUpsideDown, .unknown:
+        case .faceDown, .faceUp, .portraitUpsideDown, .unknown:
             currentOrientation = .portrait
         default:
             break
@@ -79,21 +76,19 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     
     override func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
-        
         let safeAreaInsets = view.safeAreaInsets
         
         // Remove lastSafeAreaInsets and add safeAreaInsets
-        var oldFrame = chatInputNode.frame
-        chatInputNode.frame = CGRect(x: oldFrame.minX - lastSafeAreaInsets.left + safeAreaInsets.left,
-                                     y: oldFrame.minY + lastSafeAreaInsets.bottom - safeAreaInsets.bottom,
-                                     width: oldFrame.width + lastSafeAreaInsets.left + lastSafeAreaInsets.right - safeAreaInsets.left - safeAreaInsets.right,
-                                     height: oldFrame .height - lastSafeAreaInsets.bottom + safeAreaInsets.bottom)
+        chatInputNode.frame.origin.y += lastSafeAreaInsets.bottom - safeAreaInsets.bottom
+        if !keyboardAppeared{
+            chatInputNode.frame.size.height += -lastSafeAreaInsets.bottom + safeAreaInsets.bottom
+        }
+        chatInputNode.contentInsets = UIEdgeInsets(top: 0, left: safeAreaInsets.left, bottom: safeAreaInsets.bottom, right: safeAreaInsets.right)
+  
+        tableNode.frame.size.height += lastSafeAreaInsets.bottom - safeAreaInsets.bottom
+        tableNode.tableNode.contentInset.bottom += -lastSafeAreaInsets.top + safeAreaInsets.top
         
-        oldFrame = tableNode.frame
-        tableNode.frame = CGRect(x: oldFrame.minX - lastSafeAreaInsets.left + safeAreaInsets.left,
-                                 y: oldFrame.minY,
-                                 width: oldFrame.width + lastSafeAreaInsets.left + lastSafeAreaInsets.right - safeAreaInsets.left - safeAreaInsets.right,
-                                 height: oldFrame .height + lastSafeAreaInsets.bottom - safeAreaInsets.bottom)
+        // Set new insets
         lastSafeAreaInsets = safeAreaInsets
     }
     
@@ -106,36 +101,18 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
                 
                 self.editMessageView.frame = self.view.frame
          
-                // Remove
-                var oldFrame = chatInputNode.frame
-                chatInputNode.frame = CGRect(x: oldFrame.minX - lastSafeAreaInsets.left,
-                                             y: oldFrame.minY + lastSafeAreaInsets.bottom,
-                                             width: oldFrame.width + lastSafeAreaInsets.left + lastSafeAreaInsets.right,
-                                             height: oldFrame .height - lastSafeAreaInsets.bottom )
-                
-                oldFrame = tableNode.frame
-                tableNode.frame = CGRect(x: oldFrame.minX - lastSafeAreaInsets.left,
-                                         y: oldFrame.minY,
-                                         width: oldFrame.width + lastSafeAreaInsets.left + lastSafeAreaInsets.right,
-                                         height: oldFrame .height + lastSafeAreaInsets.bottom )
-                
-                let chatInputHeight = chatInputNode.frame.height
+                let currentChatInputHeight = chatInputNode.frame.height
                 let frame = view.frame
-                chatInputNode.frame = CGRect(x: frame.minX, y: frame.maxY - chatInputHeight, width: frame.width, height: chatInputHeight)
-                tableNode.frame = CGRect(x: frame.minX, y: frame.minY, width: frame.width, height: frame.height - chatInputHeight)
+                chatInputNode.frame = CGRect(x: frame.minX, y: frame.maxY - currentChatInputHeight, width: frame.width, height: currentChatInputHeight)
+                chatInputNode.contentInsets = UIEdgeInsets(top: 0, left: lastSafeAreaInsets.left, bottom: lastSafeAreaInsets.bottom, right: lastSafeAreaInsets.right)
+                chatInputNode.transitionLayout(withAnimation: false, shouldMeasureAsync: true, measurementCompletion: nil)
                 
-                oldFrame = chatInputNode.frame
-                chatInputNode.frame = CGRect(x: oldFrame.minX + lastSafeAreaInsets.left,
-                                             y: oldFrame.minY - lastSafeAreaInsets.bottom ,
-                                             width: oldFrame.width - lastSafeAreaInsets.left - lastSafeAreaInsets.right,
-                                             height: oldFrame .height + lastSafeAreaInsets.bottom )
-                
-                oldFrame = tableNode.frame
-                tableNode.frame = CGRect(x: oldFrame.minX + lastSafeAreaInsets.left,
-                                         y: oldFrame.minY,
-                                         width: oldFrame.width - lastSafeAreaInsets.left - lastSafeAreaInsets.right ,
-                                         height: oldFrame .height - lastSafeAreaInsets.bottom )
-                
+                let additionHeight = -tableNode.frame.minY
+                tableNode.frame = frame
+                tableNode.frame.size.height -= keyboardAppeared ? chatInputNode.baseHeight : chatInputNode.baseHeight + lastSafeAreaInsets.bottom
+                tableNode.tableNode.contentInset.bottom = lastSafeAreaInsets.top
+                tableNode.changeSize(withHeight: additionHeight)
+                                
                 tableNode.reloadData()
             }
             
@@ -422,20 +399,25 @@ extension ChatScreenViewController{
     @objc func keyboardAppear(notification: NSNotification) {
         if !keyboardAppeared, let keyboardValue: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             keyboardAppeared = true
-            
             currentKeyboardFrame = keyboardValue.cgRectValue
-            print("keyboardAppear ", currentKeyboardFrame)
-            self.tableNode.changeSize(withHeight: currentKeyboardFrame.height)
-            self.chatInputNode.frame.origin.y -= currentKeyboardFrame.height
+           
+            let height = currentKeyboardFrame.height - lastSafeAreaInsets.bottom
+            self.tableNode.changeSize(withHeight: height)
+            self.chatInputNode.frame.origin.y -= height
+            self.chatInputNode.frame.size.height -= lastSafeAreaInsets.bottom
+            self.chatInputNode.contentInsets.bottom = 0
         }
     }
     
     @objc func keyboardDisappear(notification: NSNotification) {
         if keyboardAppeared{
             keyboardAppeared = false
-            print("keyboardDisappear ", currentKeyboardFrame)
-            self.tableNode.changeSize(withHeight: -currentKeyboardFrame.height)
-            self.chatInputNode.frame.origin.y += currentKeyboardFrame.height
+       
+            let height = currentKeyboardFrame.height - lastSafeAreaInsets.bottom
+            self.tableNode.changeSize(withHeight: -height)
+            self.chatInputNode.frame.origin.y += height
+            self.chatInputNode.frame.size.height += lastSafeAreaInsets.bottom
+            self.chatInputNode.contentInsets.bottom = lastSafeAreaInsets.bottom
         }
     }
 }
