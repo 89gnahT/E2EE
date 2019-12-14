@@ -52,15 +52,15 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         tableNode.tableNode.automaticallyAdjustsContentOffset = false
         tableNode.tableNode.view.contentInsetAdjustmentBehavior = .never
         
-        chatInputNode.frame = CGRect(x: 0, y: view.frame.height - chatInputNode.baseHeight, width: view.frame.width, height: chatInputNode.baseHeight)
-        chatInputNode.delegate = self
-        view.addSubnode(chatInputNode)
-        
         tableNode.delegate = self
         tableNode.dataSource = self
         tableNode.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - chatInputNode.baseHeight)
         view.addSubnode(tableNode)
-       
+        
+        chatInputNode.delegate = self
+        chatInputNode.frame = CGRect(x: 0, y: view.frame.height - chatInputNode.baseHeight, width: view.frame.width, height: chatInputNode.baseHeight)
+        view.addSubnode(chatInputNode)
+        
         switch currentOrientation {
         case .faceDown, .faceUp, .portraitUpsideDown, .unknown:
             currentOrientation = .portrait
@@ -74,24 +74,54 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         self.view.addGestureRecognizer(gesture)
     }
     
+    /**
+     Follow: The system will automatically the methods in the following order:
+     1. if keyboard disappeard: viewSafeAreaInsetsDidChange -> orientation changed
+     2. if keyboard appeared: viewSafeAreaInsetsDidChange -> keyboard disappeared -> orientation changed
+     
+     With case 1, we handle it very easily
+     Step 1: in safeAreaInsetsChange, We need to update height, position and contentInsets of the nodes (remove old value and update new value)
+     Step 2: In orientationChange, we retains chatInputNode's height and change the remainning properties according to the new frame
+     
+     With case 2, we'll transform this case to case 1:
+     We need handle Step 1 to 3 in safeAreaInsetsChange
+     Step 1: First, we call keyboardDisappear with old safe area insets
+     Step 2: Now, we do the same as Step 1 in case 1
+     Step 3: We call keyboarAppear after update safe area insets
+     Step 4: Do the same as step 2 in case 1
+     */
     override func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
-        let safeAreaInsets = view.safeAreaInsets
+        let currentSafeAreaInsets = view.safeAreaInsets
         
-        // Remove lastSafeAreaInsets and add safeAreaInsets
-        chatInputNode.frame.origin.y += lastSafeAreaInsets.bottom - safeAreaInsets.bottom
-        if !keyboardAppeared{
-            chatInputNode.frame.size.height += -lastSafeAreaInsets.bottom + safeAreaInsets.bottom
+        // When safe area insets changed, we need to update the height, the position, the content insets of chatInputNode and tabeNode
+        func handleSafeAreaInsetDidChangeWhenKeyboardDisappeared(){
+            chatInputNode.frame.origin.y += lastSafeAreaInsets.bottom - currentSafeAreaInsets.bottom
+            chatInputNode.frame.size.height += -lastSafeAreaInsets.bottom + currentSafeAreaInsets.bottom
+            
+            var chatInputContentInsets = currentSafeAreaInsets
+            chatInputContentInsets.top = 0
+            chatInputNode.contentInsets = chatInputContentInsets
+            
+            tableNode.frame.size.height += lastSafeAreaInsets.bottom - currentSafeAreaInsets.bottom
+            tableNode.tableNode.contentInset.bottom += -lastSafeAreaInsets.top + currentSafeAreaInsets.top
         }
-        chatInputNode.contentInsets = UIEdgeInsets(top: 0, left: safeAreaInsets.left, bottom: safeAreaInsets.bottom, right: safeAreaInsets.right)
-  
-        tableNode.frame.size.height += lastSafeAreaInsets.bottom - safeAreaInsets.bottom
-        tableNode.tableNode.contentInset.bottom += -lastSafeAreaInsets.top + safeAreaInsets.top
         
-        // Set new insets
-        lastSafeAreaInsets = safeAreaInsets
+        if keyboardAppeared{
+            handleFrameWhenKeyboardChanged(keyboardAppeard: false)
+        }
+        
+        handleSafeAreaInsetDidChangeWhenKeyboardDisappeared()
+        
+        // Update new insets
+        lastSafeAreaInsets = currentSafeAreaInsets
+        
+        if keyboardAppeared{
+            handleFrameWhenKeyboardChanged(keyboardAppeard: true)
+        }
     }
     
+    // The keyboard always disappears before this method is called
     @objc func deviceOrientationDidChange(_ notification: Notification) {
         let orientation = UIDevice.current.orientation
         switch orientation {
@@ -100,19 +130,26 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
                 currentOrientation = orientation
                 
                 self.editMessageView.frame = self.view.frame
-         
+                
+                // Retains current chatInputNode's height and change the remainning properties according to the new frame
                 let currentChatInputHeight = chatInputNode.frame.height
                 let frame = view.frame
                 chatInputNode.frame = CGRect(x: frame.minX, y: frame.maxY - currentChatInputHeight, width: frame.width, height: currentChatInputHeight)
-                chatInputNode.contentInsets = UIEdgeInsets(top: 0, left: lastSafeAreaInsets.left, bottom: lastSafeAreaInsets.bottom, right: lastSafeAreaInsets.right)
-                chatInputNode.transitionLayout(withAnimation: false, shouldMeasureAsync: true, measurementCompletion: nil)
                 
+                // Update content insets
+                chatInputNode.contentInsets = lastSafeAreaInsets
+                // We do not use top's content inset
+                chatInputNode.contentInsets.top = 0
+                
+                //chatInputNode.transitionLayout(withAnimation: false, shouldMeasureAsync: true, measurementCompletion: nil)
+                
+                // Store old position
                 let additionHeight = -tableNode.frame.minY
                 tableNode.frame = frame
-                tableNode.frame.size.height -= keyboardAppeared ? chatInputNode.baseHeight : chatInputNode.baseHeight + lastSafeAreaInsets.bottom
+                tableNode.frame.size.height -= chatInputNode.baseHeight + lastSafeAreaInsets.bottom
                 tableNode.tableNode.contentInset.bottom = lastSafeAreaInsets.top
                 tableNode.changeSize(withHeight: additionHeight)
-                                
+                
                 tableNode.reloadData()
             }
             
@@ -127,15 +164,10 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardAppear(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDisappear(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
-        
-        //tabBarController?.tabBar.isHidden = true
-        
-        
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        //tabBarController?.tabBar.isHidden = false
         
         NotificationCenter.default.removeObserver(self)
     }
@@ -234,8 +266,6 @@ extension ChatScreenViewController{
         self.tableNode.deleteRows(at: [IndexPath(row: pos, section: 0)])
     }
     
-    
-    
     private func insertMessage(viewModel : MessageViewModel, at pos: Int){
         
         if pos < 0 && pos > viewModels.count{
@@ -270,32 +300,28 @@ extension ChatScreenViewController{
             completion?(false)
             return
         }
-        
-        var previous1: MessageViewModel?
-        var previous2: MessageViewModel?
+
+        let length = self.viewModels.count
+        var after1: MessageViewModel? = length > 0 ? self.viewModels.last : nil
+        var after2: MessageViewModel? = length > 1 ? self.viewModels[length -  2] : nil
         
         for v in viewModels{
-            previous1?.setupPositionWith(previous: previous2, andAfter: v)
-            v.setupPositionWith(previous: previous1, andAfter: nil)
+            after1?.setupPositionWith(previous: v, andAfter: after2)
+            v.setupPositionWith(previous: nil, andAfter: after1)
             
-            previous2 = previous1
-            previous1 = v
+            after2 = after1
+            after1 = v
         }
-        let after = self.viewModels.last
-        if after != nil{
-            let count = self.viewModels.count
-            after?.setupPositionWith(previous: viewModels.last!, andAfter: count > 1 ? self.viewModels[count - 2] : nil)
-            let afterNode: MessageCell = tableNode.nodeForRowAt(IndexPath(row: count - 1, section: 0)) as! MessageCell
+        if length > 0{
+            let afterNode: MessageCell = tableNode.nodeForRowAt(IndexPath(row: length - 1, section: 0)) as! MessageCell
             afterNode.updateUI()
         }
         
         tableNode.performBatch(animated: false, updates: {
             var indexPaths = [IndexPath]()
-            var index = viewModels.count - 1
-            while index >= 0{
-                self.viewModels.append(viewModels[index])
+            for v in viewModels{
+                self.viewModels.append(v)
                 indexPaths.append(IndexPath(row: self.viewModels.count - 1, section: 0))
-                index -= 1
             }
             
             self.tableNode.insertRows(at: indexPaths)
@@ -307,6 +333,7 @@ extension ChatScreenViewController{
 
 // MARK: DataManagerListenerDelegate
 extension ChatScreenViewController: DataManagerListenerDelegate{
+    
     func messageChanged(_ msg: MessageModel, updateType: UpdateType, oldValue: MessageModel?) {
         let viewModel = MessageViewModelFactory.createViewModel(msg)
         
@@ -317,6 +344,7 @@ extension ChatScreenViewController: DataManagerListenerDelegate{
             
         case .changed:
             break
+            
         case .delete:
             removeMessage(msg)
         }
@@ -400,24 +428,36 @@ extension ChatScreenViewController{
         if !keyboardAppeared, let keyboardValue: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             keyboardAppeared = true
             currentKeyboardFrame = keyboardValue.cgRectValue
-           
-            let height = currentKeyboardFrame.height - lastSafeAreaInsets.bottom
-            self.tableNode.changeSize(withHeight: height)
-            self.chatInputNode.frame.origin.y -= height
-            self.chatInputNode.frame.size.height -= lastSafeAreaInsets.bottom
-            self.chatInputNode.contentInsets.bottom = 0
+            
+            handleFrameWhenKeyboardChanged(keyboardAppeard: keyboardAppeared)
         }
     }
     
     @objc func keyboardDisappear(notification: NSNotification) {
         if keyboardAppeared{
             keyboardAppeared = false
-       
-            let height = currentKeyboardFrame.height - lastSafeAreaInsets.bottom
+          
+            handleFrameWhenKeyboardChanged(keyboardAppeard: keyboardAppeared)
+        }
+    }
+    
+    private func handleFrameWhenKeyboardChanged(keyboardAppeard appear: Bool){
+        let height = currentKeyboardFrame.height - lastSafeAreaInsets.bottom
+        
+        if appear{
+            self.tableNode.changeSize(withHeight: height)
+            
+            self.chatInputNode.frame.origin.y -= height
+            self.chatInputNode.frame.size.height -= lastSafeAreaInsets.bottom
+            
+            self.chatInputNode.contentInsets.bottom -= lastSafeAreaInsets.bottom
+        }else{
             self.tableNode.changeSize(withHeight: -height)
+            
             self.chatInputNode.frame.origin.y += height
             self.chatInputNode.frame.size.height += lastSafeAreaInsets.bottom
-            self.chatInputNode.contentInsets.bottom = lastSafeAreaInsets.bottom
+            
+            self.chatInputNode.contentInsets.bottom += lastSafeAreaInsets.bottom
         }
     }
 }

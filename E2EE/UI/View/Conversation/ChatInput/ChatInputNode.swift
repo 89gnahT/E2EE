@@ -104,7 +104,9 @@ class ChatInputNode: ASDisplayNode {
         let stack = ASStackLayoutSpec(direction: .horizontal, spacing: 10, justifyContent: .center, alignItems: .center, children: [leftNode, input, rightNode])
         
         let stackWrapper = ASStackLayoutSpec(direction: .vertical, spacing: 0, justifyContent: .start, alignItems: .stretch, children: [stack])
-        let insetLayout = ASInsetLayoutSpec(insets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10), child: stackWrapper)
+        
+        let insetLayout = ASInsetLayoutSpec(insets: UIEdgeInsets(top: 7, left: 10, bottom: 10, right: 10), child: stackWrapper)
+        
         return ASInsetLayoutSpec(insets: contentInsets, child: insetLayout)
     }
     
