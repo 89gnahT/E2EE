@@ -50,7 +50,7 @@ class MessageEditView: ASDisplayNode {
         copyBtn.setAttributedTitle(attributedString("Copy", fontSize: fontSize, isBold: false, foregroundColor: .darkGray), for: .normal)
         copyBtn.setImage(UIImage(named: "copy"), for: .normal)
         copyBtn.laysOutHorizontally = false
-                       
+        
         optionNode.backgroundColor = .white
         optionNode.automaticallyManagesSubnodes = true
         optionNode.layoutSpecBlock = { (node : ASDisplayNode, constrainedSize : ASSizeRange) -> ASLayoutSpec in
@@ -88,7 +88,9 @@ class MessageEditView: ASDisplayNode {
         super.removeFromSupernode()
         
         if messageCell?.isHideDetails ?? false{
-            messageCell?.isHighlightContent = false
+            ASPerformBlockOnBackgroundThread {
+                self.messageCell?.isHighlightContent = false
+            }
         }
     }
     

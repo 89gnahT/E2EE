@@ -42,7 +42,7 @@ class MessageCell: BaseMessageCell {
     
     var isHideDetails : Bool = true{
         didSet{
-            let setHighlightContentIfNeed = isHideDetails ? false : true
+            let setHighlightContentIfNeed = !isHideDetails
             
             ASPerformBlockOnBackgroundThread {
                 self.isHighlightContent = setHighlightContentIfNeed
@@ -54,11 +54,10 @@ class MessageCell: BaseMessageCell {
         }
     }
     
+    // Should call updateHighlightContentIfNeed() after set property
     var isHighlightContent: Bool = false{
         didSet{
-            ASPerformBlockOnBackgroundThread {
-                self.updateHighlightContentIfNeed()
-            }
+            self.updateHighlightContentIfNeed()
         }
     }
     
@@ -66,8 +65,6 @@ class MessageCell: BaseMessageCell {
     
     override init() {
         super.init()
-        
-        setup()
     }
     
     override func setup(){
@@ -229,6 +226,7 @@ class MessageCell: BaseMessageCell {
         
     }
     
+    // Should call this method in background thread
     public func updateHighlightContentIfNeed(){
         
     }
@@ -245,11 +243,13 @@ class MessageCell: BaseMessageCell {
 
 // MARK: - Handle UIGestureRecognizerDelegate
 extension MessageCell: UIGestureRecognizerDelegate{
+    
     @objc func handleLongPress(longPressGesture: UILongPressGestureRecognizer) {
         ASPerformBlockOnMainThread {
             (self.delegate as? MessageCellDelegate)?.messageCell(self, longPressGesture: longPressGesture)
             
             self.isHighlightContent = true
+            self.updateHighlightContentIfNeed()
         }        
     }
     

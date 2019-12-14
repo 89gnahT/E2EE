@@ -23,6 +23,8 @@
 		483F920E23A4E0E3009F4F5B /* BaseMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F920D23A4E0E3009F4F5B /* BaseMessageViewModel.swift */; };
 		483F921023A4E3B6009F4F5B /* BaseMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F920F23A4E3B6009F4F5B /* BaseMessageCell.swift */; };
 		483F921223A4EEC0009F4F5B /* MessageCellFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F921123A4EEC0009F4F5B /* MessageCellFactory.swift */; };
+		483F921823A51708009F4F5B /* MessageTitleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F921723A51708009F4F5B /* MessageTitleViewModel.swift */; };
+		483F921A23A51724009F4F5B /* MessageTitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483F921923A51724009F4F5B /* MessageTitleCell.swift */; };
 		48400F16238575B1008E2A0B /* UIImage+MaskColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48400F15238575B1008E2A0B /* UIImage+MaskColor.swift */; };
 		484EEAA623A13451009CCF2A /* ChatInputNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 484EEAA523A13451009CCF2A /* ChatInputNode.swift */; };
 		485746102398133300A497BB /* MessageEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4857460F2398133300A497BB /* MessageEditView.swift */; };
@@ -159,6 +161,8 @@
 		483F920D23A4E0E3009F4F5B /* BaseMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseMessageViewModel.swift; sourceTree = "<group>"; };
 		483F920F23A4E3B6009F4F5B /* BaseMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseMessageCell.swift; sourceTree = "<group>"; };
 		483F921123A4EEC0009F4F5B /* MessageCellFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCellFactory.swift; sourceTree = "<group>"; };
+		483F921723A51708009F4F5B /* MessageTitleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTitleViewModel.swift; sourceTree = "<group>"; };
+		483F921923A51724009F4F5B /* MessageTitleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTitleCell.swift; sourceTree = "<group>"; };
 		48400F15238575B1008E2A0B /* UIImage+MaskColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+MaskColor.swift"; sourceTree = "<group>"; };
 		484EEAA523A13451009CCF2A /* ChatInputNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInputNode.swift; sourceTree = "<group>"; };
 		4857460F2398133300A497BB /* MessageEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEditView.swift; sourceTree = "<group>"; };
@@ -378,6 +382,7 @@
 		483F921423A4F71F009F4F5B /* MessageTitle */ = {
 			isa = PBXGroup;
 			children = (
+				483F921723A51708009F4F5B /* MessageTitleViewModel.swift */,
 			);
 			path = MessageTitle;
 			sourceTree = "<group>";
@@ -396,6 +401,7 @@
 		483F921623A4F743009F4F5B /* MessageTitle */ = {
 			isa = PBXGroup;
 			children = (
+				483F921923A51724009F4F5B /* MessageTitleCell.swift */,
 			);
 			path = MessageTitle;
 			sourceTree = "<group>";
@@ -1024,6 +1030,7 @@
 				C2763769236BD981007A563D /* PreKeyStore.swift in Sources */,
 				DD49B530238E2F00007163ED /* MessageViewModel.swift in Sources */,
 				C2763782236BD981007A563D /* SenderMessageKey.swift in Sources */,
+				483F921A23A51724009F4F5B /* MessageTitleCell.swift in Sources */,
 				48BC3F6F237D53F200B96361 /* InboxModel.swift in Sources */,
 				48400F16238575B1008E2A0B /* UIImage+MaskColor.swift in Sources */,
 				C25D7289236BE8CB00359C11 /* SessionCipher.swift in Sources */,
@@ -1041,6 +1048,7 @@
 				C276376E236BD981007A563D /* PreKeySignalMessage.swift in Sources */,
 				482C45F7237D93E500C4F554 /* InboxViewCell.swift in Sources */,
 				483F920E23A4E0E3009F4F5B /* BaseMessageViewModel.swift in Sources */,
+				483F921823A51708009F4F5B /* MessageTitleViewModel.swift in Sources */,
 				C2763774236BD981007A563D /* LocalStorage.pb.swift in Sources */,
 				C25D7284236BDEDD00359C11 /* DeviceConsistencyMessage.swift in Sources */,
 				C2763788236BD981007A563D /* SessionRecord.swift in Sources */,

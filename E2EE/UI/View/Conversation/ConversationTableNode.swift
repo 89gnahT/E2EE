@@ -39,6 +39,8 @@ class ConversationTableNode: ASDisplayNode {
         }
     }
     
+    let topDefaultContentInset = CGFloat(15)
+    
     override init() {
         super.init()
         
@@ -90,7 +92,7 @@ extension ConversationTableNode{
         tableNode.performBatch(animated: animated, updates: updates, completion: completion)
     }
     
-    func changeSize(withHeight height: CGFloat){
+    func raiseFrameByHeight(_ height: CGFloat){
         view.frame.origin.y -= height
         tableNode.contentInset.bottom += height
     }
