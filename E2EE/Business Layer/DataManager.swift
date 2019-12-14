@@ -346,6 +346,20 @@ extension DataManager{
         }
     }
     
+    public func removeObserver(target : DataManagerListenerDelegate){
+        taskQueue.async {
+            for i in self.listenItems{
+                for j in i.value{
+                    if j.target.isEqual(target){
+                        self.listenItems[i.key]!.removeAll { (a) -> Bool in
+                            return a.target.isEqual(target)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     private func callbackForDataChanged(object : NSObject, forEvent event : ValueChanged, updateType : UpdateType, oldVaule : NSObject?){
         taskQueue.async {
             guard self.listenItems[event] != nil else{

@@ -11,7 +11,7 @@ import UIKit
 public class MessageModel: NSObject {
     var id : MessageID
     
-    var conversationID : InboxID
+    var inboxID : InboxID
     
     var sender : UserModel
     
@@ -29,7 +29,7 @@ public class MessageModel: NSObject {
          time : MessageTime = MessageTime())
     {
         self.id = id
-        self.conversationID = conversationID
+        self.inboxID = conversationID
         self.sender = sender
         self.type = type
         self.contents = contents

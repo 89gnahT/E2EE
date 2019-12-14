@@ -9,7 +9,7 @@
 import UIKit
 import AsyncDisplayKit
 
-protocol MessageCellDelegate {
+protocol MessageCellDelegate: BaseMessageCellDelegate {
     func messageCell(_ cell : MessageCell, avatarClicked avatarNode : ASImageNode)
     
     func messageCell(_ cell : MessageCell, subFunctionClicked subFunctionNode : ASImageNode)
@@ -19,10 +19,8 @@ protocol MessageCellDelegate {
     func messageCell(_ cell : MessageCell, longPressGesture: UILongPressGestureRecognizer)
 }
 
-class MessageCell: ASCellNode {
+class MessageCell: BaseMessageCell {
     var justifyContent : ASStackLayoutJustifyContent = .start
-    
-    var delegate : MessageCellDelegate?
     
     var rootViewController : ChatScreenViewController?
     
@@ -72,7 +70,7 @@ class MessageCell: ASCellNode {
         setup()
     }
     
-    func setup(){
+    override func setup(){
         self.automaticallyManagesSubnodes = true
         
         avatarImageNode.style.preferredSize = CGSize(squareEdge: 28)
@@ -94,7 +92,7 @@ class MessageCell: ASCellNode {
         getContentNode().view.addGestureRecognizer(longPressGesture)
     }
     
-    public func updateUI(){
+    public override func updateUI(){
         ASPerformBlockOnBackgroundThread {
             let viewModel = self.getViewModel()
             viewModel.updateData(nil)
@@ -139,7 +137,7 @@ class MessageCell: ASCellNode {
         }
         stack.style.maxSize = constrainedSize.max
         stack.style.minSize = constrainedSize.min
-     
+        
         var newInset = insets
         if !isHideDetails{
             newInset.top += 15
@@ -213,11 +211,11 @@ class MessageCell: ASCellNode {
     }
     
     // MARK: - Should be override in subclass
-    func setupContent(){
+    override func setupContent(){
         
     }
     
-    func getViewModel() -> MessageViewModel{
+    override func getViewModel() -> MessageViewModel{
         assert(false, "getViewModel should be override in subClass")
         return MessageViewModel(model: MessageModel())
     }
@@ -227,7 +225,7 @@ class MessageCell: ASCellNode {
         return ContentNode()
     }
     
-    public func updateUIContent(){
+    public override func updateUIContent(){
         
     }
     
@@ -249,7 +247,7 @@ class MessageCell: ASCellNode {
 extension MessageCell: UIGestureRecognizerDelegate{
     @objc func handleLongPress(longPressGesture: UILongPressGestureRecognizer) {
         ASPerformBlockOnMainThread {
-            self.delegate?.messageCell(self, longPressGesture: longPressGesture)
+            (self.delegate as? MessageCellDelegate)?.messageCell(self, longPressGesture: longPressGesture)
             
             self.isHighlightContent = true
         }        
@@ -264,11 +262,7 @@ extension MessageCell: UIGestureRecognizerDelegate{
     }
     
     @objc func contentClicked(_ contentNode : ASDisplayNode){
-        delegate?.messageCell(self, contentClicked: getContentNode())
+        (delegate as? MessageCellDelegate)?.messageCell(self, contentClicked: getContentNode())
     }
-    
-}
-
-extension MessageCell{
     
 }

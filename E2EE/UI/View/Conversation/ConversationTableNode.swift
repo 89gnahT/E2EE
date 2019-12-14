@@ -78,6 +78,10 @@ extension ConversationTableNode{
         tableNode.deleteRows(at: at, with: .automatic)
     }
     
+    func nodeForRowAt(_ index: Int) -> ASCellNode? {
+        return tableNode.nodeForRow(at: IndexPath(row: index, section: 0))
+    }
+    
     func nodeForRowAt(_ indexPath: IndexPath) -> ASCellNode? {
         return tableNode.nodeForRow(at: indexPath)
     }

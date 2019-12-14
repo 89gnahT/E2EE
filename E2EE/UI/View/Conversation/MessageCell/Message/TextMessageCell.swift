@@ -33,7 +33,7 @@ class TextMessageCell: MessageCell {
     
     override func didLoad() {
         super.didLoad()
-    
+        
         textContentNode.addTarget(self, action: #selector(contentClicked(_:)), forControlEvents: .touchUpInside)
     }
     

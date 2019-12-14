@@ -142,7 +142,7 @@ extension Database{
     private func fetchRoomsChat(){
         for c in self.conversations.values{
             self.rooms.updateValue(Dictionary<MessageID, MessageEntity>(), forKey: c.id)
-            let numberOfMessage = 40//self.randomInt(500, 2000)
+            let numberOfMessage = 100//self.randomInt(500, 2000)
             
             for _ in 0..<numberOfMessage{
                 let m = self.createMsgFrom(c)

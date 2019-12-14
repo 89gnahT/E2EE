@@ -31,11 +31,11 @@ class ImagesMessageCell: MessageCell {
     
     override func didLoad() {
         super.didLoad()
-
+        
     }
     
     override func updateUIContent() {
-         imagesContentNode.updateUI()
+        imagesContentNode.updateUI()
     }
     
     override func getViewModel() -> MessageViewModel {

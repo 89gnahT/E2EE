@@ -10,11 +10,11 @@ import UIKit
 import AsyncDisplayKit
 
 class ChatScreenViewController: ASViewController<ASDisplayNode> {
-    var tableNode = ConversationTableNode()
+    var conversationTableNode = ConversationTableNode()
     
     var chatInputNode = ChatInputNode()
     
-    var viewModels = [MessageViewModel]()
+    var viewModels = [BaseMessageViewModel]()
     
     var inboxID : InboxID!
     
@@ -49,13 +49,13 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         
         view.backgroundColor = .black
         
-        tableNode.tableNode.automaticallyAdjustsContentOffset = false
-        tableNode.tableNode.view.contentInsetAdjustmentBehavior = .never
+        conversationTableNode.tableNode.automaticallyAdjustsContentOffset = false
+        conversationTableNode.tableNode.view.contentInsetAdjustmentBehavior = .never
         
-        tableNode.delegate = self
-        tableNode.dataSource = self
-        tableNode.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - chatInputNode.baseHeight)
-        view.addSubnode(tableNode)
+        conversationTableNode.delegate = self
+        conversationTableNode.dataSource = self
+        conversationTableNode.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - chatInputNode.baseHeight)
+        view.addSubnode(conversationTableNode)
         
         chatInputNode.delegate = self
         chatInputNode.frame = CGRect(x: 0, y: view.frame.height - chatInputNode.baseHeight, width: view.frame.width, height: chatInputNode.baseHeight)
@@ -67,8 +67,6 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         default:
             break
         }
-        
-        DataManager.shared.addObserver(for: .messageChanged, target: self, callBackQueue: DispatchQueue.main)
         
         let gesture = UITapGestureRecognizer(target: self, action: #selector(tapEventInView(_:)))
         self.view.addGestureRecognizer(gesture)
@@ -103,8 +101,8 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
             chatInputContentInsets.top = 0
             chatInputNode.contentInsets = chatInputContentInsets
             
-            tableNode.frame.size.height += lastSafeAreaInsets.bottom - currentSafeAreaInsets.bottom
-            tableNode.tableNode.contentInset.bottom += -lastSafeAreaInsets.top + currentSafeAreaInsets.top
+            conversationTableNode.frame.size.height += lastSafeAreaInsets.bottom - currentSafeAreaInsets.bottom
+            conversationTableNode.tableNode.contentInset.bottom += -lastSafeAreaInsets.top + currentSafeAreaInsets.top
         }
         
         if keyboardAppeared{
@@ -144,13 +142,14 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
                 //chatInputNode.transitionLayout(withAnimation: false, shouldMeasureAsync: true, measurementCompletion: nil)
                 
                 // Store old position
-                let additionHeight = -tableNode.frame.minY
-                tableNode.frame = frame
-                tableNode.frame.size.height -= chatInputNode.baseHeight + lastSafeAreaInsets.bottom
-                tableNode.tableNode.contentInset.bottom = lastSafeAreaInsets.top
-                tableNode.changeSize(withHeight: additionHeight)
+                let additionHeight = -conversationTableNode.frame.minY
+                conversationTableNode.frame = frame
+                conversationTableNode.frame.size.height -= chatInputNode.baseHeight + lastSafeAreaInsets.bottom
+                conversationTableNode.tableNode.contentInset.bottom = lastSafeAreaInsets.top
+                // Restore old position
+                conversationTableNode.changeSize(withHeight: additionHeight)
                 
-                tableNode.reloadData()
+                conversationTableNode.reloadData()
             }
             
         default:
@@ -164,12 +163,16 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardAppear(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDisappear(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
+        
+        DataManager.shared.addObserver(for: .messageChanged, target: self, callBackQueue: DispatchQueue.main)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
         NotificationCenter.default.removeObserver(self)
+        
+        DataManager.shared.removeObserver(target: self)
     }
 }
 
@@ -203,16 +206,7 @@ extension ChatScreenViewController: ConversationTableNodeDataSource{
         let viewModel = viewModels[indexPath.row]
         
         return {
-            var cell: MessageCell
-            if viewModel.model.type == .text{
-                cell = TextMessageCell(viewModel: viewModel as! TextMessageViewModel)
-            }else{
-                cell = ImagesMessageCell(viewModel: viewModel as! ImageMessageViewModel)
-            }
-            
-            cell.delegate = self
-            
-            return cell
+            return MessageCellFactory.createMessageCell(withMessageViewModel: viewModel, target: self)
         }
     }
     
@@ -227,7 +221,7 @@ extension ChatScreenViewController{
     private func removeMessage(_ msg: MessageModel){
         var index = -1
         for i in 0..<viewModels.count{
-            if viewModels[i].model.id == msg.id{
+            if (viewModels[i] as! MessageViewModel).model.id == msg.id{
                 index = i
                 break
             }
@@ -245,54 +239,53 @@ extension ChatScreenViewController{
             return
         }
         
-        let previous = count > pos + 1 ? self.viewModels[pos + 1] : nil
-        let after = pos > 0 ? self.viewModels[pos - 1] : nil
+        let previous = count > pos + 1 ? (self.viewModels[pos + 1] as! MessageViewModel) : nil
+        let after = pos > 0 ? (self.viewModels[pos - 1] as! MessageViewModel) : nil
         
         if previous != nil{
-            previous!.setupPositionWith(previous: count > pos + 2 ? self.viewModels[pos + 2] : nil, andAfter: after)
+            previous!.setupPositionWith(previous: count > pos + 2 ? (self.viewModels[pos + 2] as! MessageViewModel) : nil, andAfter: after)
             
-            let preNode: MessageCell = self.tableNode.nodeForRowAt(IndexPath(row: pos + 1, section: 0)) as! MessageCell
+            let preNode: MessageCell = self.conversationTableNode.nodeForRowAt(IndexPath(row: pos + 1, section: 0)) as! MessageCell
             preNode.updateUI()
         }
         
         if after != nil{
-            after!.setupPositionWith(previous: previous, andAfter: pos > 1 ? self.viewModels[pos - 2] : nil)
+            after!.setupPositionWith(previous: previous, andAfter: pos > 1 ? (self.viewModels[pos - 2] as! MessageViewModel) : nil)
             
-            let afterNode: MessageCell = self.tableNode.nodeForRowAt(IndexPath(row: pos - 1, section: 0)) as! MessageCell
+            let afterNode: MessageCell = self.conversationTableNode.nodeForRowAt(IndexPath(row: pos - 1, section: 0)) as! MessageCell
             afterNode.updateUI()
         }
         
         self.viewModels.remove(at: pos)
-        self.tableNode.deleteRows(at: [IndexPath(row: pos, section: 0)])
+        self.conversationTableNode.deleteRows(at: [IndexPath(row: pos, section: 0)])
     }
     
     private func insertMessage(viewModel : MessageViewModel, at pos: Int){
-        
         if pos < 0 && pos > viewModels.count{
             return
         }
         
-        let previous = viewModels.count > pos ? viewModels[pos] : nil
+        let previous = viewModels.count > pos ? (viewModels[pos] as! MessageViewModel) : nil
         if previous != nil{
-            previous?.setupPositionWith(previous: viewModels.count > pos + 1 ? viewModels[pos + 1] : nil, andAfter: viewModel)
+            previous?.setupPositionWith(previous: viewModels.count > pos + 1 ? (viewModels[pos + 1] as! MessageViewModel) : nil, andAfter: viewModel)
             
-            let preNode: MessageCell = tableNode.nodeForRowAt(IndexPath(row: pos, section: 0)) as! MessageCell
+            let preNode: MessageCell = conversationTableNode.nodeForRowAt(IndexPath(row: pos, section: 0)) as! MessageCell
             preNode.updateUI()
         }
         
-        let after =  pos > 0 ? viewModels[pos - 1] : nil
+        let after =  pos > 0 ? (viewModels[pos - 1] as! MessageViewModel) : nil
         
         if after != nil{
-            after?.setupPositionWith(previous: viewModel, andAfter: pos >= 2 ? viewModels[pos - 2] : nil)
+            after?.setupPositionWith(previous: viewModel, andAfter: pos >= 2 ? (viewModels[pos - 2] as! MessageViewModel) : nil)
             
-            let afterNode: MessageCell = tableNode.nodeForRowAt(IndexPath(row: pos - 1, section: 0)) as! MessageCell
+            let afterNode: MessageCell = conversationTableNode.nodeForRowAt(IndexPath(row: pos - 1, section: 0)) as! MessageCell
             afterNode.updateUI()
         }
         
         viewModel.setupPositionWith(previous: previous, andAfter: after)
         
         self.viewModels.insert(viewModel, at: pos)
-        self.tableNode.insertRows(at: [IndexPath(row: pos, section: 0)])
+        self.conversationTableNode.insertRows(at: [IndexPath(row: pos, section: 0)])
     }
     
     private func insertIntoLastWithMessages(viewModels : [MessageViewModel], completion: ((_ success: Bool) -> Void)?){
@@ -300,10 +293,10 @@ extension ChatScreenViewController{
             completion?(false)
             return
         }
-
+        
         let length = self.viewModels.count
-        var after1: MessageViewModel? = length > 0 ? self.viewModels.last : nil
-        var after2: MessageViewModel? = length > 1 ? self.viewModels[length -  2] : nil
+        var after1: MessageViewModel? = length > 0 ? (self.viewModels.last as! MessageViewModel) : nil
+        var after2: MessageViewModel? = length > 1 ? (self.viewModels[length -  2] as! MessageViewModel) : nil
         
         for v in viewModels{
             after1?.setupPositionWith(previous: v, andAfter: after2)
@@ -313,18 +306,18 @@ extension ChatScreenViewController{
             after1 = v
         }
         if length > 0{
-            let afterNode: MessageCell = tableNode.nodeForRowAt(IndexPath(row: length - 1, section: 0)) as! MessageCell
+            let afterNode: MessageCell = conversationTableNode.nodeForRowAt(IndexPath(row: length - 1, section: 0)) as! MessageCell
             afterNode.updateUI()
         }
         
-        tableNode.performBatch(animated: false, updates: {
+        conversationTableNode.performBatch(animated: false, updates: {
             var indexPaths = [IndexPath]()
             for v in viewModels{
                 self.viewModels.append(v)
                 indexPaths.append(IndexPath(row: self.viewModels.count - 1, section: 0))
             }
             
-            self.tableNode.insertRows(at: indexPaths)
+            self.conversationTableNode.insertRows(at: indexPaths)
         }, completion: { (success) in
             completion?(success)
         })
@@ -333,14 +326,16 @@ extension ChatScreenViewController{
 
 // MARK: DataManagerListenerDelegate
 extension ChatScreenViewController: DataManagerListenerDelegate{
-    
     func messageChanged(_ msg: MessageModel, updateType: UpdateType, oldValue: MessageModel?) {
+        guard msg.inboxID == inboxID else {
+            return
+        }
         let viewModel = MessageViewModelFactory.createViewModel(msg)
         
         switch updateType {
         case .new:
             insertMessage(viewModel: viewModel, at: 0)        
-            tableNode.scrollToRow(at: 0)
+            conversationTableNode.scrollToRow(at: 0)
             
         case .changed:
             break
@@ -365,7 +360,7 @@ extension ChatScreenViewController: ChatInputNodeDelegate{
     }
     
     func chatInputNodeFrameDidChange(_ chatInputNode: ChatInputNode, newFrame nf: CGRect, oldFrame of: CGRect) {
-        self.tableNode.changeSize(withHeight: nf.height - of.height)
+        self.conversationTableNode.changeSize(withHeight: nf.height - of.height)
     }
 }
 
@@ -421,7 +416,7 @@ extension ChatScreenViewController{
     
     func removeMessageCell(_ cell: MessageCell) {
         let model = cell.getViewModel().model
-        DataManager.shared.deleteMessage(withInboxID: model.conversationID, messageID: model.id, completion: nil)
+        DataManager.shared.deleteMessage(withInboxID: model.inboxID, messageID: model.id, completion: nil)
     }
     
     @objc func keyboardAppear(notification: NSNotification) {
@@ -436,7 +431,7 @@ extension ChatScreenViewController{
     @objc func keyboardDisappear(notification: NSNotification) {
         if keyboardAppeared{
             keyboardAppeared = false
-          
+            
             handleFrameWhenKeyboardChanged(keyboardAppeard: keyboardAppeared)
         }
     }
@@ -445,14 +440,14 @@ extension ChatScreenViewController{
         let height = currentKeyboardFrame.height - lastSafeAreaInsets.bottom
         
         if appear{
-            self.tableNode.changeSize(withHeight: height)
+            self.conversationTableNode.changeSize(withHeight: height)
             
             self.chatInputNode.frame.origin.y -= height
             self.chatInputNode.frame.size.height -= lastSafeAreaInsets.bottom
             
             self.chatInputNode.contentInsets.bottom -= lastSafeAreaInsets.bottom
         }else{
-            self.tableNode.changeSize(withHeight: -height)
+            self.conversationTableNode.changeSize(withHeight: -height)
             
             self.chatInputNode.frame.origin.y += height
             self.chatInputNode.frame.size.height += lastSafeAreaInsets.bottom

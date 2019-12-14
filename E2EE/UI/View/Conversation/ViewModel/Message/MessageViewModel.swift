@@ -8,14 +8,8 @@
 
 import UIKit
 
-protocol MessageViewModelDelegate {
-    
-}
-
-class MessageViewModel: NSObject {
+class MessageViewModel: BaseMessageViewModel {
     private(set) var model : MessageModel
-    
-    //public weak var delegate : MessageViewModelDelegate?
     
     private var bubleConfiguration = StandardBubbleConfiguration.shared
     
@@ -55,7 +49,7 @@ class MessageViewModel: NSObject {
         self.model = model
     }
     
-    public func updateData(_ completion : (() -> Void)?){
+    public override func updateData(_ completion : (() -> Void)?){
         isIncommingMessage = !model.isMyMessage()
         avatarURL = URL(string: model.sender.avatarURL)
         
@@ -64,7 +58,6 @@ class MessageViewModel: NSObject {
         status = attributedString("Delivered", fontSize: 13, isBold: false, foregroundColor: .darkGray)
         
         bubbleImage = bubleConfiguration.getBubbleImage(isIncoming: isIncommingMessage, position: position, isHighlight: isHighlight)
-        
     }
     
     // Don't care about afterItem
@@ -78,7 +71,7 @@ class MessageViewModel: NSObject {
             insets.top = CGFloat(16)
             tempPos = .none
         }
-
+        
         position = tempPos
     }
     
@@ -111,11 +104,22 @@ class MessageViewModel: NSObject {
         position = tempPos
     }
     
-    private func isGroupWith(_ other: MessageViewModel) -> Bool{
-        if model.sender.id != other.model.sender.id{
+    override func isGroupWith(_ other: BaseMessageViewModel) -> Bool{
+        guard let item = other as? MessageViewModel else {
             return false
         }
-        if fabs(model.time.sent - other.model.time.sent) <= DAY{
+        if model.sender.id != item.model.sender.id{
+            return false
+        }
+        
+        return isBlockMessageWith(other)
+    }
+    
+    override func isBlockMessageWith(_ other: BaseMessageViewModel?) -> Bool{
+        guard let item = other as? MessageViewModel else {
+            return false
+        }
+        if fabs(model.time.sent - item.model.time.sent) <= MINUTE * 30{
             return true
         }
         
