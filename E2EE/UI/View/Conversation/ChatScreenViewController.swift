@@ -16,6 +16,12 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     
     var viewModels = [BaseMessageViewModel]()
     
+    var outOfData: Bool = false
+    
+    var numberOfMessageTitle: Int = 0
+    
+    let numberOfAdditionalMessagesLoaded = 40
+    
     var inboxID : InboxID!
     
     var selectedCell: MessageCell?
@@ -145,11 +151,15 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
 
 extension ChatScreenViewController: ConversationTableNodeDelegate{
     func shouldBatchFetch(for tableNode: ConversationTableNode) -> Bool {
-        true
+        return !outOfData
     }
     
     func tableNode(_ tableNode: ConversationTableNode, willBeginBatchFetchWith context: ASBatchContext) {
-        DataManager.shared.fetchMessageModels(with: self.inboxID, currentNumberMessages: viewModels.count, howManyMessageReceive: 40, { (models) in
+        DataManager.shared.fetchMessageModels(with: self.inboxID, currentNumberMessages: viewModels.count - numberOfMessageTitle, howManyMessageReceive: numberOfAdditionalMessagesLoaded, { (models) in
+            
+            if models.count == 0{
+                self.outOfData = true
+            }
             
             var viewModels = [MessageViewModel]()
             for i in models{
@@ -192,8 +202,9 @@ extension ChatScreenViewController{
     
     private func removeMessage(_ msg: MessageModel){
         var index = -1
+        
         for i in 0..<viewModels.count{
-            if (viewModels[i] as! MessageViewModel).model.id == msg.id{
+            if (viewModels[i] as? MessageViewModel)?.model.id == msg.id{
                 index = i
                 break
             }
@@ -202,62 +213,92 @@ extension ChatScreenViewController{
     }
     
     private func removeMessage(at pos: Int){
-        if pos < 0{
-            return
-        }
-        
-        let count = self.viewModels.count
+        let count = viewModels.count
         guard pos >= 0 && pos < count else {
             return
         }
         
-        let previous = count > pos + 1 ? (self.viewModels[pos + 1] as! MessageViewModel) : nil
-        let after = pos > 0 ? (self.viewModels[pos - 1] as! MessageViewModel) : nil
+        let previous = count > pos + 1 ? viewModels[pos + 1] : nil
+        let after = pos > 0 ? viewModels[pos - 1] : nil
         
-        if previous != nil{
-            previous!.setupPositionWith(previous: count > pos + 2 ? (self.viewModels[pos + 2] as! MessageViewModel) : nil, andAfter: after)
+        if let previousMessage = previous as? MessageViewModel{
+            previousMessage.setupPositionWith(previous: count > pos + 2 ? (viewModels[pos + 2] as? MessageViewModel) : nil, andAfter: after as? MessageViewModel)
             
-            let preNode: MessageCell = self.conversationTableNode.nodeForRowAt(IndexPath(row: pos + 1, section: 0)) as! MessageCell
+            let preNode: MessageCell = self.conversationTableNode.nodeForRowAt(pos + 1) as! MessageCell
             preNode.updateUI()
         }
         
-        if after != nil{
-            after!.setupPositionWith(previous: previous, andAfter: pos > 1 ? (self.viewModels[pos - 2] as! MessageViewModel) : nil)
+        if let afterMessage = after as? MessageViewModel{
+            afterMessage.setupPositionWith(previous: previous as? MessageViewModel, andAfter: pos > 1 ? (viewModels[pos - 2] as? MessageViewModel) : nil)
             
-            let afterNode: MessageCell = self.conversationTableNode.nodeForRowAt(IndexPath(row: pos - 1, section: 0)) as! MessageCell
+            let afterNode: MessageCell = conversationTableNode.nodeForRowAt(pos - 1) as! MessageCell
             afterNode.updateUI()
         }
         
-        self.viewModels.remove(at: pos)
-        self.conversationTableNode.deleteRows(at: [IndexPath(row: pos, section: 0)])
+        if (previous as? MessageTitleViewModel) != nil{
+            numberOfMessageTitle -= 1
+            viewModels.remove(at: pos + 1)
+            conversationTableNode.deleteRows(at: [pos + 1])
+        }
+        
+        viewModels.remove(at: pos)
+        conversationTableNode.deleteRows(at: [pos])
     }
     
     private func insertMessage(viewModel : MessageViewModel, at pos: Int){
-        if pos < 0 && pos > viewModels.count{
-            return
-        }
+        //        if pos < 0 && pos > viewModels.count{
+        //            return
+        //        }
+        //
+        //        let previous = viewModels.count > pos ? (viewModels[pos] as! MessageViewModel) : nil
+        //        if previous != nil{
+        //            previous?.setupPositionWith(previous: viewModels.count > pos + 1 ? (viewModels[pos + 1] as! MessageViewModel) : nil, andAfter: viewModel)
+        //
+        //            let preNode: MessageCell = conversationTableNode.nodeForRowAt(IndexPath(row: pos, section: 0)) as! MessageCell
+        //            preNode.updateUI()
+        //        }
+        //
+        //        let after =  pos > 0 ? (viewModels[pos - 1] as! MessageViewModel) : nil
+        //
+        //        if after != nil{
+        //            after?.setupPositionWith(previous: viewModel, andAfter: pos >= 2 ? (viewModels[pos - 2] as! MessageViewModel) : nil)
+        //
+        //            let afterNode: MessageCell = conversationTableNode.nodeForRowAt(IndexPath(row: pos - 1, section: 0)) as! MessageCell
+        //            afterNode.updateUI()
+        //        }
+        //
+        //        viewModel.setupPositionWith(previous: previous, andAfter: after)
+        //
+        //        self.viewModels.insert(viewModel, at: pos)
+        //        self.conversationTableNode.insertRows(at: [IndexPath(row: pos, section: 0)])
+    }
+    
+    private func insertMessageAtFirst(viewModel : MessageViewModel){
         
-        let previous = viewModels.count > pos ? (viewModels[pos] as! MessageViewModel) : nil
-        if previous != nil{
-            previous?.setupPositionWith(previous: viewModels.count > pos + 1 ? (viewModels[pos + 1] as! MessageViewModel) : nil, andAfter: viewModel)
+        let previous = viewModels.count > 0 ? viewModels.first! : nil
+        
+        if viewModel.isBlockMessageWith(previous){
+            if let previousMessage = previous as? MessageViewModel{
+                previousMessage.setupPositionWith(previous: viewModels.count > 1 ? (viewModels[1] as? MessageViewModel) : nil, andAfter: viewModel)
+                
+                let preNode: MessageCell = conversationTableNode.nodeForRowAt(0) as! MessageCell
+                preNode.updateUI()
+            }
             
-            let preNode: MessageCell = conversationTableNode.nodeForRowAt(IndexPath(row: pos, section: 0)) as! MessageCell
-            preNode.updateUI()
-        }
-        
-        let after =  pos > 0 ? (viewModels[pos - 1] as! MessageViewModel) : nil
-        
-        if after != nil{
-            after?.setupPositionWith(previous: viewModel, andAfter: pos >= 2 ? (viewModels[pos - 2] as! MessageViewModel) : nil)
+            viewModel.setupPositionWith(previous: previous as? MessageViewModel, andAfter: nil)
             
-            let afterNode: MessageCell = conversationTableNode.nodeForRowAt(IndexPath(row: pos - 1, section: 0)) as! MessageCell
-            afterNode.updateUI()
+        }else{
+            
+            let title = MessageTitleViewModel(messageTime: viewModel.messageTime())
+            viewModel.setupPositionWith(previous: nil, andAfter: nil)
+            
+            numberOfMessageTitle += 1
+            viewModels.insert(title, at: 0)
+            conversationTableNode.insertRows(at: [0])
         }
         
-        viewModel.setupPositionWith(previous: previous, andAfter: after)
-        
-        self.viewModels.insert(viewModel, at: pos)
-        self.conversationTableNode.insertRows(at: [IndexPath(row: pos, section: 0)])
+        self.viewModels.insert(viewModel, at: 0)
+        self.conversationTableNode.insertRows(at: [0])
     }
     
     private func insertIntoLastWithMessages(viewModels : [MessageViewModel], completion: ((_ success: Bool) -> Void)?){
@@ -266,30 +307,68 @@ extension ChatScreenViewController{
             return
         }
         
-        let length = self.viewModels.count
-        var after1: MessageViewModel? = length > 0 ? (self.viewModels.last as! MessageViewModel) : nil
-        var after2: MessageViewModel? = length > 1 ? (self.viewModels[length -  2] as! MessageViewModel) : nil
+        var arrayTitle = [MessageTitleViewModel]()
         
+        let length = self.viewModels.count
+        var lastTitle: MessageTitleViewModel? = length > 1 ? self.viewModels.last as? MessageTitleViewModel : nil
+        lastTitle?.resetCount()
+        
+        var after1: MessageViewModel? = length > 1 ? self.viewModels[length - 2] as? MessageViewModel : nil
+        var after2: MessageViewModel? = length > 2 ? self.viewModels[length - 3] as? MessageViewModel : nil
+        
+        if lastTitle?.isBlockMessageWith(viewModels.first!) ?? false{
+            arrayTitle.append(lastTitle!)
+        }
         for v in viewModels{
+            if lastTitle == nil{
+                lastTitle = MessageTitleViewModel(messageTime: v.messageTime())
+                arrayTitle.append(lastTitle!)
+            }else{
+                if lastTitle!.isBlockMessageWith(v){
+                    lastTitle?.updateTime(newTime: v.messageTime())
+                }else{
+                    lastTitle = MessageTitleViewModel(messageTime: v.messageTime())
+                    arrayTitle.append(lastTitle!)
+                }
+            }
+            
             after1?.setupPositionWith(previous: v, andAfter: after2)
             v.setupPositionWith(previous: nil, andAfter: after1)
             
             after2 = after1
             after1 = v
         }
-        if length > 0{
-            let afterNode: MessageCell = conversationTableNode.nodeForRowAt(IndexPath(row: length - 1, section: 0)) as! MessageCell
+        
+        if length > 1{
+            let afterNode: MessageCell = conversationTableNode.nodeForRowAt(length - 2) as! MessageCell
             afterNode.updateUI()
         }
         
         conversationTableNode.performBatch(animated: false, updates: {
-            var indexPaths = [IndexPath]()
-            for v in viewModels{
-                self.viewModels.append(v)
-                indexPaths.append(IndexPath(row: self.viewModels.count - 1, section: 0))
+            var indexs = [Int]()
+            if length > 1 && arrayTitle.first! === self.viewModels.last!{
+                self.viewModels.removeLast()
+                self.conversationTableNode.deleteRows(at: [length - 1])
+                
+                self.numberOfMessageTitle += arrayTitle.count
+            }else{
+                self.numberOfMessageTitle += arrayTitle.count
             }
             
-            self.conversationTableNode.insertRows(at: indexPaths)
+            var count = 0
+            for v in viewModels{
+                count += 1
+                self.viewModels.append(v)
+                indexs.append(self.viewModels.count - 1)
+                
+                if count == arrayTitle.first!.count{
+                    count = 0
+                    self.viewModels.append(arrayTitle.removeFirst())
+                    indexs.append(self.viewModels.count - 1)
+                }
+            }
+            
+            self.conversationTableNode.insertRows(at: indexs)
         }, completion: { (success) in
             completion?(success)
         })
@@ -306,7 +385,7 @@ extension ChatScreenViewController: DataManagerListenerDelegate{
         
         switch updateType {
         case .new:
-            insertMessage(viewModel: viewModel, at: 0)        
+            insertMessageAtFirst(viewModel: viewModel)
             conversationTableNode.scrollToRow(at: 0)
             
         case .changed:
@@ -356,6 +435,7 @@ extension ChatScreenViewController: MessageCellDelegate{
             if keyboardAppeared{
                 view.endEditing(true)
             }
+            
             editMessageView.messageCell = cell
             view.addSubnode(editMessageView)
             editMessageView.transitionLayout(withAnimation: true, shouldMeasureAsync: true, measurementCompletion: nil)

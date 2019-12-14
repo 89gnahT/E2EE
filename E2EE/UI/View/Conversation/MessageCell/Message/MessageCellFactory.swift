@@ -18,9 +18,11 @@ class MessageCellFactory: NSObject {
             }else{
                 cell = ImagesMessageCell(viewModel: messageViewModel as! ImageMessageViewModel)
             }
-        }else{
-            
+        }else
+            if let titleViewModel = viewModel as? MessageTitleViewModel{
+                cell = MessageTitleCell(viewModel: titleViewModel)
         }
+        
         cell.delegate = target
         
         return cell

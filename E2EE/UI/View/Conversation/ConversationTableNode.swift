@@ -72,12 +72,28 @@ extension ConversationTableNode{
         tableNode.scrollToRow(at: indexPath, at: UITableView.ScrollPosition.top, animated: false)
     }
     
+    func insertRows(at: [Int]){
+        var indexPaths = [IndexPath]()
+        for i in at{
+            indexPaths.append(IndexPath(row: i, section: 0))
+        }
+        tableNode.insertRows(at: indexPaths, with: .automatic)
+    }
+    
     func insertRows(at: [IndexPath]){
         tableNode.insertRows(at: at, with: .automatic)
     }
     
     func deleteRows(at: [IndexPath]){
         tableNode.deleteRows(at: at, with: .automatic)
+    }
+    
+    func deleteRows(at: [Int]){
+        var indexPaths = [IndexPath]()
+        for i in at{
+            indexPaths.append(IndexPath(row: i, section: 0))
+        }
+        tableNode.deleteRows(at: indexPaths, with: .automatic)
     }
     
     func nodeForRowAt(_ index: Int) -> ASCellNode? {

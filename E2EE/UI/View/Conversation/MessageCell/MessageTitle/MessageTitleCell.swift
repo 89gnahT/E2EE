@@ -10,30 +10,41 @@ import UIKit
 import AsyncDisplayKit
 
 class MessageTitleCell: BaseMessageCell {
-    override init() {
+    
+    var viewModel: MessageTitleViewModel
+    
+    var textNode = ASTextNode()
+    
+    init(viewModel: MessageTitleViewModel) {
+        self.viewModel = viewModel
         super.init()
-        
-        setup()
     }
     
     override func setup(){
+        super.setup()
         
+        automaticallyManagesSubnodes = true
+        
+        updateUI()
     }
     
     public override func updateUI(){
-        
-    }
-    
-    // MARK: - Should be override in subclass
-    override func setupContent(){
-        
+        ASPerformBlockOnBackgroundThread {
+            self.viewModel.updateData(nil)
+            self.textNode.attributedText = self.viewModel.title
+            
+            self.setNeedsLayout()
+        }
     }
     
     override func getViewModel() -> MessageTitleViewModel {
-        return MessageTitleViewModel()
+        return viewModel
+    }
+   
+    override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
+        let stack = ASStackLayoutSpec(direction: .horizontal, spacing: 0, justifyContent: .center, alignItems: .center, children: [textNode])
+        
+        return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 25, left: 0, bottom: 15, right: 0), child: stack)
     }
     
-    public override func updateUIContent(){
-        
-    }
 }

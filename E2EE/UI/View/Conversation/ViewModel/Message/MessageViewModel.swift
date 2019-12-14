@@ -104,7 +104,7 @@ class MessageViewModel: BaseMessageViewModel {
         position = tempPos
     }
     
-    override func isGroupWith(_ other: BaseMessageViewModel) -> Bool{
+    func isGroupWith(_ other: BaseMessageViewModel) -> Bool{
         guard let item = other as? MessageViewModel else {
             return false
         }
@@ -115,15 +115,8 @@ class MessageViewModel: BaseMessageViewModel {
         return isBlockMessageWith(other)
     }
     
-    override func isBlockMessageWith(_ other: BaseMessageViewModel?) -> Bool{
-        guard let item = other as? MessageViewModel else {
-            return false
-        }
-        if fabs(model.time.sent - item.model.time.sent) <= MINUTE * 30{
-            return true
-        }
-        
-        return true
+    override func messageTime() -> TimeInterval {
+        return model.time.sent
     }
 }
 

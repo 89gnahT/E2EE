@@ -68,6 +68,8 @@ class MessageCell: BaseMessageCell {
     }
     
     override func setup(){
+        super.setup()
+        
         self.automaticallyManagesSubnodes = true
         
         avatarImageNode.style.preferredSize = CGSize(squareEdge: 28)

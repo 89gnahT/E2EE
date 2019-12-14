@@ -9,15 +9,19 @@
 import UIKit
 
 class BaseMessageViewModel: NSObject {
+    
+    let timePeriod = TimeInterval(10 * MINUTE)
+    
+    public func messageTime() -> TimeInterval{
+        assert(false, "messageTime should be override in subClass")
+        return 0
+    }
+    
     public func updateData(_ completion : (() -> Void)?){
         
     }
     
-    public func isGroupWith(_ other: BaseMessageViewModel) -> Bool{
-        return false
-    }
-    
     public func isBlockMessageWith(_ other: BaseMessageViewModel?) -> Bool{
-        return false
+        return other != nil && fabs(messageTime() - other!.messageTime()) <= timePeriod
     }
 }
