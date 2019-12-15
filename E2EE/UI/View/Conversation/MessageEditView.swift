@@ -23,6 +23,8 @@ class MessageEditView: ASDisplayNode {
     
     private let optionNode = ASDisplayNode()
     
+    private var optionNodeHeight = CGFloat(60)
+    
     public var messageCell : MessageCell?
     
     
@@ -63,8 +65,11 @@ class MessageEditView: ASDisplayNode {
         optionNode.setNeedsLayout()
     }
     
+    override func safeAreaInsetsDidChange() {
+        optionNodeHeight = 60 + safeAreaInsets.bottom
+    }
+    
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        let optionNodeHeight = CGFloat(70)
         optionNode.style.layoutPosition = CGPoint(x: 0, y: constrainedSize.max.height - optionNodeHeight)
         optionNode.style.preferredSize = CGSize(width: constrainedSize.max.width, height: optionNodeHeight)
         
