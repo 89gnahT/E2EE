@@ -70,8 +70,8 @@ class ConversationTableNode: ASDisplayNode {
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        scrollDownBtn.style.layoutPosition = CGPoint(x: constrainedSize.max.width * 6.5/8,
-                                                     y: constrainedSize.max.height * 8/9)
+        scrollDownBtn.style.layoutPosition = CGPoint(x: constrainedSize.max.width - 70,
+                                                     y: constrainedSize.max.height - 70)
         
         let absoluteLayout = ASAbsoluteLayoutSpec(children: [tableNode, scrollDownBtn])
         

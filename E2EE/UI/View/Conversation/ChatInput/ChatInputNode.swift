@@ -411,17 +411,14 @@ extension ChatInputNode{
     }
 }
 
-
-
-
-
-
 // MARK: Layout and animation
 extension ChatInputNode{
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         let input = ASBackgroundLayoutSpec(child: editTextNode, background: backgroundEditTextNode)
-        let space: CGFloat = UIDevice.current.orientation.isPortrait ? 20 : 10
+        let space: CGFloat = UIDevice.current.orientation.isLandscape ? 20 : 10
         input.style.flexGrow = 1.0
+        
+        optionNode.reduceContent = constrainedSize.max.width < 350 ? true : false
         
         let leftNode = inputExpanded ? collapseBtn : optionNode
         let rightNode = quickSendBtnEnable ? quickSendBtn : sendBtn
@@ -556,6 +553,8 @@ class OptionalChatInput: ASDisplayNode{
     
     var spacePortrait: CGFloat = 10
     
+    var reduceContent: Bool = false
+    
     override init() {
         super.init()
         
@@ -582,9 +581,13 @@ class OptionalChatInput: ASDisplayNode{
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
+        let space = UIDevice.current.orientation.isLandscape ? spaceLandscape : spacePortrait
         
-        let space = UIDevice.current.orientation.isPortrait ? spacePortrait : spaceLandscape
         let contentStack = ASStackLayoutSpec(direction: .horizontal, spacing: space, justifyContent: .center, alignItems: .stretch, children: [self.plusBtn, self.cameraBtn, self.imageBtn, self.voiceBtn])
+        
+        if reduceContent{
+            contentStack.children?.removeLast()
+        }
         
         return ASInsetLayoutSpec(insets: UIEdgeInsets.zero, child: contentStack)
     }
