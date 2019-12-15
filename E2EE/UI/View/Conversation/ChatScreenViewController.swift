@@ -135,6 +135,7 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardAppear(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDisappear(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChangeFrame(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
         
         DataManager.shared.addObserver(for: .messageChanged, target: self, callBackQueue: DispatchQueue.main)
@@ -456,6 +457,16 @@ extension ChatScreenViewController{
             keyboardAppeared = false
             
             handleFrameWhenKeyboardChanged(keyboardAppeard: keyboardAppeared)
+        }
+    }
+    
+    @objc func keyboardWillChangeFrame(notification: NSNotification) {
+        if keyboardAppeared{
+            if let keyboardValue: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+                handleFrameWhenKeyboardChanged(keyboardAppeard: false)
+                currentKeyboardFrame = keyboardValue.cgRectValue
+                handleFrameWhenKeyboardChanged(keyboardAppeard: true)
+            }
         }
     }
     
