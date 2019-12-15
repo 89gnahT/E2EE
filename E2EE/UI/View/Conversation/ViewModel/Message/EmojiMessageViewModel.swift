@@ -24,7 +24,7 @@ class EmojiMessageViewModel: MessageViewModel {
     override func updateData(_ completion : (() -> Void)?) {
         super.updateData(completion)
                 
-        emojiContent = attributedString(emojiModel.content, fontSize: 50, isBold: false, foregroundColor: .black)
+        emojiContent = attributedString(emojiModel.content, fontSize: 45, isBold: false, foregroundColor: .black)
         
     }
 }

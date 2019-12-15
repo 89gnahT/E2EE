@@ -66,6 +66,8 @@ class MessageEditView: ASDisplayNode {
     }
     
     override func safeAreaInsetsDidChange() {
+        super.safeAreaInsetsDidChange()
+        
         optionNodeHeight = 60 + safeAreaInsets.bottom
     }
     

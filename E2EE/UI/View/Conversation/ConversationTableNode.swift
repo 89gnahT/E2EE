@@ -51,13 +51,16 @@ class ConversationTableNode: ASDisplayNode {
         tableNode.dataSource = self
         tableNode.delegate = self
         tableNode.view.separatorStyle = .none
+        tableNode.automaticallyAdjustsContentOffset = false
+        tableNode.view.contentInsetAdjustmentBehavior = .never
         
         //tableNode.leadingScreensForBatching = 3
         
         scrollDownBtn.setImage(UIImage(named: "double_down_arrow")?.maskWithColor(color: .black), for: .normal)
         scrollDownBtn.imageNode.style.preferredSize = CGSize(squareEdge: 17)
-        scrollDownBtn.setBackgroundImage(UIImage(named: "dot")?.maskWithColor(color: .white), for: .normal)
-        scrollDownBtn.contentEdgeInsets = UIEdgeInsets(top: 7, left: 7, bottom: 7, right: 7)
+        scrollDownBtn.setBackgroundImage(UIImage(named: "dot-1")?.maskWithColor(color: .white), for: .normal)
+        let insets = CGFloat(12)
+        scrollDownBtn.contentEdgeInsets = UIEdgeInsets(top: insets, left: insets, bottom: insets, right: insets)
     }
     
     override func didLoad() {

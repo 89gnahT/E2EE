@@ -55,9 +55,6 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         
         view.backgroundColor = .black
         
-        conversationTableNode.tableNode.automaticallyAdjustsContentOffset = false
-        conversationTableNode.tableNode.view.contentInsetAdjustmentBehavior = .never
-        
         let frame = view.frame
         conversationTableNode.delegate = self
         conversationTableNode.dataSource = self
@@ -83,60 +80,12 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
         self.view.addGestureRecognizer(gesture)
     }
     
-    /**
-     Follow: The system will automatically the methods in the following order:
-     1. If keyboard disappeard: viewSafeAreaInsetsDidChange -> orientation changed
-     2. If keyboard appeared: viewSafeAreaInsetsDidChange -> keyboard disappeared -> orientation changed -> keyboard appear
-     
-     With case 1, we handle it very easily
-     Step 1: in safeAreaInsetsChange, We need to update height, position and contentInsets of the nodes (remove old value and update new value)
-     Step 2: In orientationChange, we retains chatInputNode's height and change the remainning properties according to the new frame
-     
-     With case 2, we'll transform this case to case 1:
-     We need handle Step 1 to 3 in safeAreaInsetsChange
-     Step 1: First, we call keyboardDisappear with old safe area insets
-     Step 2: Now, we do the same as Step 1 in case 1
-     Step 3: We call keyboarAppear after update safe area insets
-     Step 4: Do the same as step 2 in case 1
-     */
-    override func viewSafeAreaInsetsDidChange() {
-        super.viewSafeAreaInsetsDidChange()
-        let currentSafeAreaInsets = view.safeAreaInsets
-        
-        // When safe area insets changed, we need to update the height, the position, the content insets of chatInputNode and tabeNode
-        func handleSafeAreaInsetDidChangeWhenKeyboardDisappeared(){
-            chatInputNode.frame.origin.y += lastSafeAreaInsets.bottom - currentSafeAreaInsets.bottom
-            chatInputNode.frame.size.height += -lastSafeAreaInsets.bottom + currentSafeAreaInsets.bottom
-            
-            chatInputNode.contentInsets = currentSafeAreaInsets
-            chatInputNode.contentInsets.top = 0
-            
-            conversationTableNode.frame.size.height += lastSafeAreaInsets.bottom - currentSafeAreaInsets.bottom
-            conversationTableNode.contentInset.bottom += -lastSafeAreaInsets.top + currentSafeAreaInsets.top
-            conversationTableNode.contentInset.top = conversationTableNode.topDefaultContentInset
-        }
-        
-        if keyboardAppeared{
-            handleFrameWhenKeyboardChanged(keyboardAppeard: false)
-        }
-        
-        handleSafeAreaInsetDidChangeWhenKeyboardDisappeared()
-        
-        // Update new insets
-        lastSafeAreaInsets = currentSafeAreaInsets
-        
-        if keyboardAppeared{
-            handleFrameWhenKeyboardChanged(keyboardAppeard: true)
-        }
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardAppear(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDisappear(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChangeFrame(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+     
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
+        
+        chatInputNode.registerNotifications()
         
         DataManager.shared.addObserver(for: .messageChanged, target: self, callBackQueue: DispatchQueue.main)
     }
@@ -144,9 +93,24 @@ class ChatScreenViewController: ASViewController<ASDisplayNode> {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        chatInputNode.unregisterNotifications()
+        
         NotificationCenter.default.removeObserver(self)
         
         DataManager.shared.removeObserver(target: self)
+    }
+    
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        let currentSafeAreaInsets = view.safeAreaInsets
+        
+        chatInputNode.safeAreaInsetsChange(view.safeAreaInsets)
+        
+        conversationTableNode.frame.size.height += lastSafeAreaInsets.bottom - currentSafeAreaInsets.bottom
+        conversationTableNode.contentInset.bottom += -lastSafeAreaInsets.top + currentSafeAreaInsets.top
+        conversationTableNode.contentInset.top = conversationTableNode.topDefaultContentInset
+        
+        lastSafeAreaInsets = currentSafeAreaInsets
     }
 }
 
@@ -384,7 +348,7 @@ extension ChatScreenViewController: ChatInputNodeDelegate{
     }
     
     func chatInputNodeFrameDidChange(_ chatInputNode: ChatInputNode, newFrame nf: CGRect, oldFrame of: CGRect) {
-        self.conversationTableNode.raiseFrameByHeight(nf.height - of.height)
+        self.conversationTableNode.raiseFrameByHeight(of.minY - nf.minY)
     }
 }
 
@@ -443,33 +407,6 @@ extension ChatScreenViewController{
         }
     }
     
-    @objc func keyboardAppear(notification: NSNotification) {
-        if !keyboardAppeared, let keyboardValue: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-            keyboardAppeared = true
-            currentKeyboardFrame = keyboardValue.cgRectValue
-            
-            handleFrameWhenKeyboardChanged(keyboardAppeard: keyboardAppeared)
-        }
-    }
-    
-    @objc func keyboardDisappear(notification: NSNotification) {
-        if keyboardAppeared{
-            keyboardAppeared = false
-            
-            handleFrameWhenKeyboardChanged(keyboardAppeard: keyboardAppeared)
-        }
-    }
-    
-    @objc func keyboardWillChangeFrame(notification: NSNotification) {
-        if keyboardAppeared{
-            if let keyboardValue: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-                handleFrameWhenKeyboardChanged(keyboardAppeard: false)
-                currentKeyboardFrame = keyboardValue.cgRectValue
-                handleFrameWhenKeyboardChanged(keyboardAppeard: true)
-            }
-        }
-    }
-    
     // The keyboard always disappears before this method is called
     @objc func deviceOrientationDidChange(_ notification: Notification) {
         let orientation = UIDevice.current.orientation
@@ -484,16 +421,7 @@ extension ChatScreenViewController{
                 
                 editMessageView.frame = frame
                 
-                // Retains current chatInputNode's height and change the remainning properties according to the new frame
-                let currentChatInputHeight = chatInputNode.frame.height
-                chatInputNode.frame = CGRect(x: frame.minX,
-                                             y: frame.maxY - currentChatInputHeight,
-                                             width: frame.width,
-                                             height: currentChatInputHeight)
-                // Update content insets
-                chatInputNode.contentInsets = lastSafeAreaInsets
-                // We do not use top's content inset
-                chatInputNode.contentInsets.top = 0
+                chatInputNode.deviceOrientationDidChange(frame)
                 
                 // Store old position
                 let additionHeight = -conversationTableNode.frame.minY
@@ -510,30 +438,6 @@ extension ChatScreenViewController{
             
         default:
             break
-        }
-    }
-}
-
-// MARK: Helper method
-extension ChatScreenViewController{
-    
-    private func handleFrameWhenKeyboardChanged(keyboardAppeard appear: Bool){
-        let height = currentKeyboardFrame.height - lastSafeAreaInsets.bottom
-        
-        if appear{
-            self.conversationTableNode.raiseFrameByHeight(height)
-            
-            self.chatInputNode.frame.origin.y -= height
-            self.chatInputNode.frame.size.height -= lastSafeAreaInsets.bottom
-            
-            self.chatInputNode.contentInsets.bottom -= lastSafeAreaInsets.bottom
-        }else{
-            self.conversationTableNode.raiseFrameByHeight(-height)
-            
-            self.chatInputNode.frame.origin.y += height
-            self.chatInputNode.frame.size.height += lastSafeAreaInsets.bottom
-            
-            self.chatInputNode.contentInsets.bottom += lastSafeAreaInsets.bottom
         }
     }
 }

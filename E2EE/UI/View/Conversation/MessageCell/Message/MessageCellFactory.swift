@@ -19,6 +19,7 @@ class MessageCellFactory: NSObject {
             
             case .emoji:
                 cell = EmojiMessageCell(viewModel: messageViewModel as! EmojiMessageViewModel)
+                
             case .image:
                 cell = ImagesMessageCell(viewModel: messageViewModel as! ImageMessageViewModel)
             }
