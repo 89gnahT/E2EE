@@ -42,6 +42,6 @@ class MessageTitleViewModel: BaseMessageViewModel {
     }
     
     public override func updateData(_ completion : (() -> Void)?){
-        title = attributedString(getTimeWithFormath(time: time, format: "hh:mm dd/MM/yyyy"), fontSize: 14, isBold: false, foregroundColor: .darkGray)
+        title = attributedString(getTimeWithFormath(time: time, format: "hh:mm dd/MM/yyyy"), fontSize: 14, isBold: false, foregroundColor: .lightGray)
     }
 }

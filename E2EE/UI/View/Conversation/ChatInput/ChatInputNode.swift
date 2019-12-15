@@ -12,7 +12,7 @@ import AsyncDisplayKit
 protocol ChatInputNodeDelegate {
     func chatInputNodeFrameDidChange(_ chatInputNode: ChatInputNode, newFrame nf: CGRect, oldFrame of: CGRect)
     
-    func chatInputNode(_ chatInputNode: ChatInputNode, sendText text: String)
+    func chatInputNode(_ chatInputNode: ChatInputNode, sendMessageWithContent content: String, type: MessageType)
 }
 
 class ChatInputNode: ASDisplayNode {
@@ -90,6 +90,7 @@ class ChatInputNode: ASDisplayNode {
         editTextNode.view.addGestureRecognizer(inputTap)
         
         sendBtn.addTarget(self, action: #selector(sendText(_:)), forControlEvents: .touchUpInside)
+        quickSendBtn.addTarget(self, action: #selector(sendEmoji(_:)), forControlEvents: .touchUpInside)
         
         let gesture = UITapGestureRecognizer(target: self, action: #selector(tapEventInView(_:)))
         view.addGestureRecognizer(gesture)
@@ -360,7 +361,18 @@ extension ChatInputNode{
         }
         
         editTextNode.attributedText = nil
-        delegate?.chatInputNode(self, sendText: text)
+        delegate?.chatInputNode(self, sendMessageWithContent: text, type: .text)
+        
+        textInputDidChanged(editTextNode)
+    }
+    
+    @objc func sendEmoji(_ button: ASButtonNode){
+        if !inputExpanded{
+            lastContentBeforCollapse = nil
+        }
+        
+        editTextNode.attributedText = nil
+        delegate?.chatInputNode(self, sendMessageWithContent: "👍", type: .emoji)
         
         textInputDidChanged(editTextNode)
     }

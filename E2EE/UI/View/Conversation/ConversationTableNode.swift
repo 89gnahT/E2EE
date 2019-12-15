@@ -41,6 +41,8 @@ class ConversationTableNode: ASDisplayNode {
     
     let topDefaultContentInset = CGFloat(15)
     
+    let scrollDownBtn = ASButtonNode()
+    
     override init() {
         super.init()
         
@@ -51,10 +53,26 @@ class ConversationTableNode: ASDisplayNode {
         tableNode.view.separatorStyle = .none
         
         //tableNode.leadingScreensForBatching = 3
+        
+        scrollDownBtn.setImage(UIImage(named: "double_down_arrow")?.maskWithColor(color: .black), for: .normal)
+        scrollDownBtn.imageNode.style.preferredSize = CGSize(squareEdge: 17)
+        scrollDownBtn.setBackgroundImage(UIImage(named: "dot")?.maskWithColor(color: .white), for: .normal)
+        scrollDownBtn.contentEdgeInsets = UIEdgeInsets(top: 7, left: 7, bottom: 7, right: 7)
+    }
+    
+    override func didLoad() {
+        super.didLoad()
+        
+        scrollDownBtn.addTarget(self, action: #selector(scrollDownBtnPressed(_:)), forControlEvents: .touchUpInside)
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        return ASInsetLayoutSpec(insets: UIEdgeInsets.zero, child: tableNode)
+        scrollDownBtn.style.layoutPosition = CGPoint(x: constrainedSize.max.width * 6.5/8,
+                                                     y: constrainedSize.max.height * 8/9)
+        
+        let absoluteLayout = ASAbsoluteLayoutSpec(children: [tableNode, scrollDownBtn])
+        
+        return absoluteLayout
     }
 }
 
@@ -134,6 +152,15 @@ extension ConversationTableNode: ASTableDelegate{
         
         delegate?.tableNode(self, willBeginBatchFetchWith: context)
     }
+    
+    func tableNode(_ tableNode: ASTableNode, willDisplayRowWith node: ASCellNode) {
+        guard let lastIndex = tableNode.indexPathsForVisibleRows().min()?.row else {
+            scrollDownBtn.isHidden = true
+            return
+        }
+        scrollDownBtn.isHidden = lastIndex > 10 ? false : true
+    }
+    
 }
 
 // MARK: - DataSource
@@ -148,5 +175,11 @@ extension ConversationTableNode: ASTableDataSource{
     
     func tableNode(_ tableNode: ASTableNode, numberOfRowsInSection section: Int) -> Int {
         dataSource?.tableNode(self, numberOfRowsInSection: section) ?? 0
+    }
+}
+
+extension ConversationTableNode{
+    @objc func scrollDownBtnPressed(_ button: ASButtonNode){
+        scrollToRow(at: 0)
     }
 }

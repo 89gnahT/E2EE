@@ -13,11 +13,16 @@ class MessageViewModelFactory: NSObject {
     class func createViewModel(_ model: MessageModel) -> MessageViewModel{
         var viewModel: MessageViewModel!
         
-        if model.type == .text{
+        switch model.type {
+        case .text:
             viewModel = TextMessageViewModel(model: model as! TextMessageModel)
-        }else if model.type == .image{
+        
+        case .image:
             viewModel = ImageMessageViewModel(model: model as! ImageMessageModel)
-        }
+            
+        case .emoji:
+            viewModel = EmojiMessageViewModel(model: model as! EmojiMessageModel)
+        }                
         
         return viewModel
     }

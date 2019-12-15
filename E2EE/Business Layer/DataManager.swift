@@ -75,9 +75,15 @@ extension DataManager{
         callbackForDataChanged(object: model, forEvent: .messageChanged, updateType: .new, oldVaule: nil)
     }
     
-    public func sendTextMessage(inboxID iID: InboxID, withContent text: String, _ completion : ((TextMessageModel) -> Void)?){
+    public func sendMessage(inboxID iID: InboxID, withContent content: String, type: MessageType, _ completion : ((TextMessageModel) -> Void)?){
         taskQueue.async {
-            let t = MessageEntity(id: iID + String(timeNow), conversationID: iID, senderId: self.you.id, type: .text, contents: [text], timeSent: timeNow, timeDeliveried: 0, timeSeen: 0)
+          
+            let t = MessageEntity(id: iID + String(timeNow),
+                                  conversationID: iID,
+                                  senderId: self.you.id,
+                                  type: type,
+                                  contents: [content],
+                                  timeSent: timeNow, timeDeliveried: 0, timeSeen: 0)
             
             self.receivedMessage(t)
             
@@ -91,7 +97,7 @@ extension DataManager{
                     }
                 }
                 
-                let t = MessageEntity(id: iID + String(timeNow), conversationID: iID, senderId: userID, type: .text, contents: [text], timeSent: timeNow, timeDeliveried: 0, timeSeen: 0)
+                let t = MessageEntity(id: iID + String(timeNow), conversationID: iID, senderId: userID, type: type, contents: [content], timeSent: timeNow, timeDeliveried: 0, timeSeen: 0)
                 
                 self.receivedMessage(t)
             }

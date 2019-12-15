@@ -13,6 +13,7 @@ typealias MessageID = String
 enum MessageType {
     case text
     case image
+    case emoji
 }
 
 struct MessageTime {
@@ -75,6 +76,9 @@ class MessageEntity {
             
         case .text:
             return TextMessageModel(id: id, conversationID: inboxID, sender: sender, content: contents[0], time: time)
+            
+        case .emoji:
+            return EmojiMessageModel(id: id, conversationID: inboxID, sender: sender, content: contents[0], time: time)
         }
     
     }

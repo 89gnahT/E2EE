@@ -127,7 +127,8 @@ class MessageCell: BaseMessageCell {
         
         let bottomStack = ASStackLayoutSpec(direction: .horizontal, spacing: 10, justifyContent: justifyContent, alignItems: .stretch, children: [contentStack])
         if isIncommingMessage{
-            bottomStack.children?.insert(avatarImageNode, at: 0)
+            let avatarStack = ASStackLayoutSpec(direction: .vertical, spacing: 0, justifyContent: .end, alignItems: .stretch, children: [avatarImageNode])
+            bottomStack.children?.insert(avatarStack, at: 0)
         }
         
         let stack = ASStackLayoutSpec(direction: .vertical, spacing: 15, justifyContent: justifyContent, alignItems: .stretch, children: [bottomStack])

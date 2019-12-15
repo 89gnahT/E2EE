@@ -13,9 +13,13 @@ class MessageCellFactory: NSObject {
         var cell: BaseMessageCell!
         
         if let messageViewModel = viewModel as? MessageViewModel{
-            if (viewModel as! MessageViewModel).model.type == .text{
+            switch messageViewModel.model.type {
+            case .text:
                 cell = TextMessageCell(viewModel: messageViewModel as! TextMessageViewModel)
-            }else{
+            
+            case .emoji:
+                cell = EmojiMessageCell(viewModel: messageViewModel as! EmojiMessageViewModel)
+            case .image:
                 cell = ImagesMessageCell(viewModel: messageViewModel as! ImageMessageViewModel)
             }
         }else

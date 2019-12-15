@@ -245,34 +245,6 @@ extension ChatScreenViewController{
         conversationTableNode.deleteRows(at: [pos])
     }
     
-    private func insertMessage(viewModel : MessageViewModel, at pos: Int){
-        //        if pos < 0 && pos > viewModels.count{
-        //            return
-        //        }
-        //
-        //        let previous = viewModels.count > pos ? (viewModels[pos] as! MessageViewModel) : nil
-        //        if previous != nil{
-        //            previous?.setupPositionWith(previous: viewModels.count > pos + 1 ? (viewModels[pos + 1] as! MessageViewModel) : nil, andAfter: viewModel)
-        //
-        //            let preNode: MessageCell = conversationTableNode.nodeForRowAt(IndexPath(row: pos, section: 0)) as! MessageCell
-        //            preNode.updateUI()
-        //        }
-        //
-        //        let after =  pos > 0 ? (viewModels[pos - 1] as! MessageViewModel) : nil
-        //
-        //        if after != nil{
-        //            after?.setupPositionWith(previous: viewModel, andAfter: pos >= 2 ? (viewModels[pos - 2] as! MessageViewModel) : nil)
-        //
-        //            let afterNode: MessageCell = conversationTableNode.nodeForRowAt(IndexPath(row: pos - 1, section: 0)) as! MessageCell
-        //            afterNode.updateUI()
-        //        }
-        //
-        //        viewModel.setupPositionWith(previous: previous, andAfter: after)
-        //
-        //        self.viewModels.insert(viewModel, at: pos)
-        //        self.conversationTableNode.insertRows(at: [IndexPath(row: pos, section: 0)])
-    }
-    
     private func insertMessageAtFirst(viewModel : MessageViewModel){
         
         let previous = viewModels.count > 0 ? viewModels.first! : nil
@@ -406,8 +378,8 @@ extension ChatScreenViewController: DataManagerListenerDelegate{
 }
 
 extension ChatScreenViewController: ChatInputNodeDelegate{
-    func chatInputNode(_ chatInputNode: ChatInputNode, sendText text: String) {
-        DataManager.shared.sendTextMessage(inboxID: inboxID, withContent: text, nil)
+    func chatInputNode(_ chatInputNode: ChatInputNode, sendMessageWithContent content: String, type: MessageType) {
+        DataManager.shared.sendMessage(inboxID: inboxID, withContent: content, type: type, nil)
     }
     
     func chatInputNodeFrameDidChange(_ chatInputNode: ChatInputNode, newFrame nf: CGRect, oldFrame of: CGRect) {
