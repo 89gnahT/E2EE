@@ -287,7 +287,7 @@ extension ChatScreenViewController{
                 self.viewModels.removeLast()
                 self.conversationTableNode.deleteRows(at: [length - 1])
                 
-                self.numberOfMessageTitle += arrayTitle.count
+                self.numberOfMessageTitle += arrayTitle.count - 1
             }else{
                 self.numberOfMessageTitle += arrayTitle.count
             }

@@ -61,6 +61,7 @@ class ConversationTableNode: ASDisplayNode {
         scrollDownBtn.setBackgroundImage(UIImage(named: "dot-1")?.maskWithColor(color: .white), for: .normal)
         let insets = CGFloat(12)
         scrollDownBtn.contentEdgeInsets = UIEdgeInsets(top: insets, left: insets, bottom: insets, right: insets)
+        scrollDownBtn.isHidden = true
     }
     
     override func didLoad() {
